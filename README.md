@@ -1,0 +1,2 @@
+multiSelectable
+===============
