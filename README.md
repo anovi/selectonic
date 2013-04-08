@@ -36,7 +36,7 @@ Possibility to use keys **Up**, **Down** and **Home**, **End** to move cursor (f
 *Type: boolean, Default: false*  
 If *keyboardInput* is *true* and focused element is last in a list, pressing key **Down** set focus to begin of the list; same with key **Up** – when focus on first item of the list.
 
-### handler
+### handle
 *Type: selector, Default: null*  
 Match child elemets, that will be served as clickable area inside each item to select/unselect these items.
 

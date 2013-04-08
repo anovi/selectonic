@@ -19,7 +19,7 @@
             selectionBlur:	false,
             keyboardInput:	false,
             loop:			false,
-            handler:		null,
+            handle:			null,
 
             // CSS classes
             wrapperClass:   ( "j-" + pluginName ),
@@ -85,7 +85,7 @@
 			// Проходимся по переданному объекту параметров
 			$.each(
 				// Проверяем параметры которые должны быть строкой
-				[ "item", "wrapperClass", "focusClass", "selectedClass", "handler" ],
+				[ "item", "wrapperClass", "focusClass", "selectedClass", "handle" ],
 				function(index, val) {
 					// На всякий случай преобразуем в строку и обрезаем пробелы по краям
 					if( options[val] != null ) {
@@ -620,7 +620,7 @@
     Plugin.prototype._getTarrget = function(e) {
 
         var elem = e.target,
-			handler = this.options.handler,
+			handle = this.options.handle,
 			target;
 
         // While plugin's element or top of the DOM is achieved
@@ -631,22 +631,22 @@
 				target = elem;
 			}
 
-			// If handler option is ON and that elem match to handler's selector
-			if( handler && $(elem).is(handler) ) {
-				this.ui.handler = elem;
+			// If handle option is ON and that elem match to handle's selector
+			if( handle && $(elem).is(handle) ) {
+				this.ui.handle = elem;
 			}
 
 			// Get parent element
 			elem = elem.parentNode;
 		}
 
-        // If handler option is ON and it was found
+        // If handle option is ON and it was found
         // and item of this list was clicked
-        if( handler && elem && this.ui.handler ) {
+        if( handle && elem && this.ui.handle ) {
 			return target;
 
 		// If achieved $el of this instance of plugin's object
-        } else if( !handler && elem ) {
+        } else if( !handle && elem ) {
 			return target;
         }
 
@@ -1030,7 +1030,7 @@
         this._prevItemsState = [];
         delete this.ui.items;
         delete this.ui.target;
-        delete this.ui.handler;
+        delete this.ui.handle;
         delete this._items;
         delete this._isRangeSelect;
         delete this._isMultiSelect;
