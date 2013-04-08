@@ -1,5 +1,6 @@
 # MultiSelectable
-jQuery-plugin for making selectable lists by mouse and keyboard, configurable with options, methods and callbacks.
+jQuery-plugin for making selectable lists by mouse and keyboard, configurable with options, methods and callbacks.  
+[Demo page](http://anovi.github.io/multiSelectable/ "MultiSelectable — jQuery plugin") 
 
 Author: Alexey Novichkov  
 Version: 1.0
