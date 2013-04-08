@@ -1,1 +1,522 @@
-My GitHab Page
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js ie7 lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js ie8 lt-ie9"> <![endif]-->
+<!--[if IE 9]>         <html class="no-js ie9"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>MultiSelectable — jQuery plugin</title>
+        <meta name="description" content="MultiSelectable — jQuery plugin for making selectable lists by mouse and keyboard, configurable with options, methods and callbacks | Author: Alexey Novichkov">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" type="text/css" href="css/normalize.css"/>
+        <link rel="stylesheet" type="text/css" href="css/main.css"/>
+        <link rel="stylesheet" type="text/css" href="css/font-awesome.min.css"/>
+</head>
+<body>
+
+	
+<div class="l-wrapper">
+
+
+
+	<div class="l-plugin">
+		
+		<div class="b-list">
+			<div class="g-panel">
+				<div class="panel-head">
+					<span class="panel-title">Selectable list</span>
+				</div>
+				<div class="panel-body">
+					<ul class="list-wrapper">
+						<li id="item1" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 1</span></li>
+						<li id="item2" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 2</span></li>
+						<li id="item3" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 3</span></li>
+						<li id="item4" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 4</span></li>
+						<li id="item5" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 5</span></li>
+						<li id="item6" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 6</span></li>
+						<li id="item7" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 7</span></li>
+						<li id="item8" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 8</span></li>
+						<li id="item9" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 9</span></li>
+						<li id="item10" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 10</span></li>
+						<li id="item11" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 11</span></li>
+						<li id="item12" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 12</span></li>
+						<li id="item13" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 13</span></li>
+						<li id="item14" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 14</span></li>
+						<li id="item15" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 15</span></li>
+						<li id="item16" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 16</span></li>
+						<li id="item17" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 17</span></li>
+						<li id="item18" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 18</span></li>
+						<li id="item19" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 19</span></li>
+						<li id="item20" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 20</span></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		
+		
+		<div class="b-event-log">
+			<div class="g-panel">
+				<!-- <div class="panel-head"> -->
+					<div class="panel-toggle">
+						<button class="b-but-pipka"></button>
+					</div>
+					<!-- <div class="panel-title">Log</div> -->
+				<!-- </div> -->
+				<div class="panel-body">
+					<div class="event-log-wrapper"></div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	
+	<div class="b-wellcome">
+		<div class="wellcome-wrapper">
+			<h1 class="wellcome-title">MultiSelectable</h1>
+			<p>jQuery-plugin for making selectable lists by mouse and keyboard, configurable with options, methods and callbacks.</p>
+			<p><a class="download" target="_blank" href="http://github.com/anovi/multiSelectable"><span class="icon-github"></span> <span class="title">Download from GitHub</span></a></p>
+		</div>
+	</div>
+
+
+	<div class="l-docs">
+		<div class="docs-wrapper">
+
+			<div class="b-options">
+				<h2>Options</h2>
+				
+				<table class="options-table">
+					<tr>
+						<td><input type="checkbox" id="multi"> <label for="multi"><span class="g-option">multi</span></label></td>
+						<td>
+							<span class="options-description">User can select many items in a list;</span>
+						</td>
+					</tr>
+					<tr>
+						<td><input type="checkbox" id="focusBlur"> <label for="focusBlur"><span class="g-option">focusBlur</span></label></td>
+						<td>
+							<span class="options-description">Plugin lose focus when user clicks outside of the list</span>
+						</td>
+					</tr>
+					<tr>
+						<td><input type="checkbox" id="selectionBlur"> <label for="selectionBlur"><span class="g-option">selectionBlur</span></label></td>
+						<td>
+							<span class="options-description">Plugin clear selection when user clicks outside of the list</span>
+						</td>
+					</tr>
+					<tr>
+						<td><input type="checkbox" id="keyboardInput"> <label for="keyboardInput"><span class="g-option">keyboardInput</span></label></td>
+						<td>
+							<span class="options-description">Possibility to use keys <span class="g-key">↓</span> <span class="g-key">↑</span> and <span class="g-key">Home</span> <span class="g-key">End</span> to&nbsp;move cursor (focus), select several items by holding <span class="g-key">shift</span> and select all items by pressing<span class="g-key">ctrl + a</span>; </span>
+						</td>
+					</tr>
+					<tr>
+						<td><input type="checkbox" id="loop"> <label for="loop"><span class="g-option">loop</span></label></td>
+						<td>
+						<span class="options-description">If keyboardInput is true and focused element is last in a list, pressing key <span class="g-key">↓</span> set focus to begin of the list; same with key <span class="g-key">↑</span> when focus on first item of the list;</span>
+						</td>
+					</tr>
+					<tr>
+						<td><input type="checkbox" id="handle"> <label for="handle"><span class="g-option">handle</span></label></td>
+					<td>
+						<span class="options-description">Match child elemets, that will be served as clickable area inside each item to select/unselect these items;</span>
+					</td></tr>
+				<!-- </table> -->
+
+
+				<!-- <ul class="options-wrapper g-plain-list"> -->
+
+					<!-- <li> -->
+
+							<tr class="row-group">
+								<td>
+									<span class="g-option">mouseMode</span><br>
+								</td>
+								<td>
+									<span class="options-description">(String) How toggle selection on an item:</span>
+								</td>
+							</tr>
+							
+							<!-- <table class="options-table"> -->
+							<tr class="options-radio">
+								<td>
+								 	<input name="mouseMode" id="mouseMode-select" type="radio" data-option="select"> <label for="mouseMode-select">select</label>
+								</td>
+								 <td>
+								 	<span class="options-description">mouse click select target item and clear other selection in a list; to add/remove element to selection user need holding <span class="g-key">ctrl</span> key (file manager style);</span>
+								</td>
+							</tr>
+							
+							<tr class="options-radio end">
+								<td>
+								 	<input name="mouseMode" id="mouseMode-toggle" type="radio" data-option="toggle"> <label for="mouseMode-toggle">toggle</label>
+								</td>
+								 <td>
+								 	<span class="options-description">mouse click select/unselect item (like group of checkboxes)</span>
+								</td>
+							</tr>
+						<!-- </table> -->
+					<!-- </li> -->
+					<tr class="row-group">
+						<td>
+							<span class="g-option">event</span>
+						</td>
+						<td><span class="options-description">(String) Which event plugin will react for:</span></td>
+					</tr>
+					<tr class="options-radio">
+						<td>
+						 	<input name="event" id="event-mousedown" type="radio" data-option="mousedown"> <label for="event-mousedown">mousedown</label>
+						</td>
+						<td>
+							<span class="options-description">plugin will react when user pushes down on right mouse button;</span>
+						</td>
+					</tr>
+					<tr class="options-radio">
+						<td>
+						 	<input name="event" id="event-click" type="radio" data-option="click"> <label for="event-click">click</label>
+						</td>
+						<td>
+						 	<span class="options-description">plugin will react when user clicks (press and release) on left mouse button;</span>
+						</td>
+					</tr>
+
+					<tr class="options-radio end">
+						<td>
+						 	<input name="event" id="event-hybrid" type="radio" data-option="hybrid"> <label for="event-hybrid">hybrid</label>
+						</td>
+						 <td>
+						 	<span class="options-description">plugin will select item when user pushes down mouse button on an element, that is not selected, but user must press and release mouse button to unselect selected item. It can be used, for example, when there is another plugin for dragging selected items.</span>
+						</td>
+					</tr>
+					
+					<tr class="row-group">
+						<td>
+						 	<span class="g-option">filter</span>
+						</td>
+						 <td>
+						 	<span class="options-description">(selector) Match child elements, that can be selected <span class="g-nowrap">( default = "* >" ).</span></span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+						 	<span class="g-option">wrapperClass</span>
+						</td>
+						 <td>
+						 	<span class="options-description">Name of class for element which plugin attached to <span class="g-nowrap">( default = "j-multiSelectable" ).</span></span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+						 	<span class="g-option">focusClass</span>
+						</td>
+						 <td>
+						 	<span class="options-description">Name of class on focused element <span class="g-nowrap">( default = "j-multiSelectable-focused" ).</span></span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+						 	<span class="g-option">selectedClass</span>
+						</td>
+						 <td>
+						 	<span class="options-description">Name of class on selected element <span class="g-nowrap">( default = "j-multiSelectable-selected" ).</span></span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+						 	<span class="g-option">disabledClass</span>
+						</td>
+						 <td>
+						 	<span class="options-description">Name of class on plugin's element which is in disabled state <span class="g-nowrap">( default = "j-multiSelectable-disabled" ).</span></span>
+						</td>
+					</tr>
+				<!-- </ul> -->
+				</table>
+
+				<p>Example:</p>
+<code>$(elem).multiSelectable({
+    focusBlur: true,
+    mouseMode: "click",
+    handle: ".item-handle"
+});</code></p>
+			</div>
+
+			<div class="b-methods">
+				<h2>Methods</h2>
+				<p>Example of a method call:
+<code>$(elem).multiSelectable("getSelected");</code></p>
+
+				<h3><button data-action="blur">blur</button></h3>
+				<p>Clear selection in a list.</p>
+
+				<h3><button data-action="getSelected">getSelected</button></h3>
+				<p>Get array of selected elements.</p>
+
+				<h3><button data-action="getSelectedId">getSelectedId</button></h3>
+				<p>Get array of id's of selected elements.</p>
+
+				<h3><button data-action="disable">disable</button></h3>
+				<p>Disable plugin, but keep data and save it state.</p>
+
+				<h3><button data-action="enable">enable</button></h3>
+				<p>Turn on disabled plugin.</p>
+
+				<h3><button data-action="destroy">destroy</button></h3>
+				<p>Detach handlers, clear data and remove plugin's classes</p>
+
+				<h3>refresh</h3>
+				<p>Refresh plugin data. That is necessary when some items in list was removed.</p>
+
+				<h3>option</h3>
+				<p>Get or set one ore more options.</p>
+				<h4>Getter:</h4>
+				<code>elem.multiSelectable("option", "mouseMode");</code>
+				<p>or you can get whole options object:</p>
+				<code>elem.multiSelectable("option");</code>
+				<h4>Setter:</h4>
+<code>elem.multiSelectable("option", "mouseMode", "select");</code>
+<code>elem.multiSelectable("option", {
+    loop: true,
+    mouseMode: "select"
+});</code>
+				<h3>cancel</h3>
+				<p>Cancel last changes in a list or prevent it, if called in <em>beforeSelect</em> callback. Method can be call only inside callback functions:</p>
+<code>elem.multiSelectable({
+    stop: function(event, ui) {
+        if( condition ) {
+            <strong>this.multiSelectable("cancel");</strong> // inside callback
+        }
+    }
+});</code>
+
+				<h3>Select method</h3>
+<p>You can select items by plugin interface. Plugin accept elements:</p>
+<p><code>elem.multiSelectable( $(".someElements") );</code></p>
+<p>or selector:</p>
+<p><code>elem.multiSelectable(&quot;:even&quot;);</code>
+<button id="chooseEven">Choose</button></p>
+<p><code>elem.multiSelectable(&quot;li:eq(3)&quot;);</code><button id="chooseThird">Choose</button></p>
+
+			</div>
+
+
+			<div class="b-about">
+				<h2>Callback functions (events)</h2>
+				
+				<p>Callback functions and arguments they receives:</p>
+				
+				<dl class="g-plain-definition-list">
+					<dt>event</dt>
+					<dd>event object from mouse or keyboard handlers.</dd>
+					<dt>ui</dt>
+					<dd>object that contains properties with DOM elements:
+						<dl>
+							<dt>ui.target</dt>
+							<dd>link to&nbsp;target element, that was clicked.</dd>
+							<dt>ui.focus</dt>
+							<dd>link to&nbsp;focused element.</dd>
+							<dt>ui.items</dt>
+							<dd>jquery collection of changed elements – it differ from event to&nbsp;event.</dd>
+						</dl>
+					</dd>
+				</dl>
+
+
+				<table>
+					<thead>
+						<tr>
+							<td>
+								Callback function
+							</td></span>
+							<td>event</td>
+							<td>ui.target</td>
+							<td>ui.focus</td>
+							<td>ui.items</td>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>
+								<span class="g-option">beforeSelect</span>
+								<span class="options-description">— calls in every work cycle before any changes will performed</span>
+							</td>
+							<td>event</td>
+							<td>if exist</td>
+							<td>if exist</td>
+							<td>—</td>
+						</tr>
+						<tr>
+							<td>
+								<span class="g-option">select</span>
+								<span class="options-description">— when one or several elements is selected</span>
+							</td>
+							<td>event</td>
+							<td>target element</td>
+							<td>if exist</td>
+							<td>jquery collection of elements that was selected</td>
+						</tr>
+						<tr>
+							<td>
+								<span class="g-option">unSelect</span>
+								<span class="options-description">— one or several elements has been unselected</span>
+							</td>
+							<td>event</td>
+							<td>if exist</td>
+							<td>if exist</td>
+							<td>jquery collection of elements that was unselected</td>
+						</tr>
+						<tr>
+							<td>
+								<span class="g-option">unSelectAll</span>
+								<span class="options-description">— when all elements in list is unselected</span>
+							</td>
+							<td>event</td>
+							<td>if exist</td>
+							<td>if exist</td>
+							<td>jquery collection of elements that was unselected</td>
+						</tr>
+						<tr>
+							<td>
+								<span class="g-option">focusLost</span>
+								<span class="options-description">— when the focus of list is lost</span>
+							</td>
+							<td>event</td>
+							<td>—</td>
+							<td>Link on focused element. Link will be deleted after this callback.</td>
+							<td>—</td>
+						</tr>
+						<tr>
+							<td>
+								<span class="g-option">stop</span>
+								<span class="options-description">— calls in the end of every work cycle</span>
+							</td>
+							<td>event</td>
+							<td>if exist</td>
+							<td>if exist</td>
+							<td>all changed items (if they was)</td>
+						</tr>
+						<tr>
+							<td>
+								<span class="g-option">create</span>
+								<span class="options-description">— calls after initialization</span>
+							</td>
+							<td>—</td>
+							<td>—</td>
+							<td>—</td>
+							<td>—</td>
+						</tr>
+						<tr>
+							<td>
+								<span class="g-option">destroy</span>
+								<span class="options-description">— calls before plugin will be destroyed</span>
+							</td>
+							<td>—</td>
+							<td>—</td>
+							<td>—</td>
+							<td>—</td>
+						</tr>
+					</tbody>
+				</table>
+
+				<p>Example of usage:</p>
+<code>$(element).multiSelectable({
+    select: function( event, ui ) {
+        // do something
+    }
+});</code>
+			</div>			
+			
+			<div class="b-about">
+				<h2>Compatibility</h2>
+				<p>Requires jQuery 1.7+<br>Tested in Firefox, Chrome, Safari, Opera, IE8+</p>
+			</div>
+
+			<div class="b-about">
+				<h2>About</h2>
+				<p>Version: 1.0</p>
+				<p>Author: Alexey Novichkov</p>
+				<p>Contact <a href="mailto:mygrib@gmail.com">mygrib@gmail.com</a></p>
+				<p>License: Released under the MIT License. Feel free to use it in personal and commercial projects.</p>
+			</div>
+
+
+		</div>
+	</div>
+
+</div>
+	
+
+
+
+<script>window.jQuery || document.write('<script src="js/jquery-1.8.2.js"><\/script>')</script>
+<script src="js/jquery.multiSelectable.min.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+
+
+<script type="text/javascript">
+
+	var logContainer = $(".b-event-log .event-log-wrapper"),
+		mainList = $(".b-list .list-wrapper").multiSelectable({
+
+            create: 		function()            {
+            	demo.log( "create", logContainer );
+            },
+            beforeSelect: 	function( event, ui ) {
+            	if ( event && event.target.tagName === "BUTTON" ) {
+            		this.multiSelectable("cancel");
+            	}
+            	demo.log( "beforeSelect<div class='hr'></div>", logContainer );
+            },
+            focusLost: 		function( event, ui ) { // потеря фокуса
+            	demo.log( "focusLost", logContainer );
+            	
+            },
+            select: 		function( event, ui ) {
+            	demo.log( "select", logContainer );
+            },
+            unSelect: 		function( event, ui ) {
+            	demo.log( "unSelect", logContainer );
+            },
+            unSelectAll: 	function( event, ui ) {
+            	demo.log( "unSelectAll", logContainer );
+            },
+            stop: 			function( event, ui ) {
+            	demo.log( "stop", logContainer );
+            },
+            destroy: 		function()            {
+            	demo.log( "destroy", logContainer );
+            }
+	    });
+
+	mainList.multiSelectable( $("li").first() );
+
+
+	$([
+		"multi",
+		"focusBlur",
+		"selectionBlur",
+		"keyboardInput",
+		"loop"
+
+	]).each(function( index, item ) {
+		$( "#" + item ).prop( "checked", mainList.multiSelectable( "option", item ) );
+	});
+
+	$([
+		"mouseMode",
+		"event"
+
+	]).each(function( index, item ) {
+
+		var value = mainList.multiSelectable( "option", item );
+		$("input[name=" + item + "][data-option=" + value + "]").prop( "checked", true );
+	});
+
+	
+</script>
+
+</body>
+</html>
