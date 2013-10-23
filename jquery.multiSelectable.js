@@ -207,6 +207,14 @@
         return this._getSelected();
     };
 
+    Plugin.prototype.getFocused = function() {
+    	if (this.ui.focus) {
+    		return this.ui.focus;
+    	} else {
+    		return null
+    	}
+    };
+
     Plugin.prototype.getSelectedId = function() {
         return this._getSelected( true );
     };
@@ -328,6 +336,7 @@
 			if ( this._isEnable ) {
 				this._mouseHandler(e);
 			}
+			return e
 		}, this );
 
 		// Handler for keyboard events
@@ -335,6 +344,7 @@
 			if( this.options.keyboardInput && this._isEnable ) {
 				this._keyHandler(e);
 			}
+			return e
 		}, this );
 
 		$( document ).on(
