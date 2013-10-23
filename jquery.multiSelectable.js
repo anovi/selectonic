@@ -18,6 +18,7 @@
             focusBlur:		false,
             selectionBlur:	false,
             keyboardInput:	false,
+            preventInputs:	true,
             loop:			false,
             handle:			null,
 
@@ -366,6 +367,8 @@
 	Plugin.prototype._keyHandler = function( e ) {
 
 		if ( !this.options.keyboardInput ) { return; }
+		// If options for preventing plugin in html inputs and e.target is input, than return
+		if ( this.options.preventInputs && e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') { return; }
 
 		var key = e.which,		// pressed key
 			sibling,			// sibling found element
