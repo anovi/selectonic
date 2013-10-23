@@ -574,9 +574,12 @@
 			this._controller( e );
 
 			// Recalculate plugin's element scroll and window's scroll
-			this._scrollCalcElem( this.el );
-			this._scrollCalcElem( window );
+			if (this.ui.focus) {
+				this._scrollCalcElem( this.el );
+				this._scrollCalcElem( window );
+			}
 		}
+		return e;
 	},
 
 	// Used by _keyHandler
