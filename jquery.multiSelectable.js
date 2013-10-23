@@ -151,6 +151,10 @@
         throw new Error( "Plugin " + pluginName + " has no method \"" + options + "\"" );
 	}
 
+	Plugin.prototype.isEnabled = function() {
+		return this._isEnable
+	}
+
 	Plugin.prototype.option = function() {
 
 		var secArg = arguments[1],
