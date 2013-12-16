@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js ie7 lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js ie8 lt-ie9"> <![endif]-->
+<!--[if IE 9]>         <html class="no-js ie9"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>MultiSelectable — jQuery plugin</title>
+        <meta name="description" content="MultiSelectable — jQuery plugin for making selectable lists by mouse and keyboard, configurable with options, methods and callbacks | Author: Alexey Novichkov">
+        <meta name="viewport" content="width=device-width">
+        
+        <style>
+            * {
+                box-sizing: border-box;
+            }
+            #list {
+                margin: 50px;
+            }
+            #list ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+            #list li {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                line-height: 2em;
+                background: #efefef;
+                border: 1px solid white;
+            }
+            #list li.j-multiSelectable-selected {
+                background: #ddF;
+            }
+            #list .handle {
+                display: none;
+            }
+        </style>
+</head>
+<body>
+	
+
+    <div id="list">
+        <ul>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 1 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 2 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 3 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 4 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 5 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 6 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 7 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 8 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 9 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 10 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 11 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 12 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 13 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 14 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 15 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 16 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 17 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 18 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 19 </span></li>
+            <li><span class="handle">
+                    <input type="checkbox">
+                </span><span class="text">Item 20 </span></li>
+        </ul>
+    </div>
+
+
+<script src="bower_components/jquery/jquery.js"></script>
+<script src="jquery.multiSelectable.js"></script>
+
+<script type="text/javascript">
+
+    mainList = $("#list ul").multiSelectable({
+        // filter:         '> *',
+        mouseMode:      'select',
+        event:          'mousedown',
+        scrolledElem:   'elem',
+        multi:          true,
+        focusBlur:      false,
+        selectionBlur:  false,
+        keyboardInput:  true,
+        preventInputs:  true,
+        loop:           false,
+        handle:         null,
+
+        create: function() {},
+        beforeSelect: function( event, ui ) {},
+        focusLost: function( event, ui ) {},
+        select: function( event, ui ) {},
+        unSelect: function( event, ui ) {},
+        unSelectAll: function( event, ui ) {},
+        stop: function( event, ui ) {},
+        destroy: function() {}
+    });	
+
+</script>
+
+</body>
+</html>
