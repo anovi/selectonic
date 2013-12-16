@@ -14,6 +14,7 @@
             filter:           "> *",
             mouseMode:		"select",
             event:			"mousedown",
+            scrolledElem:	"elem",
             multi:          true,
             focusBlur:		false,
             selectionBlur:	false,
@@ -265,6 +266,8 @@
     Plugin.prototype._init = function() {
         // Adding classes
         this.$el.addClass( this.options.wrapperClass );
+        // scrollable containter
+        this._setScrolledElem( this.options.scrolledElem ); 
         // Attach handlers
         this._onHandler();
         // Save plugin's object instance
@@ -297,18 +300,32 @@
         // Remove classes
         this.$el.removeClass( this.options.disabledClass );
         this.$el.removeClass( this.options.wrapperClass );
+
+        delete this._scrolledElem
     };
 
-    Plugin.prototype._prevent = function() {
-        this._isPrevented = true;
-    };
+	Plugin.prototype._setScrolledElem = function(selector) {
+		var elem;
+		
+		if (selector !== "elem") {
+			elem = $( "" + selector );
+			if (elem.length > 0) {
+				return this._scrolledElem = elem[0];
+			}
+		}
+		return this._scrolledElem = this.el;
+	};
 
-    Plugin.prototype._cancel = function( e ) {
+	Plugin.prototype._prevent = function() {
+		this._isPrevented = true;
+	};
+
+	Plugin.prototype._cancel = function( e ) {
 
 		this._isCancellation = true;
 
-        // Restore items states
-        $.each(
+		// Restore items states
+		$.each(
 			// for each changed item
 			$(this._changedItems),
 			$.proxy(
@@ -575,7 +592,7 @@
 
 			// Recalculate plugin's element scroll and window's scroll
 			if (this.ui.focus) {
-				this._scrollCalcElem( this.el );
+				this._scrollCalcElem( this._scrolledElem );
 				this._scrollCalcElem( window );
 			}
 		}
