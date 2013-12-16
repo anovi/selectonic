@@ -17,5 +17,9 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/anovi/multiSelectable/issues"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.2",
+    "grunt-contrib-uglify": "~0.2.7"
   }
 }
