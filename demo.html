@@ -37,13 +37,18 @@
             #list .handle {
                 display: none;
             }
+
+            .scrollable {
+                height: 200px;
+                overflow: auto;
+            }
         </style>
 </head>
 <body>
 	
 
-    <div id="list">
-        <ul>
+    <div id="list" class="">
+        <ul class="">
             <li><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 1 </span></li>
@@ -117,7 +122,8 @@
         // filter:         '> *',
         mouseMode:      'select',
         event:          'mousedown',
-        scrolledElem:   'elem',
+        // scrolledElem:   '#list',
+        scrolledElem:   null,
         multi:          true,
         focusBlur:      false,
         selectionBlur:  false,

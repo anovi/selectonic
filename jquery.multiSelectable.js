@@ -1,8 +1,8 @@
 /*  ======================================
 *
-*   MultiSelectable
+* MultiSelectable
 * Author: Alexey Novichkov
-* Version: 1.0
+* Version: 0.1.0
 */
 
 (function($, window, undefined) {
@@ -14,7 +14,7 @@
       filter:         '> *',
       mouseMode:      'select',
       event:          'mousedown',
-      scrolledElem:   'elem',
+      scrolledElem:   true,
       multi:          true,
       focusBlur:      false,
       selectionBlur:  false,
@@ -107,7 +107,7 @@
 
   /* ==============================================================================
 
-  Plugin's API
+  Public API
 
   */
 
@@ -304,19 +304,20 @@
     this.$el.removeClass( this.options.disabledClass );
     this.$el.removeClass( this.options.wrapperClass );
 
-    delete this._scrolledElem;
+    if ( this._scrolledElem ) { delete this._scrolledElem; }
   };
 
   Plugin.prototype._setScrolledElem = function(selector) {
     var elem;
+
+    if ( null === selector || false === selector) { return; }
     
-    if (selector !== 'elem') {
-      elem = $( '' + selector );
-      if (elem.length > 0) {
-        this._scrolledElem = elem[0];
-        return;
-      }
+    if ( typeof selector === "string" ) {
+      elem = $( selector );
+      if (elem.length > 0) { this._scrolledElem = elem[0]; }
+      return;
     }
+
     this._scrolledElem = this.el;
   };
 
@@ -597,8 +598,8 @@
 
       // Recalculate plugin's element scroll and window's scroll
       if (this.ui.focus) {
-        this._scrollCalcElem( this._scrolledElem );
-        this._scrollCalcElem( window );
+        if (this._scrolledElem) { this._recalcElemScroll( this._scrolledElem ); }
+        this._recalcElemScroll( window );
       }
     }
     return e;
@@ -625,7 +626,7 @@
 
   // Used by _keyHandler
   // Recalculate scroll position, if if focused item is not visible in container viewport
-  Plugin.prototype._scrollCalcElem = function( elem ) {
+  Plugin.prototype._recalcElemScroll = function( elem ) {
 
     var
       oldPosition   = ( elem === window ) ? null : $( elem ).css( 'position' ),
@@ -1083,7 +1084,7 @@
 
   /* ==============================================================================
 
-  Method of fn object
+  Method of jQuery.fn
 
   */
 
@@ -1102,7 +1103,7 @@
       return command.call( this, options );
     }
 
-    // Create object's instances
+    // Create instances
     return this.each( function() {
       if ( !dataObject(this) ) {
         new Plugin( this, options );
