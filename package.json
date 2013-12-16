@@ -1,0 +1,21 @@
+{
+  "name": "jquery-multiSelectable",
+  "version": "0.1.0",
+  "description": "jQuery plugin for making selectable lists by mouse and keyboard",
+  "main": "jquery.multiSelectable.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anovi/multiSelectable.git"
+  },
+  "keywords": [
+    "jquery",
+    "selectable",
+    "selection",
+    "lists"
+  ],
+  "author": "Alexey Novichkov <mygrib@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/anovi/multiSelectable/issues"
+  }
+}
