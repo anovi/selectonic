@@ -639,43 +639,24 @@
   Recalculate scroll position, if if focused item is not visible in container viewport
   */
   Plugin.prototype._recalcBoxScroll = function( box ) {
-
     var
-      $box           = $( box ),
-      isWindow       = box === window,
-      boxPositioning = isWindow ? null : $box.css( 'position' ),
-      boxViewHeight  = isWindow ? $box.outerHeight() : box.clientHeight,
-      boxScroll      = $box.scrollTop(),
-      $item          = $( this.ui.focus ),
-      itemHeight     = $item.outerHeight(),
-      itemY;
+      $box          = $( box ),
+      isWindow      = box === window,
+      boxViewHeight = isWindow ? $box.outerHeight() : box.clientHeight,
+      boxScrollTop  = $box.scrollTop(),
+      boxWindowY    = isWindow ? 0 : $box.offset().top,
 
-    // If elem is not positioned and it is not the window
-    if (
-      !isWindow &&
-      boxPositioning !== 'fixed' &&
-      boxPositioning !== 'absolute' &&
-      boxPositioning !== 'relative'
-    ) {
+      $item         = $( this.ui.focus ),
+      itemHeight    = $item.outerHeight(),
+      itemBoxTop    = isWindow ? $item.offset().top : ( $item.offset().top - boxWindowY + boxScrollTop );
 
-      // Position elem to get focused items's position relative to positioned parent
-      $box.css( 'position', 'relative' );
-
-      //WARN: there is can be a trouble if any parent before plugin's containter is positioned 
-      itemY = $item.position().top + boxScroll;
-      $box.css( 'position', boxPositioning );
-
-    } else {
-      // Coordinate Y of focused item relative the window or another parent container
-      itemY = isWindow ? $item.offset().top : ( $item.position().top + boxScroll );
-    }
-
-    if ( itemY < boxScroll ) {
+    if ( itemBoxTop < boxScrollTop ) {
       // Scroll to top edge of elem
-      $box.scrollTop( itemY );
-    } else if ( (itemY + itemHeight) > (boxScroll + boxViewHeight) ) {
+      $box.scrollTop( itemBoxTop );
+    
+    } else if ( (itemBoxTop + itemHeight) > (boxScrollTop + boxViewHeight) ) {
       // Scroll to bottom edge of elem - bottom edges of item and viewport will be on the same Y
-      $box.scrollTop( itemY + itemHeight - boxViewHeight );
+      $box.scrollTop( itemBoxTop + itemHeight - boxViewHeight );
     }
   };
 
