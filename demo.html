@@ -34,6 +34,9 @@
             #list li.j-multiSelectable-selected {
                 background: #ddF;
             }
+            #list li.j-multiSelectable-focused {
+                outline: 1px solid #07d;
+            }
             #list .handle {
                 display: none;
             }
@@ -117,6 +120,7 @@
 <script src="jquery.multiSelectable.js"></script>
 
 <script type="text/javascript">
+    var mainList;
 
     mainList = $("#list ul").multiSelectable({
         // filter:         '> *',
@@ -125,8 +129,8 @@
         // scrolledElem:   '#list',
         scrolledElem:   null,
         multi:          true,
-        focusBlur:      false,
-        selectionBlur:  false,
+        focusBlur:      true,
+        selectionBlur:  true,
         keyboardInput:  true,
         preventInputs:  true,
         loop:           false,
@@ -134,13 +138,24 @@
 
         create: function() {},
         beforeSelect: function( event, ui ) {},
-        focusLost: function( event, ui ) {},
+        focusLost: function( event, ui ) {
+            console.log('Focus lost');
+            console.log( this );
+            this.multiSelectable("cancel")
+        },
         select: function( event, ui ) {},
         unSelect: function( event, ui ) {},
         unSelectAll: function( event, ui ) {},
         stop: function( event, ui ) {},
         destroy: function() {}
-    });	
+    });
+
+    mainList.multiSelectable("li:eq(0)")
+
+    setTimeout(function() {
+        console.log('suepr');
+        mainList.multiSelectable("blur");
+    }, 300);
 
 </script>
 
