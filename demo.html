@@ -52,64 +52,64 @@
 
     <div id="list" class="">
         <ul class="">
-            <li><span class="handle">
+            <li id="elem0"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 1 </span></li>
-            <li><span class="handle">
+            <li id="elem1"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 2 </span></li>
-            <li><span class="handle">
+            <li id="elem2"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 3 </span></li>
-            <li><span class="handle">
+            <li id="elem3"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 4 </span></li>
-            <li><span class="handle">
+            <li id="elem4"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 5 </span></li>
-            <li><span class="handle">
+            <li id="elem5"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 6 </span></li>
-            <li><span class="handle">
+            <li id="elem6"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 7 </span></li>
-            <li><span class="handle">
+            <li id="elem7"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 8 </span></li>
-            <li><span class="handle">
+            <li id="elem8"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 9 </span></li>
-            <li><span class="handle">
+            <li id="elem9"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 10 </span></li>
-            <li><span class="handle">
+            <li id="elem10"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 11 </span></li>
-            <li><span class="handle">
+            <li id="elem11"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 12 </span></li>
-            <li><span class="handle">
+            <li id="elem12"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 13 </span></li>
-            <li><span class="handle">
+            <li id="elem13"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 14 </span></li>
-            <li><span class="handle">
+            <li id="elem14"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 15 </span></li>
-            <li><span class="handle">
+            <li id="elem15"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 16 </span></li>
-            <li><span class="handle">
+            <li id="elem16"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 17 </span></li>
-            <li><span class="handle">
+            <li id="elem17"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 18 </span></li>
-            <li><span class="handle">
+            <li id="elem18"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 19 </span></li>
-            <li><span class="handle">
+            <li id="elem19"><span class="handle">
                     <input type="checkbox">
                 </span><span class="text">Item 20 </span></li>
         </ul>
@@ -141,7 +141,7 @@
         focusLost: function( event, ui ) {
             // console.log('Focus lost');
             // console.log( this );
-            this.multiSelectable("cancel")
+            // this.multiSelectable("cancel")
         },
         select: function( event, ui ) {},
         unSelect: function( event, ui ) {},
@@ -153,7 +153,8 @@
     mainList.multiSelectable("li:eq(0)")
 
     setTimeout(function() {
-        mainList.multiSelectable("blur");
+        var x = mainList.multiSelectable("getSelectedId")
+        console.log(x);
     }, 300);
 
 </script>

@@ -228,17 +228,17 @@
   };
 
 
+  Plugin.prototype.getSelectedId = function() {
+    return this._getSelected( true );
+  };
+
+
   Plugin.prototype.getFocused = function() {
     if (this.ui.focus) {
       return this.ui.focus;
     } else {
       return null;
     }
-  };
-
-
-  Plugin.prototype.getSelectedId = function() {
-    return this._getSelected( true );
   };
 
 
@@ -734,22 +734,21 @@
 
 
   Plugin.prototype._getSelected = function( getIds ) {
+    var arr, res, items;
 
     if( getIds ) {
-      return $.map(
-        this.$el.children( '.' + this.options.selectedClass ),
-        function( elem ) {
-          return $( elem ).attr('id');
-        }
-      );
-    }
+      arr = [];
+      items = this.$el.children( '.' + this.options.selectedClass );
 
-    return this.$el.children( '.' + this.options.selectedClass );
-  };
+      // Iterate through collection and return id or null
+      $.each( items, function(index, elem) {
+        arr.push( $(elem).attr('id') || null );
+      });
+      res = arr.length > 0 ? arr : null;
 
+    } else res = this.$el.children( '.' + this.options.selectedClass );
 
-  Plugin.prototype._getSelectedId = function() {
-    return this._getSelected( true );
+    return res;
   };
 
 
