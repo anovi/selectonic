@@ -436,7 +436,7 @@
 
       /* Prevent — bacause it's strange and annoying behavior 
       when first select all items in the list, and after that 
-      if hold ctrl+A longer — select all text on tha page */
+      if hold ctrl+A longer — select all text on that page */
       e.preventDefault();
 
       // Get all items
@@ -499,7 +499,7 @@
           isSelectedSecSibling = this._getIsSelected( secSibling );
 
         // If another arrow was pressed
-        // that mean the direction was changed
+        // that means the direction was changed
         if ( this._keyModes.shift && this._keyModes.shift !== key ) {
           this._keyModes.shift = null;
           this._shiftModeAction = null;
@@ -519,7 +519,7 @@
         } else if ( this._keyModes.shift && this._shiftModeAction === 'select' && isTargetSelected ) {
 
           /* When user select range of items by holding SHIFT and presses arrow key,
-          there are already can be selected items — than focus will jump 
+          there are already can be selected items — than focus should jump
           through these selected items to first unselected item */
 
           // While first unselected item will be found or edge of the list will be reached
@@ -592,7 +592,7 @@
           // and turn on range select mode
           this._items = this._rangeSelect();
         } else {
-          // Mode of multimpy selection
+          // Mode of multiply selection
           this._isMultiSelect = true;
         }
       }
@@ -605,7 +605,7 @@
 
       // Recalculate plugin's element scroll and window's scroll
       if (this.ui.focus) {
-        if (this._scrolledElem) { this._recalcElemScroll( this._scrolledElem ); }
+        if ( this._scrolledElem ) this._recalcElemScroll( this._scrolledElem );
         this._recalcElemScroll( window );
       }
     }
@@ -738,20 +738,11 @@
   Plugin.prototype._getItems = function( selection, elem ) {
 
     switch( selection ) {
-    case 'next':
-      return $( elem ).next( this.options.parentSelector );
-
-    case 'prev':
-      return $( elem ).prev( this.options.parentSelector );
-
-    case 'first':
-      return this.$el.find( this.options.filter ).first();
-
-    case 'last':
-      return this.$el.find( this.options.filter ).last();
-
-    default:
-      return this.$el.find( this.options.filter );
+    case 'next':  return $( elem ).next( this.options.parentSelector );
+    case 'prev':  return $( elem ).prev( this.options.parentSelector );
+    case 'first': return this.$el.find( this.options.filter ).first();
+    case 'last':  return this.$el.find( this.options.filter ).last();
+    default:      return this.$el.find( this.options.filter );
     }
   };
 
@@ -833,7 +824,7 @@
 
   // Control the state of a list
   // this method calls from _keyHandler and _mouseHandler or API
-  // and do changets depending on input parameters
+  // and do changes depending on input parameters
   Plugin.prototype._controller = function( e ) {
 
     // Callback
@@ -847,7 +838,7 @@
     }
 
     /* Set necessary variables */
-    // Set old focus
+    // Old focus elem
     this._prevFocus = ( this.ui.focus ) ? this.ui.focus : null;
 
     // Flag - if there was any selected items before changes
@@ -940,7 +931,7 @@
       /*  If it's unselecting and item is selected target,
         and is not 'multi' or 'range' select mode
         — do nothing because state of selected target should not change
-        – it is just unselecting from remaining items  */
+        – it is just unselecting other items  */
       if (
         isSelectedTarget &&
         !aboveZero &&
@@ -1034,8 +1025,8 @@
       y = arr.index( this.ui.focus ),
 
     // Get array of items between focus and target
-    subArr =    ( x < y ) ? arr.slice( x, y ) : arr.slice( y, x );
-    subArr.push(  ( x < y ) ? arr[ y ]      : arr[ x ] );
+    subArr =     ( x < y ) ? arr.slice( x, y ) : arr.slice( y, x );
+    subArr.push( ( x < y ) ? arr[ y ]          : arr[ x ] );
 
     return subArr;
   };
