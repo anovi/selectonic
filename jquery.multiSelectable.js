@@ -6,6 +6,7 @@
 */
 
 (function($, window, undefined) {
+  'use strict';
 
   var pluginName = 'multiSelectable',
     document = window.document,
@@ -56,11 +57,11 @@
     element – html element
     options – plugin initial options
   */
-  function Plugin( element ) {
+  function Plugin( element, options ) {
     this._name           = pluginName;
-    this.options         = setOptions.apply( this, arguments ); // Set options
-    this.el              = element; // Plugin's element
-    this.$el             = $( element ); // $cached Plugin's element
+    this.options         = Plugin.setInitOptions( options );
+    this.el              = element;
+    this.$el             = $( element );
     this.ui              = {};   // Object for DOM elements
     this._selected       = 0;    // Amount of selected items
     this._changedItems   = [];   // Elements that was changed in current cycle
@@ -75,26 +76,32 @@
     this._init();
   }
 
-  // Get or set plugin's object to data:
-  function dataObject( el, object ) {
-    if ( object ) {
-      return $( el ).data( 'plugin_' + pluginName, object );
-    } else {
-      return $( el ).data( 'plugin_' + pluginName );
-    }
-  }
+
+  // Set plugin's object to data:
+  Plugin.setDataObject = function( el, object ) {
+    return $( el ).data( 'plugin_' + pluginName, object );
+  };
+
+
+  // Get plugin's data object:
+  Plugin.getDataObject = function( el ) {
+    return $( el ).data( 'plugin_' + pluginName );
+  };
+
 
   // Extending options object
-  function setOptions( elem, options ) {
+  Plugin.setInitOptions = function( options ) {
+    var option;
 
     if( options ) {
       $.each(
         // Ensure that actions are strings
         [ 'item', 'wrapperClass', 'focusClass', 'selectedClass', 'handle' ],
         function(index, val) {
+          option = options[val];
           // Turn in a string and trim spaces
-          if( options[val] != null ) {
-            options[val] = $.trim( String(options[val]) );
+          if( null !== option && void 0 !== option) {
+            option = $.trim( String(option) );
           }
         }
       );
@@ -102,7 +109,7 @@
 
     // Return final object with options
     return $.extend( {}, defaults, (options || {}) );
-  }
+  };
 
 
   /* ==============================================================================
@@ -110,15 +117,13 @@
   Public API
 
   */
-
-  function command( options ) {
+  Plugin.command = function( options ) {
 
     var
-      pluginObject = dataObject( this ),
-      apiMethod,
-      selector;
+      pluginObject = Plugin.getDataObject( this ),
+      apiMethod, selector;
 
-    if( pluginObject === undefined ) {
+    if( null === pluginObject || void 0 === pluginObject ) {
       throw new Error( 'Element ' + this[0] + ' has no plugin ' + pluginName );
     }
 
@@ -141,20 +146,20 @@
       );
     }
 
-    // Test for selector:
-    selector = this.find( options )
-          // Filter found elements
-          .filter( pluginObject.options.parentSelector );
+    // Test for selector
+    selector = this
+      .find( options ) // Try to find
+      .filter( pluginObject.options.parentSelector ); // Filter found elements
 
     // If there are any elements:
-    if( selector && selector.length > 0 ) {
+    if( selector && selector.length && selector.length > 0 ) {
       // Call select method and give him elements
       return pluginObject.select( selector );
     }
 
     // Nothing has found
     throw new Error( 'Plugin ' + pluginName + ' has no method \'' + options + '\'' );
-  }
+  };
 
 
   Plugin.prototype.isEnabled = function() {
@@ -288,7 +293,7 @@
     // Attach handlers
     this._onHandler();
     // Save plugin's object instance
-    dataObject( this.$el, this );
+    Plugin.setDataObject( this.$el, this );
     // Callback
     this.options.create.call( this.$el );
   };
@@ -622,13 +627,13 @@
       }
     }
     return e;
-  },
+  };
 
   /*
   Used by _keyHandler
   when UP or DOWN keys was pressed — find next item or first/last of the list
   direction – next|prev
-  */ 
+  */
   Plugin.prototype._findNextSibling = function( direction ) {
 
     var edge = ( direction === 'next' ) ? 'first' : 'last', // extreme item of the list
@@ -643,7 +648,7 @@
     }
 
     return res;
-  },
+  };
 
 
   /*
@@ -660,7 +665,12 @@
       elemY;
 
     // If elem is not positioned and it is not the window
-    if ( elem !== window && oldPosition !== 'fixed' && oldPosition !== 'absolute' && oldPosition !== 'relative' ) {
+    if (
+      elem !== window &&
+      oldPosition !== 'fixed' &&
+      oldPosition !== 'absolute' &&
+      oldPosition !== 'relative'
+    ) {
 
       // Position elem to get focused items's position relative to positioned parent
       $( elem ).css( 'position', 'relative' );
@@ -1137,24 +1147,22 @@
 
   $.fn[pluginName] = function( options ) {
 
-    // If string was got
+    // If string passed
     if( options && options.charAt ) {
       // Do the command
-      var res = command.apply( this, arguments );
+      var res = Plugin.command.apply( this, arguments );
       // Return result or 'this' for chaining
       return (res !== undefined) ? res : this;
     }
 
-    // DOM element was got
+    // DOM element passed
     else if ( options && options.addClass || options.parentNode ) {
-      return command.call( this, options );
+      return Plugin.command.call( this, options );
     }
 
     // Create instances
-    return this.each( function() {
-      if ( !dataObject(this) ) {
-        new Plugin( this, options );
-      }
+    return this.each( function(key, elem) {
+      if ( !Plugin.getDataObject(elem) ) new Plugin( elem, options );
     });
   };
 
