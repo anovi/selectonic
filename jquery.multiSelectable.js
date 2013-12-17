@@ -605,8 +605,8 @@
 
       // Recalculate plugin's element scroll and window's scroll
       if (this.ui.focus) {
-        if ( this._scrolledElem ) this._recalcElemScroll( this._scrolledElem );
-        this._recalcElemScroll( window );
+        if ( this._scrolledElem ) this._recalcBoxScroll( this._scrolledElem );
+        this._recalcBoxScroll( window );
       }
     }
     return e;
@@ -638,41 +638,44 @@
   Used by _keyHandler
   Recalculate scroll position, if if focused item is not visible in container viewport
   */
-  Plugin.prototype._recalcElemScroll = function( elem ) {
+  Plugin.prototype._recalcBoxScroll = function( box ) {
 
     var
-      oldPosition   = ( elem === window ) ? null : $( elem ).css( 'position' ),
-      elemHeight    = $( this.ui.focus ).outerHeight(),
-      parentScroll  = $( elem ).scrollTop(),
-      viewHeight    = ( elem === window ) ? $( elem ).outerHeight() : elem.clientHeight,
-      elemY;
+      $box           = $( box ),
+      isWindow       = box === window,
+      boxPositioning = isWindow ? null : $box.css( 'position' ),
+      boxViewHeight  = isWindow ? $box.outerHeight() : box.clientHeight,
+      boxScroll      = $box.scrollTop(),
+      $item          = $( this.ui.focus ),
+      itemHeight     = $item.outerHeight(),
+      itemY;
 
     // If elem is not positioned and it is not the window
     if (
-      elem !== window &&
-      oldPosition !== 'fixed' &&
-      oldPosition !== 'absolute' &&
-      oldPosition !== 'relative'
+      !isWindow &&
+      boxPositioning !== 'fixed' &&
+      boxPositioning !== 'absolute' &&
+      boxPositioning !== 'relative'
     ) {
 
       // Position elem to get focused items's position relative to positioned parent
-      $( elem ).css( 'position', 'relative' );
+      $box.css( 'position', 'relative' );
 
       //WARN: there is can be a trouble if any parent before plugin's containter is positioned 
-      elemY = $( this.ui.focus ).position().top + parentScroll;
-      $( elem ).css( 'position', oldPosition );
+      itemY = $item.position().top + boxScroll;
+      $box.css( 'position', boxPositioning );
 
     } else {
       // Coordinate Y of focused item relative the window or another parent container
-      elemY = ( elem === window ) ? $( this.ui.focus ).offset().top : ( $( this.ui.focus ).position().top + parentScroll );
+      itemY = isWindow ? $item.offset().top : ( $item.position().top + boxScroll );
     }
 
-    if ( elemY < parentScroll ) {
+    if ( itemY < boxScroll ) {
       // Scroll to top edge of elem
-      $( elem ).scrollTop( elemY );
-    } else if ( (elemY + elemHeight) > (parentScroll + viewHeight) ) {
+      $box.scrollTop( itemY );
+    } else if ( (itemY + itemHeight) > (boxScroll + boxViewHeight) ) {
       // Scroll to bottom edge of elem - bottom edges of item and viewport will be on the same Y
-      $( elem ).scrollTop( elemY + elemHeight - viewHeight );
+      $box.scrollTop( itemY + itemHeight - boxViewHeight );
     }
   };
 
