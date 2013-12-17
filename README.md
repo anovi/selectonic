@@ -44,15 +44,15 @@ Match child elemets, that will be served as clickable area inside each item to s
 ### mouseMode
 *Type: string, Default: "select"*  
 Mode for toggle selection on item:
-* select – mouse click select target item and clear other selection in a list; to add/remove element to selection user need holding **ctrl** key (file manager style);
-* toggle – mouse click select/unselect item (like group of checkboxes);
+* `select` – mouse click select target item and clear other selection in a list; to add/remove element to selection user need holding **ctrl** key (file manager style);
+* `toggle` – mouse click select/unselect item (like group of checkboxes);
 
 ### event
 *Type: string, Default: "mousedown"*  
 Which event plugin will react for: 
-* mousedown – plugin will react when user pushes down on right mouse button.
-* click – plugin will react when user clicks (press and release) on left mouse button.
-* hybrid – plugin will select item when user pushes down mouse button on an element, that is not selected, but user must press and release mouse button to unselect selected item. It can be used, for example, when there is another plugin for dragging selected items.
+* `mousedown` – plugin will react when user pushes down on left mouse button.
+* `click` – plugin will react when user clicks (press and release) on left mouse button.
+* `hybrid` – plugin will select item when user pushes down mouse button on an element, that is not selected, but user must press and release mouse button to unselect selected item. It can be used, for example, when there is another plugin for dragging selected items.
 
 ### filter
 *Type: selector,  Default: "* >"*   
@@ -150,11 +150,11 @@ Detach handlers, clear data and remove plugin's classes.
 
 ## Callbacks (Events)
 Callback functions and arguments they receives:  
-* event — event object from mouse or keyboard handlers.
-* ui — object that contains properties with DOM elements:
-* ui.target — link to target element, that was clicked.
-	* ui.focus — link to focused element.
-	* ui.items — jquery collection of changed elements – it differ from event to event.
+* `event` — event object from mouse or keyboard handlers.
+* `ui` — object that contains properties with DOM elements:
+	* `target` — link to targeted element, that has clicked or chosen by keyboard.
+	* `focus` — link to focused element.
+	* `items` — jquery collection of changed elements – it differ from event to event.
 
 <table>
 	<thead>
@@ -171,7 +171,7 @@ Callback functions and arguments they receives:
 	<tbody>
 		<tr>
 			<td>
-				<strong>beforeSelect</strong> — calls in every work cycle before any changes will performed
+				<strong>beforeSelect</strong> — calls in every work cycle before any changes
 			</td>
 			<td>event</td>
 			<td>if exist</td>
@@ -183,7 +183,7 @@ Callback functions and arguments they receives:
 				<strong>select</strong> — when one or several elements is selected
 			</td>
 			<td>event</td>
-			<td>target element</td>
+			<td>Yes</td>
 			<td>if exist</td>
 			<td>jquery collection of elements that was selected</td>
 		</tr>
@@ -198,7 +198,7 @@ Callback functions and arguments they receives:
 		</tr>
 		<tr>
 			<td>
-				<strong>unSelectAll</strong> — when all elements in list is unselected
+				<strong>unSelectAll</strong> — when all elements in the list is unselected
 			</td>
 			<td>event</td>
 			<td>if exist</td>
@@ -207,7 +207,7 @@ Callback functions and arguments they receives:
 		</tr>
 		<tr>
 			<td>
-				<strong>focusLost</strong> — when the focus of list is lost
+				<strong>focusLost</strong> — when the focus of the list is lost
 			</td>
 			<td>event</td>
 			<td>—</td>

@@ -52,13 +52,6 @@
     this._init();
   }
 
-
-  // Set plugin's object to data:
-  Plugin.setDataObject = function( el, object ) {
-    return $( el ).data( 'plugin_' + pluginName, object );
-  };
-
-
   // Get plugin's data object:
   Plugin.getDataObject = function( el ) {
     return $( el ).data( 'plugin_' + pluginName );
@@ -186,11 +179,10 @@
 
 
   Plugin.prototype.getFocused = function() {
-    if (this.ui.focus) {
+    if (this.ui.focus)
       return this.ui.focus;
-    } else {
+    else
       return null;
-    }
   };
 
 
@@ -219,9 +211,7 @@
     var focus = this.ui.focus;
 
     // Check if focus is visible
-    if ( focus && !$(focus).is(':visible') ) {
-      delete this.ui.focus;
-    }
+    if ( focus && !$(focus).is(':visible') ) delete this.ui.focus;
 
     // Recalculate amount of selected items
     this._selected = ( this.getSelected() ).length;
@@ -245,7 +235,7 @@
     // Attach handlers
     this._onHandler();
     // Save plugin's object instance
-    Plugin.setDataObject( this.$el, this );
+    this.$el.data( 'plugin_' + pluginName, this );
     // Callback
     this._callEvent('create');
   };
@@ -360,22 +350,16 @@
   
   // Attath handlers
   Plugin.prototype._onHandler = function() {
-    var e;
-    e = ( this.options.event === 'click' ) ? 'click' : 'mousedown';
 
     // Handler for mouse events
     this._mouseEventHandler = $.proxy( function(e) {
-      if ( this._isEnable ) {
-        this._mouseHandler(e);
-      }
+      if ( this._isEnable ) this._mouseHandler(e);
       return e;
     }, this );
 
     // Handler for keyboard events
     this._keyEventHandler = $.proxy( function(e) {
-      if( this.options.keyboardInput && this._isEnable ) {
-        this._keyHandler(e);
-      }
+      if( this.options.keyboardInput && this._isEnable ) this._keyHandler(e);
       return e;
     }, this );
 
@@ -393,10 +377,9 @@
   
   // Detach handlers
   Plugin.prototype._offHandler = function() {
-    var e = ( this.options.event === 'click' ) ? 'click' : 'mousedown';
 
     $( document ).off(
-      ( e + '.' + this._name ),
+      'click' + '.' + this._name + ' ' + 'mousedown' + '.' + this._name,
       this._mouseEventHandler
     );
 
@@ -447,25 +430,21 @@
     } else {
 
       switch ( key ) {
-      // HOME button – move to the begin of the list
       case keyCode.HOME:
         direction = 'prev';
         sibling = this._getItems( 'first');
         break;
 
-      // END button – move to the end
       case keyCode.END:
         direction = 'next';
         sibling = this._getItems( 'last');
         break;
 
-      // DOWN arrow — move next
       case keyCode.DOWN:
         direction = 'next';
         sibling = this._findNextSibling( 'next' );
         break;
 
-      // UP arrow - move previous
       case keyCode.UP:
         direction = 'prev';
         sibling = this._findNextSibling( 'prev' );
@@ -753,7 +732,7 @@
     if ( options.event === 'hybrid' ) {
 
       // It is click and mouse was not pressed on item
-      if ( e.type === 'click' && !this._mouseDownMode ) { return; }
+      if ( e.type === 'click' && !this._mouseDownMode ) return;
 
       // Get target
       this.ui.target = this._getTarrget(e);
@@ -771,18 +750,13 @@
       }
 
       // If mouse down mode
-      if ( this._mouseDownMode ) {
-        delete this._mouseDownMode;
-      }
+      if ( this._mouseDownMode ) delete this._mouseDownMode;
 
     // if type of event do not match
-    } else if ( e.type !== options.event ) {
-      return;
+    } else if ( e.type !== options.event ) return;
 
-    } else {
-      // Get target
-      this.ui.target = this._getTarrget(e);
-    }
+    // Get target
+    else this.ui.target = this._getTarrget(e);
 
 
     // If multi options is true and target exists
@@ -798,10 +772,9 @@
       }
     }
 
-    if ( this.ui.target && !this._items ) {
+    if ( this.ui.target && !this._items )
       this._items = $( this.ui.target );
-    }
-
+    
     this._controller( e );
   };
 
