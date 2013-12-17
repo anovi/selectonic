@@ -151,10 +151,11 @@
       .find( options ) // Try to find
       .filter( pluginObject.options.parentSelector ); // Filter found elements
 
-    // If there are any elements:
-    if( selector && selector.length && selector.length > 0 ) {
+    // If there is jquery object:
+    if( selector.jquery ) {
       // Call select method and give him elements
-      return pluginObject.select( selector );
+      if (selector.length > 0) return pluginObject.select( selector );
+      return this;
     }
 
     // Nothing has found
@@ -177,7 +178,7 @@
       // Received two strings and any argument
       if( arg > 2 ) {
         this.options[secArg] = arguments[2];
-        return;
+        return this.$el;
       }
       // Return value of option
       return this.options[secArg];
@@ -186,7 +187,7 @@
     // Received string and object
     if( arg > 1 && $.isPlainObject( secArg ) ) {
       $.extend( this.options, secArg );
-      return;
+      return this.$el;
     }
 
     // Return whole options object
@@ -210,7 +211,7 @@
 
     // Call _controller with null instead of event object
     this._controller( null );
-    return;
+    return this.$el;
   };
 
 
@@ -219,7 +220,7 @@
     this.ui.target = null;
     // Call _controller with null instead of event object
     this._controller( null );
-    return;
+    return this.$el;
   };
 
 
@@ -245,20 +246,20 @@
   Plugin.prototype.enable = function() {
     this._isEnable = true;
     this.$el.removeClass( this.options.disabledClass );
-    return;
+    return this.$el;
   };
 
 
   Plugin.prototype.disable = function() {
     this._isEnable = false;
     this.$el.addClass( this.options.disabledClass );
-    return;
+    return this.$el;
   };
 
 
   Plugin.prototype.cancel = function() {
     this._prevent();
-    return;
+    return this.$el;
   };
 
 
@@ -273,7 +274,7 @@
 
     // Recalculate amount of selected items
     this._selected = ( this.getSelected() ).length;
-    return;
+    return this.$el;
   };
 
 
