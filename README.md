@@ -180,7 +180,7 @@ Callback functions and arguments they receives:
 		</tr>
 		<tr>
 			<td>
-				<strong>select</strong> — when one or several elements is selected
+				<strong>select</strong> — when one or more elements has been selected
 			</td>
 			<td>event</td>
 			<td>Yes</td>
@@ -189,7 +189,7 @@ Callback functions and arguments they receives:
 		</tr>
 		<tr>
 			<td>
-				<strong>unSelect</strong> — one or several elements has been unselected
+				<strong>unSelect</strong> — one or more elements has been unselected
 			</td>
 			<td>event</td>
 			<td>if exist</td>
@@ -198,7 +198,7 @@ Callback functions and arguments they receives:
 		</tr>
 		<tr>
 			<td>
-				<strong>unSelectAll</strong> — when all elements in the list is unselected
+				<strong>unSelectAll</strong> — when all elements in the list has been unselected
 			</td>
 			<td>event</td>
 			<td>if exist</td>
@@ -234,7 +234,7 @@ Callback functions and arguments they receives:
 		</tr>
 		<tr>
 			<td>
-				<strong>destroy</strong> — calls before plugin will be destroyed
+				<strong>destroy</strong> — calls before plugin's destroy
 			</td>
 			<td>—</td>
 			<td>—</td>

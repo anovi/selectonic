@@ -1,10 +1,10 @@
-/*  ======================================
+/*
 *
 * MultiSelectable
 * Author: Alexey Novichkov
 * Version: 0.1.0
+*
 */
-
 (function($, window, undefined) {
   'use strict';
 
@@ -14,7 +14,7 @@
   optionsEvents  = ['create','beforeSelect','focusLost','select','unSelect','unSelectAll','stop','destroy'],
   optionsStrings = ['filter','mouseMode','event','wrapperClass','focusClass','selectedClass','disabledClass','handle'],
   keyCode        = { DOWN:40, UP:38, SHIFT:16, END:35, HOME:36, PAGE_DOWN:34, PAGE_UP:33, A:65 },
-  defaults = {
+  defaults       = {
     filter:         '> *',
     mouseMode:      'select',
     event:          'mousedown',
@@ -715,9 +715,9 @@
     var ui, cb = this.options[name];
     if (name === 'create' || name === 'destroy') return cb.call( this.$el );
     ui = {};
-    if (this.ui.target) ui.target = this.ui.target;
-    if (this.ui.items)  ui.items  = this.ui.items;
-    if (this.ui.focus)  ui.focus  = this.ui.focus;
+    if (this.ui.target)   ui.target = this.ui.target;
+    if (this.ui.items)    ui.items  = this.ui.items;
+    if (this._prevFocus)  ui.focus  = this._prevFocus;
     // Pass to callback elem, event object and new ui object
     cb.call( this.$el, event, ui );
   };
@@ -772,9 +772,7 @@
       }
     }
 
-    if ( this.ui.target && !this._items )
-      this._items = $( this.ui.target );
-    
+    if ( this.ui.target && !this._items ) this._items = $( this.ui.target );
     this._controller( e );
   };
 
@@ -811,16 +809,15 @@
     and target is selected and equal to focus
     */
     if ( this._isRangeSelect && this._isTargetWasSelected && this.ui.target === this.ui.focus ) {
-      // nothing to do
+      // do nothing
     }
 
     // For range selections and multi-selection
     else if ( this._isRangeSelect || this._isMultiSelect ) {
-      if ( this._isTargetWasSelected ) {
+      if ( this._isTargetWasSelected )
         this._unselect( e, this._items );
-      } else {
+      else
         this._select( e, this._items );
-      }
     }
 
     // Single selection
@@ -846,14 +843,10 @@
     } else {
 
       // it is not item of list was clicked and 'focusBlur' option is ON
-      if ( this.options.focusBlur ) {
-        this._blur(e);
-      }
+      if ( this.options.focusBlur ) this._blur(e);
 
       // if there are selected items and 'selectionBlur' option is true
-      if ( this._selected > 0 && this.options.selectionBlur ) {
-        this._unselectAll( e );
-      }
+      if ( this._selected > 0 && this.options.selectionBlur ) this._unselectAll( e );
     }
 
     // Set new focus
@@ -878,7 +871,6 @@
     $( items ).each( function( index, item ) {
 
       var
-        // Is item is selected
         isSelected = self._getIsSelected( item ),
         // Condition - if item is not selected (_select) or items is selected (_unselect)
         selectedCondition = ( aboveZero ) ? !isSelected : isSelected,
@@ -896,7 +888,6 @@
         !self._isRangeSelect
       ) { return; }
 
-      // If condition ( selected or not )
       if( selectedCondition ) {
         // it is not cancellation
         if( !self._isCancellation ) {
@@ -922,43 +913,29 @@
 
 
   Plugin.prototype._select = function( e, items, silent ) {
-
     this._forEachItem( items, 1 );
-
-    if ( !silent ) {
-      this._callEvent('select', e);
-    }
-
-    if( this._isPrevented && !this._isCancellation ) { this._cancel( e ); } // cancel
+    if ( !silent ) this._callEvent('select', e);
+    if( this._isPrevented && !this._isCancellation ) this._cancel( e );
   };
 
 
   Plugin.prototype._unselect = function( e, items, silent ) {
-
-    // Iterate over all recieve items
     this._forEachItem( items, -1 );
-
-    if ( !silent ) {
-      this._callEvent('unSelect', e);
-    }
-
-    if( this._isPrevented && !this._isCancellation ) { this._cancel( e ); } // Cancel
+    if ( !silent ) this._callEvent('unSelect', e);
+    if( this._isPrevented && !this._isCancellation ) this._cancel( e );
   };
 
 
   Plugin.prototype._unselectAll = function( e ) {
     var isOnlyTargetSelected, items;
-
-    if( !this._selected || this._selected === 0 ) { return; }
+    if( !this._selected || this._selected === 0 ) return;
 
     // Get all items
     items = this._getItems();
-
     // target was only selected item ( flag used for preventing callback )
     isOnlyTargetSelected = this.ui.target && this._isTargetWasSelected && this._selected === 1;
 
     this.ui.items = null;
-
     this._unselect( e, items, isOnlyTargetSelected );
   };
 
@@ -974,7 +951,7 @@
     this._isRangeSelect = true;
 
     // If target is focused item - do nothing
-    if( this.ui.target === this.ui.focus ) { return $(this.ui.target); }
+    if( this.ui.target === this.ui.focus ) return $( this.ui.target );
 
     // Detect position of target and focus in the list
     var arr = this._getItems(),
@@ -984,7 +961,6 @@
     // Get array of items between focus and target
     subArr =     ( x < y ) ? arr.slice( x, y ) : arr.slice( y, x );
     subArr.push( ( x < y ) ? arr[ y ]          : arr[ x ] );
-
     return subArr;
   };
 
@@ -1023,7 +999,7 @@
 
   Plugin.prototype._setFocus = function( target ) {
 
-    if( !target ) { return; }
+    if( !target ) return;
 
     if( this.ui.focus ) {
       // remove class from old focused item
@@ -1039,33 +1015,12 @@
 
   Plugin.prototype._stop = function( e ) {
 
-    // If there is no selected, but was selected before changes
-    if( !this._selected && this._isWasSelected ) {
-      var focus;
+    // Callback if there were selected items and now are not
+    if( !this._selected && this._isWasSelected ) this._callEvent('unSelectAll', e);
 
-      // Need to pass old focus to callback
-      // WARN - ugly solution
-      if( this._prevFocus ) {
-
-        // Temporary cache the focus
-        focus = this.ui.focus;
-        this.ui.focus = this._prevFocus;
-
-        // Callback of full lost of selection
-        this._callEvent('unSelectAll', e);
-        this.ui.focus = focus;
-
-      } else {
-        this._callEvent('unSelectAll', e);
-      }
-    }
-
-    // Stop callback
     this.ui.items = this._changedItems;
     this._callEvent('stop', e);
-
-    // If cancellation is true
-    if( this._isPrevented ) { this._cancel( e ); }
+    if( this._isPrevented ) this._cancel( e );
 
     // Clear variables that need only during work of cycle
     this._changedItems = [];
