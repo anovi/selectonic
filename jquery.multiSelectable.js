@@ -8,49 +8,25 @@
 (function($, window, undefined) {
   'use strict';
 
-  var pluginName = 'multiSelectable',
-    document = window.document,
-    defaults = {
-
-      filter:         '> *',
-      mouseMode:      'select',
-      event:          'mousedown',
-      scrolledElem:   true,
-      multi:          true,
-      focusBlur:      false,
-      selectionBlur:  false,
-      keyboardInput:  false,
-      preventInputs:  true,
-      loop:           false,
-      handle:         null,
-
-      // CSS classes
-      wrapperClass:   ( 'j-' + pluginName ),
-      focusClass:     ( 'j-' + pluginName + '-focused' ),
-      selectedClass:  ( 'j-' + pluginName + '-selected' ),
-      disabledClass:  ( 'j-' + pluginName + '-disabled' ),
-
-      //Callbacks in the order which they calls
-      create:         function() {},
-      beforeSelect:   function() {},
-      focusLost:      function() {},
-      select:         function() {},
-      unSelect:       function() {},
-      unSelectAll:    function() {},
-      stop:           function() {},
-      destroy:        function() {}
-    },
-
-    keyCode = {
-      DOWN      :40,
-      UP        :38,
-      SHIFT     :16,
-      END       :35,
-      HOME      :36,
-      PAGE_DOWN :34,
-      PAGE_UP   :33,
-      A         :65
-    };
+  var
+  pluginName     = 'multiSelectable',
+  document       = window.document,
+  optionsEvents  = ['create','beforeSelect','focusLost','select','unSelect','unSelectAll','stop','destroy'],
+  optionsStrings = ['filter','mouseMode','event','wrapperClass','focusClass','selectedClass','disabledClass','handle'],
+  keyCode        = { DOWN:40, UP:38, SHIFT:16, END:35, HOME:36, PAGE_DOWN:34, PAGE_UP:33, A:65 },
+  defaults = {
+    filter:         '> *',
+    mouseMode:      'select',
+    event:          'mousedown',
+    handle:         null,
+    wrapperClass:   ( 'j-' + pluginName ),
+    focusClass:     ( 'j-' + pluginName + '-focused' ),
+    selectedClass:  ( 'j-' + pluginName + '-selected' ),
+    disabledClass:  ( 'j-' + pluginName + '-disabled' ),
+  };
+  defaults.scrolledElem = defaults.multi = defaults.preventInputs = true;
+  defaults.focusBlur = defaults.selectionBlur = defaults.keyboardInput = defaults.loop = false;
+  for ( var i = optionsEvents.length - 1; i >= 0; i-- ) defaults[ optionsEvents[i] ] = $.noop;
 
   /* 
     Arguments:
@@ -58,8 +34,8 @@
     options – plugin initial options
   */
   function Plugin( element, options ) {
+    this._setOptions( options );
     this._name           = pluginName;
-    this.options         = Plugin.setInitOptions( options );
     this.el              = element;
     this.$el             = $( element );
     this.ui              = {};   // Object for DOM elements
@@ -89,29 +65,6 @@
   };
 
 
-  // Extending options object
-  Plugin.setInitOptions = function( options ) {
-    var option;
-
-    if( options ) {
-      $.each(
-        // Ensure that actions are strings
-        [ 'item', 'wrapperClass', 'focusClass', 'selectedClass', 'handle' ],
-        function(index, val) {
-          option = options[val];
-          // Turn in a string and trim spaces
-          if( null !== option && void 0 !== option) {
-            option = $.trim( String(option) );
-          }
-        }
-      );
-    }
-
-    // Return final object with options
-    return $.extend( {}, defaults, (options || {}) );
-  };
-
-
   /* ==============================================================================
 
   Public API
@@ -132,9 +85,8 @@
       apiMethod = pluginObject[options];
     }
 
-    // If method exists and it is not private
+    // If method exists and it is not private – call him
     if ( apiMethod && $.isFunction( apiMethod ) && options.charAt(0) !== '_' ) {
-      // Call
       return apiMethod.apply( pluginObject, arguments );
     }
 
@@ -170,14 +122,13 @@
 
   Plugin.prototype.option = function() {
 
-    var secArg = arguments[1],
-      arg = arguments.length;
+    var secArg = arguments[1], arg = arguments.length;
 
     // Received two strings
     if( arg > 1 && secArg.charAt ) {
       // Received two strings and any argument
       if( arg > 2 ) {
-        this.options[secArg] = arguments[2];
+        this._setOptions( secArg, arguments[2] );
         return this.$el;
       }
       // Return value of option
@@ -186,7 +137,7 @@
 
     // Received string and object
     if( arg > 1 && $.isPlainObject( secArg ) ) {
-      $.extend( this.options, secArg );
+      this._setOptions( secArg );
       return this.$el;
     }
 
@@ -296,14 +247,45 @@
     // Save plugin's object instance
     Plugin.setDataObject( this.$el, this );
     // Callback
-    this.options.create.call( this.$el );
+    this._callEvent('create');
+  };
+
+
+  Plugin.prototype._setOptions = function() {
+    var option, isFunction, options = {};
+    if ( arguments.length === 2 ) options[arguments[ 0 ]] = arguments[1];
+    else options = arguments[0];
+
+    if( options ) {
+      // Ensure that actions are strings
+      $.each( optionsStrings, function(index, val) {
+        option = options[val];
+        // Turn in a string and trim spaces
+        if( option ) option = $.trim( String(option) );
+      });
+
+      // Ensure that callbacks options are functions
+      $.each( optionsEvents, function(index, name) {
+        option = options[name];
+        if( null === option || void 0 === option ) return;
+        isFunction = $.isFunction( option );
+        if ( !isFunction ) throw new Error( 'Option ' + name + ' should be a function!' );
+      });
+    }
+
+    if (!this.options)
+      // Create new options object
+      this.options = $.extend( {}, defaults, (options || {}) );
+    else
+      // or set to existing options
+      $.extend( this.options, (options || {}) );
   };
 
 
   Plugin.prototype._destroy = function() {
 
     // Callback before removing plugin data
-    this.options.destroy.call( this.$el );
+    this._callEvent('destroy');
 
     // Detach handlers
     this._offHandler();
@@ -774,6 +756,19 @@
   };
 
 
+  // Create ui object and call a callback from the options
+  Plugin.prototype._callEvent = function(name, event) {
+    var ui, cb = this.options[name];
+    if (name === 'create' || name === 'destroy') return cb.call( this.$el );
+    ui = {};
+    if (this.ui.target) ui.target = this.ui.target;
+    if (this.ui.items)  ui.items  = this.ui.items;
+    if (this.ui.focus)  ui.focus  = this.ui.focus;
+    // Pass to callback elem, event object and new ui object
+    cb.call( this.$el, event, ui );
+  };
+
+
   // Mouse events handler - set necessary paramaters and calls _controller
   Plugin.prototype._mouseHandler = function( e ) {
 
@@ -842,7 +837,7 @@
   Plugin.prototype._controller = function( e ) {
 
     // Callback
-    this.options.beforeSelect.call( this.$el, e, this.ui );
+    this._callEvent('beforeSelect', e);
 
     // If cancel flag is true any changes will be prevented
     if( this._isPrevented ) {
@@ -983,7 +978,7 @@
     this._forEachItem( items, 1 );
 
     if ( !silent ) {
-      this.options.select.call( this.$el, e, this.ui ); // Callback
+      this._callEvent('select', e);
     }
 
     if( this._isPrevented && !this._isCancellation ) { this._cancel( e ); } // cancel
@@ -996,7 +991,7 @@
     this._forEachItem( items, -1 );
 
     if ( !silent ) {
-      this.options.unSelect.call( this.$el, e, this.ui ); // Callback
+      this._callEvent('unSelect', e);
     }
 
     if( this._isPrevented && !this._isCancellation ) { this._cancel( e ); } // Cancel
@@ -1067,7 +1062,7 @@
     // If is not silent mode and focus exists
     if( !silent && this.ui.focus ) {
       // Callback of focus lost
-      this.options.focusLost.call( this.$el, e, this.ui );
+      this._callEvent('focusLost', e);
     }
 
     if( this.ui.focus ) {
@@ -1109,18 +1104,17 @@
         this.ui.focus = this._prevFocus;
 
         // Callback of full lost of selection
-        this.options.unSelectAll.call( this.$el, e, this.ui );
+        this._callEvent('unSelectAll', e);
         this.ui.focus = focus;
 
       } else {
-        // Callback of full lost of selection
-        this.options.unSelectAll.call( this.$el, e, this.ui );
+        this._callEvent('unSelectAll', e);
       }
     }
 
     // Stop callback
     this.ui.items = this._changedItems;
-    this.options.stop.call( this.$el, e, this.ui );
+    this._callEvent('stop', e);
 
     // If cancellation is true
     if( this._isPrevented ) { this._cancel( e ); }
