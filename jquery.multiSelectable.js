@@ -1046,7 +1046,7 @@
     }
 
     // DOM element passed
-    else if ( options && options.addClass || options.parentNode ) {
+    else if ( options && (options.addClass || options.parentNode) ) {
       return Plugin.command.call( this, options );
     }
 
