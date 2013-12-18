@@ -31,6 +31,7 @@ module.exports = function (grunt) {
         ignores: ['*.min.js']
       },
       all: ['*.js'],
+      test: ['./test/*.js']
     }
 
   });
