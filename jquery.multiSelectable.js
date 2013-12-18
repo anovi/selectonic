@@ -11,9 +11,9 @@
   var
   pluginName     = 'multiSelectable',
   document       = window.document,
+  keyCode        = { DOWN:40, UP:38, SHIFT:16, END:35, HOME:36, PAGE_DOWN:34, PAGE_UP:33, A:65 },
   optionsEvents  = ['create','beforeSelect','focusLost','select','unSelect','unSelectAll','stop','destroy'],
   optionsStrings = ['filter','mouseMode','event','wrapperClass','focusClass','selectedClass','disabledClass','handle'],
-  keyCode        = { DOWN:40, UP:38, SHIFT:16, END:35, HOME:36, PAGE_DOWN:34, PAGE_UP:33, A:65 },
   defaults       = {
     filter:         '> *',
     mouseMode:      'select',
@@ -26,7 +26,7 @@
   };
   defaults.scrolledElem = defaults.multi = defaults.preventInputs = true;
   defaults.focusBlur = defaults.selectionBlur = defaults.keyboardInput = defaults.loop = false;
-  for ( var i = optionsEvents.length - 1; i >= 0; i-- ) defaults[ optionsEvents[i] ] = $.noop;
+  for ( var i = optionsEvents.length - 1; i >= 0; i-- ) defaults[ optionsEvents[i] ] = null;
 
   /* 
     Arguments:
@@ -106,7 +106,7 @@
     }
 
     // Nothing has found
-    throw new Error( 'Plugin ' + pluginName + ' has no method \'' + options + '\'' );
+    throw new Error( 'Plugin \"' + pluginName + '\" has no method \"' + options + '\"' );
   };
 
 
@@ -137,7 +137,10 @@
     }
 
     // Return whole options object
-    return this.options;
+    if (arg === 1)
+      return $.extend({}, this.options);
+    else
+      throw new Error('Format of \"option\" could be: \"option\" | \"option\", \"name\" | \"option\", \"name\", val | \"option\", {...}');
   };
 
 
@@ -258,10 +261,10 @@
     // Ensure that callbacks options are functions
     $.each( optionsEvents, function(index, name) {
       option = options[name];
-      if( null === option || void 0 === option ) return;
+      if( void 0 === option ) return;
       isFunction = $.isFunction( option );
-      // TODO: if i want dynamically turn off a callback i wish if i could pass null or false as a value.
-      if ( !isFunction ) throw new Error( 'Option \"' + name + '\" should be a function!' );
+      if ( !isFunction && null !== option )
+        throw new Error( 'Option \"' + name + '\" should be a function or \"null\"!' );
     });
 
     // Set scrollable containter
@@ -705,11 +708,12 @@
   // Create ui object and call a callback from the options
   Plugin.prototype._callEvent = function(name, event) {
     var ui, cb = this.options[name];
-    if (name === 'create' || name === 'destroy') return cb.call( this.$el );
+    if ( !cb ) return;
+    if ( name === 'create' || name === 'destroy' ) return cb.call( this.$el );
     ui = {};
-    if (this.ui.target)   ui.target = this.ui.target;
-    if (this.ui.items)    ui.items  = this.ui.items;
-    if (this._prevFocus)  ui.focus  = this._prevFocus;
+    if ( this.ui.target )   ui.target = this.ui.target;
+    if ( this.ui.items )    ui.items  = this.ui.items;
+    if ( this._prevFocus )  ui.focus  = this._prevFocus;
     // Pass to callback elem, event object and new ui object
     cb.call( this.$el, event, ui );
   };
@@ -1038,10 +1042,7 @@
 
     // If string passed
     if( options && options.charAt ) {
-      // Do the command
-      var res = Plugin.command.apply( this, arguments );
-      // Return result or 'this' for chaining
-      return (res !== undefined) ? res : this;
+      return Plugin.command.apply( this, arguments );
     }
 
     // DOM element passed
