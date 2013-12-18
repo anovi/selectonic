@@ -34,7 +34,6 @@
     options – plugin initial options
   */
   function Plugin( element, options ) {
-    this._setOptions( options );
     this._name           = pluginName;
     this.el              = element;
     this.$el             = $( element );
@@ -44,6 +43,9 @@
     this._prevItemsState = [];   // States of changed items before they will be changed
     this._isEnable       = true; // Flag that plugin is enabled - used by handlers
     this._keyModes       = {};   // to saving holding keys
+    this.options         = {};
+    var newOptions       = $.extend( {}, defaults, (options || {}) );
+    this._setOptions( newOptions );
 
     // Cache items selector to compare it with clicked elements
     // Plugin's class name + Item selector
@@ -228,47 +230,44 @@
 
 
   Plugin.prototype._init = function() {
-    // Adding classes
-    this.$el.addClass( this.options.wrapperClass );
-    // scrollable containter
-    this._setScrolledElem( this.options.scrolledElem );
-    // Attach handlers
-    this._onHandler();
-    // Save plugin's object instance
-    this.$el.data( 'plugin_' + pluginName, this );
-    // Callback
-    this._callEvent('create');
+    this.$el.addClass( this.options.wrapperClass );  // Add class to box
+    this._onHandler();                               // Attach handlers6
+    this.$el.data( 'plugin_' + pluginName, this );   // Save plugin's object instance
+    this._callEvent('create');                       // Callback
   };
 
 
   Plugin.prototype._setOptions = function() {
     var option, isFunction, options = {};
-    if ( arguments.length === 2 ) options[arguments[ 0 ]] = arguments[1];
-    else options = arguments[0];
-
-    if( options ) {
-      // Ensure that actions are strings
-      $.each( optionsStrings, function(index, val) {
-        option = options[val];
-        // Turn in a string and trim spaces
-        if( option ) option = $.trim( String(option) );
-      });
-
-      // Ensure that callbacks options are functions
-      $.each( optionsEvents, function(index, name) {
-        option = options[name];
-        if( null === option || void 0 === option ) return;
-        isFunction = $.isFunction( option );
-        if ( !isFunction ) throw new Error( 'Option ' + name + ' should be a function!' );
-      });
-    }
-
-    if (!this.options)
-      // Create new options object
-      this.options = $.extend( {}, defaults, (options || {}) );
+    
+    if ( arguments.length === 2 )
+      // First arg is name of option and a second is a value
+      options[arguments[ 0 ]] = arguments[1];
     else
-      // or set to existing options
-      $.extend( this.options, (options || {}) );
+      // options hash
+      if ( $.isPlainObject(options) )  options = arguments[0];
+    else
+      throw new Error("Option should be a pair arguments of name and value or should be a hash of pairs.");
+  
+    // Ensure that actions are strings
+    $.each( optionsStrings, function(index, val) {
+      option = options[val];
+      if( option ) option = $.trim( String(option) ); // Turn in a string and trim spaces
+    });
+
+    // Ensure that callbacks options are functions
+    $.each( optionsEvents, function(index, name) {
+      option = options[name];
+      if( null === option || void 0 === option ) return;
+      isFunction = $.isFunction( option );
+      // TODO: if i want dynamically turn off a callback i wish if i could pass null or false as a value.
+      if ( !isFunction ) throw new Error( 'Option \"' + name + '\" should be a function!' );
+    });
+
+    // Set scrollable containter
+    if ( options.scrolledElem !== void 0 ) this._setScrolledElem( options.scrolledElem );
+
+    $.extend( this.options, options );
   };
 
 
@@ -297,18 +296,22 @@
     this.$el.removeClass( this.options.disabledClass );
     this.$el.removeClass( this.options.wrapperClass );
 
-    if ( this._scrolledElem ) { delete this._scrolledElem; }
+    if ( this._scrolledElem ) delete this._scrolledElem;
   };
 
 
-  Plugin.prototype._setScrolledElem = function(selector) {
+  Plugin.prototype._setScrolledElem = function( selector ) {
     var elem;
 
-    if ( null === selector || false === selector) { return; }
+    if ( null === selector || false === selector ) {
+      delete this._scrolledElem;
+      return;
+    }
     
     if ( typeof selector === "string" ) {
       elem = $( selector );
-      if (elem.length > 0) { this._scrolledElem = elem[0]; }
+      if (elem.length > 0) this._scrolledElem = elem[0];
+      else throw new Error('There are no elements that matches to selector - \"' + selector + '\"');
       return;
     }
 
@@ -393,12 +396,12 @@
   // Handler of keyboard events
   Plugin.prototype._keyHandler = function( e ) {
 
-    if ( !this.options.keyboardInput ) { return; }
+    if ( !this.options.keyboardInput ) return;
     // If options for preventing plugin in html inputs and e.target is input, than return
-    if ( this.options.preventInputs && e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') { return; }
+    if ( this.options.preventInputs && e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
     var key = e.which, // pressed key
-      sibling,         // sibling found element
+      sibling,         // sibling element
       isAllSelect,     // flag that is all items is selected
       direction;       // next or previous (depends from pressed arrow up|down)
 
@@ -410,7 +413,6 @@
         delete this._shiftModeAction; // while SHIFT is held
         delete this._keyModes.shift; // arrow key (UP,DOWN) which pressed first in SHIFT mode
       }
-      // There no more handling for keyUp
       return;
     }
 
@@ -462,26 +464,25 @@
       this.ui.target = sibling[0];
       this._items = sibling;
 
-      // ------------------------------------------------------------
-      // SHIFT - MODE START
-      // If focus exists and SHIFT pressed and multi option is ON
+      /* ------------------------------------------------------------
+      *
+      *   START - SHIFT MODE 
+      *   If focus exists and SHIFT pressed and multi option is ON
+      */
       if ( this.ui.focus && this.options.multi && e.shiftKey && !isAllSelect ) {
-
-        // Check if focus or target is selected
-        var isFocusSelected = this._getIsSelected( this.ui.focus ),
-          isTargetSelected = this._getIsSelected( this.ui.target ),
-
+        
+        var
+          // Check if focus or target is selected
+          isFocusSelected      = this._getIsSelected( this.ui.focus ),
+          isTargetSelected     = this._getIsSelected( this.ui.target ),
           // Search for next sibling in the same direction
-          secSibling = this._getItems( direction, sibling ),
-
+          secSibling           = this._getItems( direction, sibling ),
           // Check if second sibling is selected (flag)
           isSelectedSecSibling = this._getIsSelected( secSibling );
 
-        // If another arrow was pressed
-        // that means the direction was changed
+        // If another arrow was pressed that means the direction was changed
         if ( this._keyModes.shift && this._keyModes.shift !== key ) {
-          this._keyModes.shift = null;
-          this._shiftModeAction = null;
+          this._keyModes.shift = this._shiftModeAction = null;
         }
 
         // --------------------------
@@ -507,12 +508,10 @@
             this._items = this._getItems( direction, this._items );
           }
 
-          // If unselected item was found
-          if ( this._items.length > 0 ) {
-            // it becomes target item
-            this.ui.target = this._items;
-            // target will be selected and get the focus
-          }
+          // If unselected item was found it becomes target item
+          // target will be selected and get the focus
+          if ( this._items.length > 0 ) this.ui.target = this._items;
+          
 
         // If target and focus is selected, but next item to the target is not:
         } else if ( isTargetSelected && isFocusSelected && !isSelectedSecSibling ) {
@@ -520,8 +519,7 @@
           by arrow key with holding SHIFT */
 
           // Clear flags of serial selection by SHIFT
-          this._keyModes.shift = null;
-          this._shiftModeAction = null;
+          this._keyModes.shift = this._shiftModeAction = null;
           this._items = this.ui.focus;
           // Selection will be clear on the focus
           // focus will be set on target item
@@ -531,10 +529,8 @@
           this._items = this.ui.focus;
 
           // If there is no SHIFT action (first pressing arrow key with holding SHIFT)
-          if ( !this._shiftModeAction ) {
-            // Set mode of selection
-            this._shiftModeAction = 'unselect';
-          }
+          // Set mode of selection
+          if ( !this._shiftModeAction ) this._shiftModeAction = 'unselect';
           // Selection will be clear on the focus
           // focus will be set on target item
 
@@ -547,42 +543,38 @@
 
         // Nothing is selected
         } else if ( !isFocusSelected && !isTargetSelected ) {
-          this.ui.target = this.ui.focus;
-          this._items = this.ui.focus;
+          this.ui.target = this._items = this.ui.focus;
           // Focus will be selected
         }
         // END THE CHAIN OF CONDITIONS
         // ---------------------------
 
         // If there is no SHIFT action (first pressing arrow key with holding SHIFT)
-        if ( !this._shiftModeAction ) {
-          // Set mode of selection
-          this._shiftModeAction = 'select';
-        }
+        // Set mode of selection
+        if ( !this._shiftModeAction ) this._shiftModeAction = 'select';
 
         // If there is no SHIFT key mode (first pressing arrow key with holding SHIFT)
-        if ( !this._keyModes.shift ) {
-          // Set pressed arrow key
-          this._keyModes.shift = key;
-        }
+        // Set pressed arrow key
+        if ( !this._keyModes.shift ) this._keyModes.shift = key;
 
         if ( key === keyCode.END || key === keyCode.HOME ) {
-          // Get range of items
-          // and turn on range select mode
+          // Get range of items and turn on range select mode
           this._items = this._rangeSelect();
-        } else {
+
           // Mode of multiply selection
-          this._isMultiSelect = true;
-        }
+        } else this._isMultiSelect = true;
+
       }
-      // SHIFT - MODE END
-      // ------------------------------------------------------------
+      /*
+      *   END - SHIFT MODE
+      *
+      * ------------------------------------------------------------ */
 
       // There are all necessary attributes now
       // Call _controller
       this._controller( e );
 
-      // Recalculate plugin's element scroll and window's scroll
+      // Recalculate plugin's box scroll and window's scroll
       if (this.ui.focus) {
         if ( this._scrolledElem ) this._recalcBoxScroll( this._scrolledElem );
         this._recalcBoxScroll( window );
