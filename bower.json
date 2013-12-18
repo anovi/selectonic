@@ -23,6 +23,7 @@
   ],
   "devDependencies": {
     "jquery": "~2.0.3",
-    "qunit": "~1.12.0"
+    "qunit": "~1.12.0",
+    "syn": "~3.3.1"
   }
 }
