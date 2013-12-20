@@ -599,7 +599,7 @@
       res = ( this.ui.focus ) ? this._getItems( direction, this.ui.focus ) : this._getItems( edge );
 
     // If has not found any items and loop option is ON
-    if ( res.length === 0 && this.options.loop ) {
+    if ( (res === null || res.length === 0) && this.options.loop ) {
       // find extreme item
       res = this._getItems( edge );
     }
@@ -696,8 +696,18 @@
   Plugin.prototype._getItems = function( selection, elem ) {
 
     switch( selection ) {
-    case 'next':  return $( elem ).next( this.options.parentSelector );
-    case 'prev':  return $( elem ).prev( this.options.parentSelector );
+    case 'next':
+    case 'prev':
+      var
+      item = elem.jquery ? elem : $( elem ),
+      find = $.fn[selection],
+      res;
+      while (true) {
+        item = find.call( item );
+        if ( item.length === 0 ) break;
+        if ( item.is(this.options.parentSelector) ) return item;
+      }
+      return null;
     case 'first': return this.$el.find( this.options.filter ).first();
     case 'last':  return this.$el.find( this.options.filter ).last();
     default:      return this.$el.find( this.options.filter );
