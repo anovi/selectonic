@@ -12,21 +12,38 @@
   pluginName     = 'multiSelectable',
   document       = window.document,
   keyCode        = { DOWN:40, UP:38, SHIFT:16, END:35, HOME:36, PAGE_DOWN:34, PAGE_UP:33, A:65 },
-  optionsEvents  = ['create','beforeSelect','focusLost','select','unSelect','unSelectAll','stop','destroy'],
+  optionsEvents  = ['create','before','focusLost','select','unselect','unselectAll','stop','destroy'],
   optionsStrings = ['filter','mouseMode','event','wrapperClass','focusClass','selectedClass','disabledClass','handle'],
   defaults       = {
+    // Base
     filter:         '> *',
-    mouseMode:      'select',
-    event:          'mousedown',
-    handle:         null,
-    wrapperClass:   ( 'j-' + pluginName ),
-    focusClass:     ( 'j-' + pluginName + '-focused' ),
-    selectedClass:  ( 'j-' + pluginName + '-selected' ),
-    disabledClass:  ( 'j-' + pluginName + '-disabled' ),
+    multi:          true,
+    // Mouse
+    mouseMode:      'select',    /* select | toggle */
+    event:          'mousedown', /* mousedown | click | hybrid */
+    focusBlur:      false,
+    selectionBlur:  false,
+    handle:         null,        /* Selector | null */
+    // Keyboard
+    keyboard:       false,
+    scrolledElem:   true,        /* Selector | false | true */
+    loop:           false,
+    preventInputs:  true,
+    // Callbacks
+    create:         null,
+    before:         null,
+    focusLost:      null,
+    select:         null,
+    unselect:       null,
+    unselectAll:    null,
+    stop:           null,
+    destroy:        null,
+    // Classes
+    wrapperClass:   ( 'j-selectable' ),
+    focusClass:     ( 'j-focused' ),
+    selectedClass:  ( 'j-selected' ),
+    disabledClass:  ( 'j-disabled' )
   };
-  defaults.scrolledElem = defaults.multi = defaults.preventInputs = true;
-  defaults.focusBlur = defaults.selectionBlur = defaults.keyboardInput = defaults.loop = false;
-  for ( var i = optionsEvents.length - 1; i >= 0; i-- ) defaults[ optionsEvents[i] ] = null;
 
   /* 
     Arguments:
@@ -365,7 +382,7 @@
 
     // Handler for keyboard events
     this._keyEventHandler = $.proxy( function(e) {
-      if( this.options.keyboardInput && this._isEnable ) this._keyHandler(e);
+      if( this.options.keyboard && this._isEnable ) this._keyHandler(e);
       return e;
     }, this );
 
@@ -399,7 +416,7 @@
   // Handler of keyboard events
   Plugin.prototype._keyHandler = function( e ) {
 
-    if ( !this.options.keyboardInput ) return;
+    if ( !this.options.keyboard ) return;
     // If options for preventing plugin in html inputs and e.target is input, than return
     if ( this.options.preventInputs && e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
@@ -789,7 +806,7 @@
   Plugin.prototype._controller = function( e ) {
 
     // Callback
-    this._callEvent('beforeSelect', e);
+    this._callEvent('before', e);
 
     // If cancel flag is true any changes will be prevented
     if( this._isPrevented ) {
@@ -927,7 +944,7 @@
 
   Plugin.prototype._unselect = function( e, items, silent ) {
     this._forEachItem( items, -1 );
-    if ( !silent ) this._callEvent('unSelect', e);
+    if ( !silent ) this._callEvent('unselect', e);
     if( this._isPrevented && !this._isCancellation ) this._cancel( e );
   };
 
@@ -1022,7 +1039,7 @@
   Plugin.prototype._stop = function( e ) {
 
     // Callback if there were selected items and now are not
-    if( !this._selected && this._isWasSelected ) this._callEvent('unSelectAll', e);
+    if( !this._selected && this._isWasSelected ) this._callEvent('unselectAll', e);
 
     this.ui.items = this._changedItems;
     this._callEvent('stop', e);

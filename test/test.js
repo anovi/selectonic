@@ -29,7 +29,7 @@ initOptions = {
   
   focusBlur:     false,
   selectionBlur: false,
-  keyboardInput: false,
+  keyboard:      false,
   loop:          false
 },
 
@@ -97,7 +97,7 @@ QUnit.testStart( function (info) {
   advanced = {};
 
   if (info.module === 'Keyboard')
-    $.extend( advanced, { multi: true, keyboardInput: true });
+    $.extend( advanced, { multi: true, keyboard: true });
   
   switch ( info.name ) {
     case 'Blurable mousedown':
@@ -572,7 +572,7 @@ test( 'refresh', 3, function() {
   
   box
     .multiSelectable( elem )
-    .multiSelectable( 'option', { unSelectAll: function(e, ui) {check = false;} });
+    .multiSelectable( 'option', { unselectAll: function(e, ui) {check = false;} });
   
   assert.selectedCount( 1 );
 
@@ -582,7 +582,7 @@ test( 'refresh', 3, function() {
     .multiSelectable('blur');
 
   assert.selectedCount( 0 );
-  ok( check, 'There was no unSelectAll callback!' );
+  ok( check, 'There was no unselectAll callback!' );
 });
 
 test( 'cancel', 2, function() {
@@ -613,11 +613,11 @@ test( 'option', 6, function() {
   
   box
     .multiSelectable( 'option', {
-      beforeSelect: function(e, ui) { res.push( 'beforeSelect' ); },
+      before:       function(e, ui) { res.push( 'before' );       },
       focusLost:    function(e, ui) { res.push( 'focusLost' );    },
       select:       function(e, ui) { res.push( 'select' );       },
-      unSelect:     function(e, ui) { res.push( 'unSelect' );     },
-      unSelectAll:  function(e, ui) { res.push( 'unSelectAll' );  },
+      unselect:     function(e, ui) { res.push( 'unselect' );     },
+      unselectAll:  function(e, ui) { res.push( 'unselectAll' );  },
       stop:         function(e, ui) { res.push( 'stop' );         },
       destroy:      function(e, ui) { res.push( 'destroy' );      },
       
@@ -632,7 +632,7 @@ test( 'option', 6, function() {
       
       focusBlur:     true,
       selectionBlur: true,
-      keyboardInput: true,
+      keyboard:      true,
       loop:          true
     });
 
@@ -647,13 +647,13 @@ test( 'option', 6, function() {
     options.preventInputs === false &&
     options.focusBlur     === true &&
     options.selectionBlur === true &&
-    options.keyboardInput === true &&
+    options.keyboard      === true &&
     options.loop          === true ),
   'Options assigned!');
 
   Syn.click( {}, elem.find('.handle') );
   ok((
-    res[0] === 'beforeSelect' &&
+    res[0] === 'before' &&
     res[1] === 'select' &&
     res[2] === 'stop'
   ));
@@ -661,23 +661,23 @@ test( 'option', 6, function() {
   res = [];
   Syn.click( {}, $('body') );
   ok((
-    res[0] === 'beforeSelect' &&
+    res[0] === 'before' &&
     res[1] === 'focusLost' &&
-    res[2] === 'unSelect' &&
-    res[3] === 'unSelectAll' &&
+    res[2] === 'unselect' &&
+    res[3] === 'unselectAll' &&
     res[4] === 'stop'
   ));
 
   res = [];
   Syn.click( {}, $('body') );
-  ok((res[0] === 'beforeSelect' && res[1] === 'stop'));
+  ok((res[0] === 'before' && res[1] === 'stop'));
 
   Syn.click( {}, elem.find('.handle') );
   res = [];
   Syn.click( {}, sec.find('.handle') );
   ok((
-    res[0] === 'beforeSelect' &&
-    res[1] === 'unSelect' &&
+    res[0] === 'before' &&
+    res[1] === 'unselect' &&
     res[2] === 'select' &&
     res[3] === 'stop'
   ));
