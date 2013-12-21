@@ -1,17 +1,22 @@
 # MultiSelectable
-jQuery-plugin for making selectable lists by mouse and keyboard, configurable with options, methods and callbacks.  
-[Demo page](http://anovi.github.io/multiSelectable/ "MultiSelectable — jQuery plugin") 
+jQuery-plugin for making any list of items selectable by mouse and keyboard.   It could be usefull in webapp where are different widgets like menus, dropdowns with keyboard input, lists with multiple selection and so on. It maybe too bold for just a simple menu in one place.
+
+See examples on [demo page](http://anovi.github.io/multiSelectable/ "MultiSelectable — jQuery plugin").
 
 Author: Alexey Novichkov  
-Version: 1.0
+Version: 0.2.0
 
 ## Usage
 ```javascript
-$(".selector").multiSelectable({
+$(".itemsList").multiSelectable({
+	multi: true,
     mouseMode: "select",
-    keyboardInput: true,
+    keyboard: true,
     select: function(event, ui) {
-        // do something
+        // do something cool, for expample activate actionbar
+    }
+	unselectAll: function(event, ui) {
+        // …and deactivate actionbar
     }
 });
 ```
@@ -29,13 +34,13 @@ Plugin lose focus when user clicks outside of the list.
 *Type: boolean,  default: false*  
 plugin clear selection when user clicks outside of the list;
 
-### keyboardInput
+### keyboard
 *Type: boolean, Default: false*  
 Possibility to use keys **Up**, **Down** and **Home**, **End** to move cursor (focus), select several items by holding **shift** and select all items by pressing **ctrl+A**.
 
 ### loop
 *Type: boolean, Default: false*  
-If *keyboardInput* is *true* and focused element is last in a list, pressing key **Down** set focus to begin of the list; same with key **Up** – when focus on first item of the list.
+If *keyboard* is *true* and focused element is last in a list, pressing key **Down** set focus to begin of the list; same with key **Up** – when focus on first item of the list.
 
 ### handle
 *Type: selector, Default: null*  
@@ -121,7 +126,7 @@ $(elem).multiSelectable("option", {
 ```
 
 ### cancel
-Cancel last changes in a list or prevent it, if called in *beforeSelect* callback. Method can be call only inside callback functions:
+Cancel last changes in a list or prevent it, if called in *before* callback. Method can be call only inside callback functions:
 ```javascript
 elem.multiSelectable({
     stop: function(event, ui) {
@@ -171,7 +176,7 @@ Callback functions and arguments they receives:
 	<tbody>
 		<tr>
 			<td>
-				<strong>beforeSelect</strong> — calls in every work cycle before any changes
+				<strong>before</strong> — calls in every work cycle before any changes
 			</td>
 			<td>event</td>
 			<td>if exist</td>
@@ -189,7 +194,7 @@ Callback functions and arguments they receives:
 		</tr>
 		<tr>
 			<td>
-				<strong>unSelect</strong> — one or more elements has been unselected
+				<strong>unselect</strong> — one or more elements has been unselected
 			</td>
 			<td>event</td>
 			<td>if exist</td>
@@ -198,7 +203,7 @@ Callback functions and arguments they receives:
 		</tr>
 		<tr>
 			<td>
-				<strong>unSelectAll</strong> — when all elements in the list has been unselected
+				<strong>unselectAll</strong> — when all elements in the list has been unselected
 			</td>
 			<td>event</td>
 			<td>if exist</td>
