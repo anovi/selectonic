@@ -1,4 +1,9 @@
 /*
+  TODO: more apppropriate test for mouseMode option
+  TODO: test for scrolledElem option
+*/
+
+/*
 *
 * Helpers
 *
@@ -84,7 +89,7 @@ QUnit.assert.selectedCount = function( count ) {
 
 /*
 *
-* Configure
+* Config
 *
 */
 QUnit.testStart( function (info) {
@@ -164,11 +169,11 @@ test( 'Select mousedown', 4, function() {
 
 test( 'Multi-select mousedown', 6, function() {
   var
-  box           = getBox(),
-  elem          = box.find('li:eq(3)'),
-  secElem       = box.find('li:eq(5)'),
-  e             = $.Event( "mousedown" );
-  e.metaKey     = true;
+  box       = getBox(),
+  elem      = box.find('li:eq(3)'),
+  secElem   = box.find('li:eq(5)'),
+  e         = $.Event( "mousedown" );
+  e.metaKey = true;
   
   elem.trigger('mousedown');
   ok( elem.hasClass('selected'), "Selected" );
@@ -325,10 +330,10 @@ module("Keyboard");
 
 test( 'Up/down and shift', 6, function() {
   var
-  box        = getBox(),
-  elem       = box.find('li:eq(3)'),
-  midElem    = box.find('li:eq(4)'),
-  secElem    = box.find('li:eq(5)');
+  box     = getBox(),
+  elem    = box.find('li:eq(3)'),
+  midElem = box.find('li:eq(4)'),
+  secElem = box.find('li:eq(5)');
   
   Syn.type( '[down]', box );
   Syn.type( '[down]', box );
@@ -561,9 +566,9 @@ test( 'select', 2, function() {
 
 test( 'refresh', 3, function() {
   var
-  box     = getBox(),
-  elem    = box.find('li:eq(0)'),
-  check   = true;
+  box   = getBox(),
+  elem  = box.find('li:eq(0)'),
+  check = true;
   
   box
     .multiSelectable( elem )
@@ -582,8 +587,8 @@ test( 'refresh', 3, function() {
 
 test( 'cancel', 2, function() {
   var
-  box     = getBox(),
-  elem    = box.find('li:eq(0)');
+  box  = getBox(),
+  elem = box.find('li:eq(0)');
   
   box
     .multiSelectable( 'li:odd' )
@@ -682,49 +687,4 @@ test( 'option', 6, function() {
   ok( res[0] === 'destroy' );
 });
 
-
-
-/*
-Options:
-  filter
-  mouseMode
-  multi
-  event
-  handle
-  preventInputs
-  focusBlur
-  selectionBlur
-  keyboardInput
-  loop
-  scrolledElem
-
-  wrapperClass
-  focusClass
-  selectedClass
-  disabledClass
-
-  create
-  beforeSelect
-  focusLost
-  select
-  unSelect
-  unSelectAll
-  stop
-  destroy
-
-Public methods:
-  isEnabled
-  destroy
-  enable
-  disable
-  blur
-  getSelected
-  getSelectedId
-  getFocused
-  select
-  refresh
-  cancel
-  option
-  
-*/
 
