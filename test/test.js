@@ -13,7 +13,7 @@ testBox = $('#qunit-fixture'),
 assert = QUnit.assert,
 
 initOptions = {
-  wrapperClass:   ( 'selectable' ),
+  listClass:   ( 'selectable' ),
   focusClass:     ( 'focused' ),
   selectedClass:  ( 'selected' ),
   disabledClass:  ( 'disabled' ),

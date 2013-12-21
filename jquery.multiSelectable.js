@@ -13,7 +13,7 @@
   document       = window.document,
   keyCode        = { DOWN:40, UP:38, SHIFT:16, END:35, HOME:36, PAGE_DOWN:34, PAGE_UP:33, A:65 },
   optionsEvents  = ['create','before','focusLost','select','unselect','unselectAll','stop','destroy'],
-  optionsStrings = ['filter','mouseMode','event','wrapperClass','focusClass','selectedClass','disabledClass','handle'],
+  optionsStrings = ['filter','mouseMode','event','listClass','focusClass','selectedClass','disabledClass','handle'],
   defaults       = {
     // Base
     filter:         '> *',
@@ -39,7 +39,7 @@
     stop:           null,
     destroy:        null,
     // Classes
-    wrapperClass:   ( 'j-selectable' ),
+    listClass:      ( 'j-selectable' ),
     focusClass:     ( 'j-focused' ),
     selectedClass:  ( 'j-selected' ),
     disabledClass:  ( 'j-disabled' )
@@ -63,11 +63,6 @@
     this.options         = {};
     var newOptions       = $.extend( {}, defaults, (options || {}) );
     this._setOptions( newOptions );
-
-    // Cache items selector to compare it with clicked elements
-    // Plugin's class name + Item selector
-    this.options.parentSelector = '.' + this.options.wrapperClass + ' ' + this.options.filter;
-
     this._init();
   }
 
@@ -250,7 +245,7 @@
 
 
   Plugin.prototype._init = function() {
-    this.$el.addClass( this.options.wrapperClass );  // Add class to box
+    this.$el.addClass( this.options.listClass );  // Add class to box
     this._onHandler();                               // Attach handlers6
     this.$el.data( 'plugin_' + pluginName, this );   // Save plugin's object instance
     this._callEvent('create');                       // Callback
@@ -258,7 +253,7 @@
 
 
   Plugin.prototype._setOptions = function() {
-    var option, isFunction, options = {};
+    var option, isFunction, options = {}, self = this;
     
     if ( arguments.length === 2 )
       // First arg is name of option and a second is a value
@@ -270,6 +265,21 @@
       throw new Error("Option should be a pair arguments of name and value or should be a hash of pairs.");
   
     // Ensure that actions are strings
+    $.each( optionsStrings, function(index, val) {
+      option = options[val];
+      if( option ) {
+        // Turn in a string and trim spaces
+        option = $.trim( String(option) );
+        // If it's working list and is attempt to change classes
+        if ( self.options.parentSelector &&
+          (val === 'listClass' ||
+           val === 'focusClass' ||
+           val === 'selectedClass' ||
+           val === 'disabledClass')
+        ) throw new Error( 'Sorry, it\'s not allowed to dynamically change classnames!' );
+      }
+    });
+
     $.each( optionsStrings, function(index, val) {
       option = options[val];
       if( option ) option = $.trim( String(option) ); // Turn in a string and trim spaces
@@ -288,6 +298,10 @@
     if ( options.scrolledElem !== void 0 ) this._setScrolledElem( options.scrolledElem );
 
     $.extend( this.options, options );
+
+    // Cache items selector to compare it with clicked elements
+    // Plugin's class name + Item selector
+    this.options.parentSelector = '.' + this.options.listClass + ' ' + this.options.filter;
   };
 
 
@@ -314,7 +328,7 @@
 
     // Remove classes
     this.$el.removeClass( this.options.disabledClass );
-    this.$el.removeClass( this.options.wrapperClass );
+    this.$el.removeClass( this.options.listClass );
 
     if ( this._scrolledElem ) delete this._scrolledElem;
   };
@@ -1064,7 +1078,6 @@
   Method of jQuery.fn
 
   */
-
   $.fn[pluginName] = function( options ) {
 
     // If string passed
