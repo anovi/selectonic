@@ -1,10 +1,6 @@
-/*
-*
-* MultiSelectable
-* Author: Alexey Novichkov
-* Version: 0.1.0
-*
-*/
+/*! jquery-multiSelectable - v0.2.0 - 2013-12-22
+* https://github.com/anovi/multiSelectable
+* Copyright (c) 2013 Alexey Novichkov; Licensed MIT */
 (function($, window, undefined) {
   'use strict';
 
@@ -113,7 +109,7 @@
     // If there is jquery object:
     if( selector.jquery ) {
       // Call select method and give him elements
-      if (selector.length > 0) return pluginObject.select( selector );
+      if (selector.length > 0) { return pluginObject.select( selector ); }
       return this;
     }
 
@@ -149,10 +145,11 @@
     }
 
     // Return whole options object
-    if (arg === 1)
+    if (arg === 1) {
       return $.extend({}, this.options);
-    else
+    } else {
       throw new Error('Format of \"option\" could be: \"option\" | \"option\", \"name\" | \"option\", \"name\", val | \"option\", {...}');
+    }
   };
 
 
@@ -196,10 +193,11 @@
 
 
   Plugin.prototype.getFocused = function() {
-    if (this.ui.focus)
+    if (this.ui.focus) {
       return this.ui.focus;
-    else
+    } else {
       return null;
+    }
   };
 
 
@@ -228,7 +226,7 @@
     var focus = this.ui.focus;
 
     // Check if focus is visible
-    if ( focus && !$(focus).is(':visible') ) delete this.ui.focus;
+    if ( focus && !$(focus).is(':visible') ) { delete this.ui.focus; }
 
     // Recalculate amount of selected items
     this._selected = ( this.getSelected() ).length;
@@ -255,14 +253,17 @@
   Plugin.prototype._setOptions = function() {
     var option, isFunction, options = {}, self = this;
     
-    if ( arguments.length === 2 )
+    if ( arguments.length === 2 ) {
       // First arg is name of option and a second is a value
       options[arguments[ 0 ]] = arguments[1];
-    else
+    } else {
       // options hash
-      if ( $.isPlainObject(options) )  options = arguments[0];
-    else
-      throw new Error("Option should be a pair arguments of name and value or should be a hash of pairs.");
+      if ( $.isPlainObject(options) ) {
+        options = arguments[0];
+      } else {
+        throw new Error("Option should be a pair arguments of name and value or should be a hash of pairs.");
+      }
+    }
   
     // Ensure that actions are strings
     $.each( optionsStrings, function(index, val) {
@@ -276,26 +277,27 @@
            val === 'focusClass' ||
            val === 'selectedClass' ||
            val === 'disabledClass')
-        ) throw new Error( 'Sorry, it\'s not allowed to dynamically change classnames!' );
+        ) { throw new Error( 'Sorry, it\'s not allowed to dynamically change classnames!' ); }
       }
     });
 
     $.each( optionsStrings, function(index, val) {
       option = options[val];
-      if( option ) option = $.trim( String(option) ); // Turn in a string and trim spaces
+      if( option ) { option = $.trim( String(option) ); } // Turn in a string and trim spaces
     });
 
     // Ensure that callbacks options are functions
     $.each( optionsEvents, function(index, name) {
       option = options[name];
-      if( void 0 === option ) return;
+      if( void 0 === option ) { return; }
       isFunction = $.isFunction( option );
-      if ( !isFunction && null !== option )
+      if ( !isFunction && null !== option ) {
         throw new Error( 'Option \"' + name + '\" should be a function or \"null\"!' );
+      }
     });
 
     // Set scrollable containter
-    if ( options.scrolledElem !== void 0 ) this._setScrolledElem( options.scrolledElem );
+    if ( options.scrolledElem !== void 0 ) { this._setScrolledElem( options.scrolledElem ); }
 
     $.extend( this.options, options );
 
@@ -330,7 +332,7 @@
     this.$el.removeClass( this.options.disabledClass );
     this.$el.removeClass( this.options.listClass );
 
-    if ( this._scrolledElem ) delete this._scrolledElem;
+    if ( this._scrolledElem ) { delete this._scrolledElem; }
   };
 
 
@@ -344,8 +346,11 @@
     
     if ( typeof selector === "string" ) {
       elem = $( selector );
-      if (elem.length > 0) this._scrolledElem = elem[0];
-      else throw new Error('There are no elements that matches to selector - \"' + selector + '\"');
+      if (elem.length > 0) {
+        this._scrolledElem = elem[0];
+      } else {
+        throw new Error('There are no elements that matches to selector - \"' + selector + '\"');
+      }
       return;
     }
 
@@ -390,13 +395,13 @@
 
     // Handler for mouse events
     this._mouseEventHandler = $.proxy( function(e) {
-      if ( this._isEnable ) this._mouseHandler(e);
+      if ( this._isEnable ) { this._mouseHandler(e); }
       return e;
     }, this );
 
     // Handler for keyboard events
     this._keyEventHandler = $.proxy( function(e) {
-      if( this.options.keyboard && this._isEnable ) this._keyHandler(e);
+      if( this.options.keyboard && this._isEnable ) { this._keyHandler(e); }
       return e;
     }, this );
 
@@ -430,9 +435,9 @@
   // Handler of keyboard events
   Plugin.prototype._keyHandler = function( e ) {
 
-    if ( !this.options.keyboard ) return;
+    if ( !this.options.keyboard ) { return; }
     // If options for preventing plugin in html inputs and e.target is input, than return
-    if ( this.options.preventInputs && e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if ( this.options.preventInputs && e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') { return; }
 
     var key = e.which, // pressed key
       sibling,         // sibling element
@@ -544,7 +549,7 @@
 
           // If unselected item was found it becomes target item
           // target will be selected and get the focus
-          if ( this._items.length > 0 ) this.ui.target = this._items;
+          if ( this._items.length > 0 ) { this.ui.target = this._items; }
           
 
         // If target and focus is selected, but next item to the target is not:
@@ -564,7 +569,7 @@
 
           // If there is no SHIFT action (first pressing arrow key with holding SHIFT)
           // Set mode of selection
-          if ( !this._shiftModeAction ) this._shiftModeAction = 'unselect';
+          if ( !this._shiftModeAction ) { this._shiftModeAction = 'unselect'; }
           // Selection will be clear on the focus
           // focus will be set on target item
 
@@ -585,18 +590,18 @@
 
         // If there is no SHIFT action (first pressing arrow key with holding SHIFT)
         // Set mode of selection
-        if ( !this._shiftModeAction ) this._shiftModeAction = 'select';
+        if ( !this._shiftModeAction ) { this._shiftModeAction = 'select';}
 
         // If there is no SHIFT key mode (first pressing arrow key with holding SHIFT)
         // Set pressed arrow key
-        if ( !this._keyModes.shift ) this._keyModes.shift = key;
+        if ( !this._keyModes.shift ) { this._keyModes.shift = key; }
 
         if ( key === keyCode.END || key === keyCode.HOME ) {
           // Get range of items and turn on range select mode
           this._items = this._rangeSelect();
 
           // Mode of multiply selection
-        } else this._isMultiSelect = true;
+        } else { this._isMultiSelect = true; }
 
       }
       /*
@@ -610,7 +615,7 @@
 
       // Recalculate plugin's box scroll and window's scroll
       if (this.ui.focus) {
-        if ( this._scrolledElem ) this._recalcBoxScroll( this._scrolledElem );
+        if ( this._scrolledElem ) { this._recalcBoxScroll( this._scrolledElem ); }
         this._recalcBoxScroll( window );
       }
     }
@@ -718,7 +723,7 @@
       });
       res = arr.length > 0 ? arr : null;
 
-    } else res = this.$el.children( '.' + this.options.selectedClass );
+    } else { res = this.$el.children( '.' + this.options.selectedClass ); }
 
     return res;
   };
@@ -731,12 +736,12 @@
     case 'prev':
       var
       item = elem.jquery ? elem : $( elem ),
-      find = $.fn[selection],
-      res;
+      find = $.fn[selection];
+
       while (true) {
         item = find.call( item );
-        if ( item.length === 0 ) break;
-        if ( item.is(this.options.parentSelector) ) return item;
+        if ( item.length === 0 ) { break; }
+        if ( item.is(this.options.parentSelector) ) { return item; }
       }
       return null;
     case 'first': return this.$el.find( this.options.filter ).first();
@@ -749,12 +754,12 @@
   // Create ui object and call a callback from the options
   Plugin.prototype._callEvent = function(name, event) {
     var ui, cb = this.options[name];
-    if ( !cb ) return;
-    if ( name === 'create' || name === 'destroy' ) return cb.call( this.$el );
+    if ( !cb ) { return; }
+    if ( name === 'create' || name === 'destroy' ) { return cb.call( this.$el ); }
     ui = {};
-    if ( this.ui.target )   ui.target = this.ui.target;
-    if ( this.ui.items )    ui.items  = this.ui.items;
-    if ( this._prevFocus )  ui.focus  = this._prevFocus;
+    if ( this.ui.target )   { ui.target = this.ui.target; }
+    if ( this.ui.items )    { ui.items  = this.ui.items; }
+    if ( this._prevFocus )  { ui.focus  = this._prevFocus; }
     // Pass to callback elem, event object and new ui object
     cb.call( this.$el, event, ui );
   };
@@ -769,7 +774,7 @@
     if ( options.event === 'hybrid' ) {
 
       // It is click and mouse was not pressed on item
-      if ( e.type === 'click' && !this._mouseDownMode ) return;
+      if ( e.type === 'click' && !this._mouseDownMode ) { return; }
 
       // Get target
       this.ui.target = this._getTarrget(e);
@@ -787,13 +792,14 @@
       }
 
       // If mouse down mode
-      if ( this._mouseDownMode ) delete this._mouseDownMode;
+      if ( this._mouseDownMode ) { delete this._mouseDownMode; }
 
     // if type of event do not match
-    } else if ( e.type !== options.event ) return;
+    } else if ( e.type !== options.event ) {
+      return;
 
     // Get target
-    else this.ui.target = this._getTarrget(e);
+    } else { this.ui.target = this._getTarrget(e); }
 
 
     // If multi options is true and target exists
@@ -809,7 +815,7 @@
       }
     }
 
-    if ( this.ui.target && !this._items ) this._items = $( this.ui.target );
+    if ( this.ui.target && !this._items ) { this._items = $( this.ui.target ); }
     this._controller( e );
   };
 
@@ -851,10 +857,11 @@
 
     // For range selections and multi-selection
     else if ( this._isRangeSelect || this._isMultiSelect ) {
-      if ( this._isTargetWasSelected )
+      if ( this._isTargetWasSelected ) {
         this._unselect( e, this._items );
-      else
+      } else {
         this._select( e, this._items );
+      }
     }
 
     // Single selection
@@ -880,10 +887,10 @@
     } else {
 
       // it is not item of list was clicked and 'focusBlur' option is ON
-      if ( this.options.focusBlur ) this._blur(e);
+      if ( this.options.focusBlur ) { this._blur(e); }
 
       // if there are selected items and 'selectionBlur' option is true
-      if ( this._selected > 0 && this.options.selectionBlur ) this._unselectAll( e );
+      if ( this._selected > 0 && this.options.selectionBlur ) { this._unselectAll( e ); }
     }
 
     // Set new focus
@@ -951,21 +958,21 @@
 
   Plugin.prototype._select = function( e, items, silent ) {
     this._forEachItem( items, 1 );
-    if ( !silent ) this._callEvent('select', e);
-    if( this._isPrevented && !this._isCancellation ) this._cancel( e );
+    if ( !silent ) { this._callEvent('select', e); }
+    if( this._isPrevented && !this._isCancellation ) { this._cancel( e ); }
   };
 
 
   Plugin.prototype._unselect = function( e, items, silent ) {
     this._forEachItem( items, -1 );
-    if ( !silent ) this._callEvent('unselect', e);
-    if( this._isPrevented && !this._isCancellation ) this._cancel( e );
+    if ( !silent ) { this._callEvent('unselect', e); }
+    if( this._isPrevented && !this._isCancellation ) { this._cancel( e ); }
   };
 
 
   Plugin.prototype._unselectAll = function( e ) {
     var isOnlyTargetSelected, items;
-    if( !this._selected || this._selected === 0 ) return;
+    if( !this._selected || this._selected === 0 ) { return; }
 
     // Get all items
     items = this._getItems();
@@ -988,7 +995,7 @@
     this._isRangeSelect = true;
 
     // If target is focused item - do nothing
-    if( this.ui.target === this.ui.focus ) return $( this.ui.target );
+    if( this.ui.target === this.ui.focus ) { return $( this.ui.target ); }
 
     // Detect position of target and focus in the list
     var arr = this._getItems(),
@@ -1036,7 +1043,7 @@
 
   Plugin.prototype._setFocus = function( target ) {
 
-    if( !target ) return;
+    if( !target ) { return; }
 
     if( this.ui.focus ) {
       // remove class from old focused item
@@ -1053,11 +1060,11 @@
   Plugin.prototype._stop = function( e ) {
 
     // Callback if there were selected items and now are not
-    if( !this._selected && this._isWasSelected ) this._callEvent('unselectAll', e);
+    if( !this._selected && this._isWasSelected ) { this._callEvent('unselectAll', e); }
 
     this.ui.items = this._changedItems;
     this._callEvent('stop', e);
-    if( this._isPrevented ) this._cancel( e );
+    if( this._isPrevented ) { this._cancel( e ); }
 
     // Clear variables that need only during work of cycle
     this._changedItems = [];
@@ -1092,7 +1099,7 @@
 
     // Create instances
     return this.each( function(key, elem) {
-      if ( !Plugin.getDataObject(elem) ) new Plugin( elem, options );
+      if ( !Plugin.getDataObject(elem) ) { new Plugin( elem, options ); }
     });
   };
 

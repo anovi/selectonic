@@ -1,25 +1,36 @@
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js ie7 lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js ie8 lt-ie9"> <![endif]-->
-<!--[if IE 9]>         <html class="no-js ie9"> <![endif]-->
-<!--[if gt IE 9]><!--> <html class="no-js"> <!--<![endif]-->
+<html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>QUnit jQuery MultiSelectable Test</title>
     <meta name="viewport" content="width=device-width">
-    <link rel="stylesheet" href="../bower_components/qunit/qunit/qunit.css">
+
+    <!-- Load local jQuery. This can be overridden with a ?jquery=___ param. -->
+    <script src="../libs/jquery-loader.js"></script>
+    <!-- Load local QUnit. -->
+    <link rel="stylesheet" href="../bower_components/qunit/qunit/qunit.css" media="screen">
+    <script src="../bower_components/qunit/qunit/qunit.js"></script>
+    <!-- Load libs. -->
+    <script src="../bower_components/syn/dist/syn.js"></script>
+    <script src="../src/jquery.multiSelectable.js"></script>
 </head>
 <body>
-
 	<div id="qunit"></div>
 	<div id="qunit-fixture">test markup</div>
 
-    <script src="../bower_components/jquery/jquery.js"></script>
-    <script src="../jquery.multiSelectable.js"></script>
-    <script src="../bower_components/qunit/qunit/qunit.js"></script>
-    <script src="../bower_components/syn/dist/syn.js"></script>
+    <!-- Tests -->
     <script src="test.js"></script>
+    <!-- Removing access to jQuery and $. But it'll still be available as _$, if
+       you REALLY want to mess around with jQuery in the console. REMEMBER WE
+       ARE TESTING A PLUGIN HERE, THIS HELPS ENSURE BEST PRACTICES. REALLY. -->
+    <script>window._$ = jQuery.noConflict(true);</script>
 </body>
 </html>
+
+
+
+    
+
+    
+
