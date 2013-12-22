@@ -44,7 +44,14 @@ module.exports = function(grunt) {
     qunit: {
       all: {
         options: {
-          urls: [ 'http://localhost:<%= connect.server.options.port %>/test/test.html' ]
+          urls: (function() {
+            var base = 'http://localhost:<%= connect.server.options.port %>/test/test.html';
+            var arr = ['1.7.0', '1.9.0'].map(function(version) {
+              return base + '?jquery=' + version;
+            });
+            arr.push(base);
+            return arr;
+          })()
         }
       }
     },
