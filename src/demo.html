@@ -119,7 +119,10 @@
     </div>
 
 
-<script src="bower_components/jquery/jquery.js"></script>
+<!-- <script src="../bower_components/jquery/jquery.js"></script> -->
+<!-- <script src="../bower_components/jquery-1.7.0/jquery.js"></script> -->
+<!-- <script src="../bower_components/jquery-1.9.0/jquery.js"></script> -->
+<script src="../bower_components/jquery-1.10.2/jquery.js"></script>
 <script src="jquery.multiSelectable.js"></script>
 
 <script type="text/javascript">
@@ -135,7 +138,7 @@
 
     mainList = $("#list ul").multiSelectable({
         // filter:         '> *',
-        // filter:         'li:odd',
+        filter:         'li:odd',
         mouseMode:      'select',
         event:          'mousedown',
         // scrolledElem:   '#list',
@@ -143,11 +146,11 @@
         multi:          true,
         focusBlur:      true,
         selectionBlur:  true,
-        keyboard:  true,
+        keyboard:       true,
         preventInputs:  true,
         loop:           false,
         handle:         null,
-        listClass: 'my-super',
+        // listClass: 'my-super',
 
         create: function() {},
         beforeSelect: function( event, ui ) {
@@ -164,22 +167,32 @@
         stop: function( event, ui ) {},
         destroy: function() {}
     });
-    console.log('ok');
 
     // mainList.multiSelectable("li:odd");
     // mainList.multiSelectable("option", 'listClass', 'mysuper');
 
-    setTimeout(function() {
-        // var x = mainList.multiSelectable("option", "scrolledElem", "#list" ).multiSelectable("option");
-        // x.mouseMode = false;
-        // x.focusLost = 123;
-        // delete x.filter;
-        // delete x.loop;
-        // console.log( mainList.multiSelectable("getSelected") );
+    /**
+    * Benchmarking
+    */
+    // var res, time, elem;
+    // res = true;
+    // time = new Date();
+    // for (var i = 0; i < 30000; i++) {
+    //     elem = $( document.getElementsByTagName("li")[1] );
+    //     elem.context = window.document;
+    //     res = res && elem.is('.j-selectable li:odd');
+    // };
+    // console.log(res);
+    // console.log( new Date() - time );
 
-        
-    }, 300);
-
+    // res = true;
+    // time = new Date();
+    // for (var i = 0; i < 30000; i++) {
+    //     elem = $( 'li:eq(1)' );
+    //     res = res && elem.is('.j-selectable li:odd');
+    // };
+    // console.log(res);
+    // console.log( new Date() - time );
 </script>
 
 </body>

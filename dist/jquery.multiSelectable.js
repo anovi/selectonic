@@ -1,4 +1,4 @@
-/*! jquery-multiSelectable - v0.2.0 - 2013-12-22
+/*! jquery-multiSelectable - v0.2.0 - 2013-12-23
 * https://github.com/anovi/multiSelectable
 * Copyright (c) 2013 Alexey Novichkov; Licensed MIT */
 (function($, window, undefined) {
@@ -646,7 +646,7 @@
 
   /*
   Used by _keyHandler
-  Recalculate scroll position, if if focused item is not visible in container viewport
+  Recalculate scroll position, if focused item is not visible in container viewport
   */
   Plugin.prototype._recalcBoxScroll = function( box ) {
     var
@@ -665,7 +665,8 @@
       $box.scrollTop( itemBoxTop );
     
     } else if ( (itemBoxTop + itemHeight) > (boxScrollTop + boxViewHeight) ) {
-      // Scroll to bottom edge of elem - bottom edges of item and viewport will be on the same Y
+      // Scroll to bottom edge of elem - 
+      // bottom edges of item and viewport will be on the same Y
       $box.scrollTop( itemBoxTop + itemHeight - boxViewHeight );
     }
   };
@@ -673,25 +674,26 @@
 
   // Get item, that was clicked
   // or null, if click was not on an item
-  Plugin.prototype._getTarrget = function(e) {
+  Plugin.prototype._getTarget = function(e) {
 
     var elem = e.target,
       handle = this.options.handle,
-      target;
+      $elem, target;
 
     // While plugin's element or top of the DOM is achieved
     while ( elem !== null && elem !== this.el ) {
+      $elem = $(elem);
+      // Set context, because old (< 1.10.0) versions of jQuery gives wrong result.
+      $elem.context = document;
 
-      // If item match to cached selector
-      if( $(elem).is(this.options.parentSelector) ) {
+      // If item matches to selector
+      if( $elem.is(this.options.parentSelector) ) {
         target = elem;
       }
-
       // If handle option is ON and that elem match to handle's selector
-      if( handle && $(elem).is(handle) ) {
+      if( handle && $elem.is( handle ) ) {
         this.ui.handle = elem;
       }
-
       // Get parent element
       elem = elem.parentNode;
     }
@@ -741,6 +743,8 @@
       while (true) {
         item = find.call( item );
         if ( item.length === 0 ) { break; }
+        // Set context, because old (< 1.10.0) versions of jQuery gives wrong result.
+        item.context = document;
         if ( item.is(this.options.parentSelector) ) { return item; }
       }
       return null;
@@ -751,17 +755,19 @@
   };
 
 
-  // Create ui object and call a callback from the options
+  // Creates ui object and calls a callback from the options
   Plugin.prototype._callEvent = function(name, event) {
     var ui, cb = this.options[name];
     if ( !cb ) { return; }
-    if ( name === 'create' || name === 'destroy' ) { return cb.call( this.$el ); }
+    if ( name === 'create' || name === 'destroy' ) {
+      return cb.call( this.$el );
+    }
     ui = {};
     if ( this.ui.target )   { ui.target = this.ui.target; }
     if ( this.ui.items )    { ui.items  = this.ui.items; }
     if ( this._prevFocus )  { ui.focus  = this._prevFocus; }
-    // Pass to callback elem, event object and new ui object
-    cb.call( this.$el, event, ui );
+    // Pass to callback: elem, event object and new ui object
+    cb.call( this.$el, event || null, ui );
   };
 
 
@@ -776,15 +782,11 @@
       // It is click and mouse was not pressed on item
       if ( e.type === 'click' && !this._mouseDownMode ) { return; }
 
-      // Get target
-      this.ui.target = this._getTarrget(e);
+      this.ui.target = this._getTarget(e);
 
-      // If mouse press down on item
       if ( this.ui.target && e.type === 'mousedown' ) {
 
         this._isTargetWasSelected = this._getIsSelected( this.ui.target );
-
-        // If target is selected
         if ( this._isTargetWasSelected ) {
           this._mouseDownMode = true;
           return;
@@ -799,7 +801,7 @@
       return;
 
     // Get target
-    } else { this.ui.target = this._getTarrget(e); }
+    } else { this.ui.target = this._getTarget(e); }
 
 
     // If multi options is true and target exists
