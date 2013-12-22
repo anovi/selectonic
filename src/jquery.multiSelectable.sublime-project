@@ -2,10 +2,11 @@
 	"folders":
 	[
 		{
-			"path": "./",
+			"path": "../",
 			"folder_exclude_patterns":
 			[
 				".tmp",
+				"dist",
 				"node_modules",
 				".hg",
 				".hgcheck",
