@@ -34,10 +34,10 @@
                 background: #efefef;
                 border: 5px solid #ffffdd;
             }
-            #list li.j-multiSelectable-selected {
+            #list li.j-selected {
                 background: #ddF;
             }
-            #list li.j-multiSelectable-focused {
+            #list li.j-focused {
                 outline: 1px solid #07d;
             }
             #list .handle {
@@ -53,7 +53,7 @@
 <body>
 	
 
-    <div id="list" class="scrollable">
+    <div id="list" class="">
         <ul class="">
             <li id="elem0"><span class="handle">
                     <input type="checkbox">
@@ -129,12 +129,13 @@
         e.preventDefault();
     });
 
-    mainList = $("#list ul").multiSelectable({
-        event: 'hybrid'
-    });
+    // mainList = $("#list ul").multiSelectable({
+        // event: 'hybrid'
+    // });
 
-    mainList = $("#list2 ul").multiSelectable({
+    mainList = $("#list ul").multiSelectable({
         // filter:         '> *',
+        // filter:         'li:odd',
         mouseMode:      'select',
         event:          'mousedown',
         // scrolledElem:   '#list',
@@ -142,10 +143,11 @@
         multi:          true,
         focusBlur:      true,
         selectionBlur:  true,
-        keyboardInput:  true,
+        keyboard:  true,
         preventInputs:  true,
         loop:           false,
         handle:         null,
+        listClass: 'my-super',
 
         create: function() {},
         beforeSelect: function( event, ui ) {
@@ -157,14 +159,15 @@
             // this.multiSelectable("cancel")
         },
         select: function( event, ui ) {},
-        unSelect: function( event, ui ) {},
-        unSelectAll: function( event, ui ) {},
+        unSelect: function( event, ui ) { console.log('unSelect')},
+        unSelectAll: function( event, ui ) {console.log('unSelectAll')},
         stop: function( event, ui ) {},
         destroy: function() {}
     });
+    console.log('ok');
 
-    // console.log(mainList.multiSelectable("li:eq(1)").multiSelectable("getSelected"));
-    $("li:eq(1)").trigger('mousedown');
+    // mainList.multiSelectable("li:odd");
+    // mainList.multiSelectable("option", 'listClass', 'mysuper');
 
     setTimeout(function() {
         // var x = mainList.multiSelectable("option", "scrolledElem", "#list" ).multiSelectable("option");
@@ -172,7 +175,7 @@
         // x.focusLost = 123;
         // delete x.filter;
         // delete x.loop;
-        // console.log( mainList.multiSelectable("option") );
+        // console.log( mainList.multiSelectable("getSelected") );
 
         
     }, 300);
