@@ -3,20 +3,28 @@ jQuery-plugin for making any list of items selectable by mouse and keyboard.   I
 
 See examples on [demo page](http://anovi.github.io/multiSelectable/ "MultiSelectable — jQuery plugin").
 
-Author: Alexey Novichkov  
-Version: 0.2.0
+## Getting started
+Download the [production version][min] (_minified_) or the [development version][max].
 
-## Usage
+[min]: https://raw.github.com/anovi/multiSelectable/master/dist/jquery.multiSelectable.min.js
+[max]: https://raw.github.com/anovi/multiSelectable/master/dist/jquery.multiSelectable.js
+
+…or you could install it by Bower:
+```
+bower install jquery-multiSelectable
+```
+
+Use it like any jQuery plugin:
 ```javascript
 $(".itemsList").multiSelectable({
 	multi: true,
     mouseMode: "select",
     keyboard: true,
     select: function(event, ui) {
-        // do something cool, for expample enable action buttons
+        // do something cool, for expample enable actions buttons
     }
 	unselectAll: function(event, ui) {
-        // …and disable action buttons
+        // …and disable actions buttons
     }
 });
 ```
@@ -29,12 +37,12 @@ Option | Description | Type | Default
 **focusBlur** | List loses focus when user clicks outside of the list. | Boolean | false
 **selectionBlur** | List clears selection when user clicks outside of the list. | Boolean | false
 **keyboard** | Possibility to use keys **Up**, **Down** and **Home**, **End** to move cursor (focus), select range of items by holding **shift** and select all items by pressing **ctrl+A**. | Boolean | false
-**autoScroll** | Scrollable element. When user moves cursor by keys **Up**, **Down**, **Home**, **End** – plugin calculate elements's scroll position in a way that focused item is always visible. Accept values: <br>`true` – list's element is scrollable; <br>`false` – no scrollable element; <br>`selector (String)` – custom element that is not list's element. | Boolean or String | true
+**autoScroll** | Scrollable element. When user moves cursor by keys **Up**, **Down**, **Home**, **End** – plugin calculates elements's scroll position in a way that focused item is always visible. Accepts values: <br>`true` – list's element is scrollable; <br>`false` – no scrollable element; <br>`selector (String)` – custom element that is not list's element. | Boolean or String | true
 **loop** | If `keyboard: true` and focused element is last in a list, pressing key **Down** set focus to first element of the list; oppositely with **Up** key, when focus on a first element. | Boolean | false
 **preventInputs** | Prevent any reactions on keyboard input when focus is on a text input or textarea.  | Boolean | true |
 **handle** | Matches child elemets, that will be served as clickable area inside each item to select/unselect these items. | String | null
-**mouseMode** | `select` – mouse click selects target item and clear other selection in a list; to add/remove item to selection user need holding **ctrl** key (file manager style);<br>`toggle` – mouse click for select/unselect item (like group of checkboxes); | String | "select"
-**event** | `mousedown` – item will be selected when user pushes on left mouse button. <br>`click` – item will be selected when user clicks (press and release) on left mouse button. <br>`hybrid` – unselected items will react on mousedown, but selected items will react on click (press and release). It can be usefull when there is another plugin, for example to dragging selected items. | string | "mousedown"
+**mouseMode** | `select` – mouse click selects target item and clear other selection in a list; to add/remove item to selection user need holding **ctrl** key (file manager style);<br>`toggle` – mouse click to select/unselect items (like group of checkboxes); | String | "select"
+**event** | `mousedown` – item will be selected when user push on left mouse button. <br>`click` – item will be selected when user click (press and release) on left mouse button. <br>`hybrid` – unselected items will react on mousedown, but selected items will react on click (press and release). It can be usefull when there is another plugin, for example to dragging selected items. | String | "mousedown"
 **filter** | Matches child elements, that can be selected. | String | "* >"
 **listClass** | HTML class for selectable list. | String | "j-selectable"
 **focusClass** | HTML class for focused element. | String | "j-focused"
@@ -51,7 +59,7 @@ Callback functions except `create` and `destroy` may get arguments:
 	* `focus` — link to focused element.
 	* `items` — jquery collection of changed items – it could differ from event to event. Look at a table below.
 
-Callback functions and arguments that they receive:
+Callback functions and arguments that they receives:
 <table>
 	<thead>
 		<tr>
@@ -226,9 +234,6 @@ $(elem).multiSelectable(":even");
 $(elem).multiSelectable("li:eq(3)");
 ```
 
-
-## Known issues
-There is a problem with calculation of scroll position when lists container has a scrollbar and located inside (primary parent) element with `display: table-row;`.
 
 ## Compatibility
 Requires jQuery 1.7+  

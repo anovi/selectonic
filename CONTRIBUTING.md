@@ -14,18 +14,21 @@ First, ensure that you have the latest [Node.js](http://nodejs.org/) and [npm](h
 
 Test that Grunt's CLI is installed by running `grunt --version`.  If the command isn't found, run `npm install -g grunt-cli`.  For more information about installing Grunt, see the [getting started guide](http://gruntjs.com/getting-started).
 
+It also have used [Bower](http://bower.io/) for front-end dependencies. If you haven't got inslalled bower, than you need install it globally `npm install -g bower`.
+
 1. Fork and clone the repo.
-1. Run `npm install` to install all dependencies (including Grunt).
-1. Run `grunt` to grunt this project.
+2. Run `npm install` to install all Node's dependencies (including Grunt).
+3. Run `bower install` to install all front-end dependencies.
+4. Run `grunt` to grunt this project. It will run sequentially JSHint, Qunit tests, concatenate source file and create minified version by UglifyJS and put output files to `dist` subdirectory.
 
 Assuming that you don't see any red, you're ready to go. Just be sure to run `grunt` after making any changes, to ensure that nothing is broken.
 
 ## Submitting pull requests
 
 1. Create a new branch, please don't work in your `master` branch directly.
-1. Add failing tests for the change you want to make. Run `grunt` to see the tests fail.
-1. Fix stuff.
-1. Run `grunt` to see if the tests pass. Repeat steps 2-4 until done.
-1. Open `test/*.html` unit test file(s) in actual browser to ensure tests pass everywhere.
-1. Update the documentation to reflect any changes.
-1. Push to your fork and submit a pull request.
+2. Add failing tests for the change you want to make. Run `grunt` to see the tests fail.
+3. Fix stuff.
+4. Run `grunt` to see if the tests pass. Repeat steps 2-4 until done.
+5. Open `test/*.html` unit test file(s) in actual browser to ensure tests pass everywhere.
+6. Update the documentation to reflect any changes.
+7. Push to your fork and submit a pull request.
