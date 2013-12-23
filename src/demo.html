@@ -7,8 +7,8 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-        <title>MultiSelectable — jQuery plugin</title>
-        <meta name="description" content="MultiSelectable — jQuery plugin for making selectable lists by mouse and keyboard, configurable with options, methods and callbacks | Author: Alexey Novichkov">
+        <title>Selectonic — jQuery plugin</title>
+        <meta name="description" content="Selectonic — jQuery plugin for making selectable lists by mouse and keyboard, configurable with options, methods and callbacks | Author: Alexey Novichkov">
         <meta name="viewport" content="width=device-width">
         
         <style>
@@ -123,7 +123,7 @@
 <!-- <script src="../bower_components/jquery-1.7.0/jquery.js"></script> -->
 <!-- <script src="../bower_components/jquery-1.9.0/jquery.js"></script> -->
 <script src="../bower_components/jquery-1.10.2/jquery.js"></script>
-<script src="jquery.multiSelectable.js"></script>
+<script src="selectonic.js"></script>
 
 <script type="text/javascript">
     var mainList;
@@ -132,11 +132,11 @@
         e.preventDefault();
     });
 
-    // mainList = $("#list ul").multiSelectable({
+    // mainList = $("#list ul").selectonic({
         // event: 'hybrid'
     // });
 
-    mainList = $("#list ul").multiSelectable({
+    mainList = $("#list ul").selectonic({
         // filter:         '> *',
         filter:         'li:odd',
         mouseMode:      'select',
@@ -159,7 +159,7 @@
         focusLost: function( event, ui ) {
             console.log('Focus lost');
             // console.log( this );
-            // this.multiSelectable("cancel")
+            // this.selectonic("cancel")
         },
         select: function( event, ui ) {},
         unSelect: function( event, ui ) { console.log('unSelect')},
@@ -168,8 +168,8 @@
         destroy: function() {}
     });
 
-    // mainList.multiSelectable("li:odd");
-    // mainList.multiSelectable("option", 'listClass', 'mysuper');
+    // mainList.selectonic("li:odd");
+    // mainList.selectonic("option", 'listClass', 'mysuper');
 
     /**
     * Benchmarking

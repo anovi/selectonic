@@ -45,7 +45,7 @@
       box.append( str );
     }
     testBox.html( res );
-    box.multiSelectable( options );
+    box.selectonic( options );
   },
 
   getBox = function () {
@@ -145,7 +145,7 @@
   });
 
   test( 'Test destroy', 1, function() {
-    getBox().multiSelectable('destroy');
+    getBox().selectonic('destroy');
     ok( !getBox().hasClass('selectable'), "Destroyed" );
   });
 
@@ -447,9 +447,9 @@
     secElem = box.find('li:eq(5)'),
     
     isEnabled = box
-      .multiSelectable('li:eq(3)')
-      .multiSelectable('disable')
-      .multiSelectable('isEnabled');
+      .selectonic('li:eq(3)')
+      .selectonic('disable')
+      .selectonic('isEnabled');
     ok( !isEnabled, 'Is diabled!' );
     
     secElem.trigger('mousedown');
@@ -457,7 +457,7 @@
       .selectedFocus( elem )
       .selectedCount( 1 );
     
-    isEnabled = box.multiSelectable('enable').multiSelectable('isEnabled');
+    isEnabled = box.selectonic('enable').selectonic('isEnabled');
     ok( isEnabled, 'Is enabled!' );
   });
 
@@ -466,20 +466,20 @@
     box  = getBox(),
     elem = box.find('li:eq(3)');
     
-    box.multiSelectable('li:eq(3)');
+    box.selectonic('li:eq(3)');
     assert
       .selectedFocus( elem )
       .selectedCount( 1 );
     box
-      .multiSelectable( 'option', 'selectionBlur', true )
-      .multiSelectable( 'blur' );
+      .selectonic( 'option', 'selectionBlur', true )
+      .selectonic( 'blur' );
     assert
       .focused( elem )
       .selectedCount( 0 );
     box
-      .multiSelectable('li:eq(3)')
-      .multiSelectable( 'option', 'focusBlur', true )
-      .multiSelectable( 'blur' );
+      .selectonic('li:eq(3)')
+      .selectonic( 'option', 'focusBlur', true )
+      .selectonic( 'blur' );
     assert
       .notFocused( elem )
       .selectedCount( 0 );
@@ -502,13 +502,13 @@
       .selectedCount( 3 );
     
     selected = box
-      .multiSelectable('option', 'selectionBlur', true)
-      .multiSelectable('getSelected');
+      .selectonic('option', 'selectionBlur', true)
+      .selectonic('getSelected');
     equal( selected.length, 3, "3 selected" );
 
     $('body').trigger('mousedown');
 
-    selected = box.multiSelectable('getSelected');
+    selected = box.selectonic('getSelected');
     equal( selected.length, 0, "0 selected" );
   });
 
@@ -529,8 +529,8 @@
       .selectedCount( 3 );
     
     selected = box
-      .multiSelectable('option', 'selectionBlur', true)
-      .multiSelectable('getSelectedId');
+      .selectonic('option', 'selectionBlur', true)
+      .selectonic('getSelectedId');
     ok( $.isArray(selected), 'Is array' );
     equal( selected.length, 3, "Is 3 selected" );
     equal( selected[0], elem.attr('id'), "Id's match" );
@@ -544,12 +544,12 @@
     
     Syn.click( {}, elem );
     selected = box
-      .multiSelectable( 'option', 'focusBlur', true )
-      .multiSelectable( 'getFocused' );
+      .selectonic( 'option', 'focusBlur', true )
+      .selectonic( 'getFocused' );
     ok( $(selected).is( elem ) , 'Items match' );
 
     $('body').trigger('mousedown');
-    selected = box.multiSelectable( 'getFocused' );
+    selected = box.selectonic( 'getFocused' );
     ok( selected === null, 'No focus' );
   });
 
@@ -558,10 +558,10 @@
     box     = getBox(),
     elem    = box.find('li:eq(3)');
     
-    box.multiSelectable( elem );
+    box.selectonic( elem );
     assert.selected( elem );
     
-    box.multiSelectable( 'li:odd' );
+    box.selectonic( 'li:odd' );
     assert.selectedCount( 10 );
   });
 
@@ -572,15 +572,15 @@
     check = true;
     
     box
-      .multiSelectable( elem )
-      .multiSelectable( 'option', { unselectAll: function() {check = false;} });
+      .selectonic( elem )
+      .selectonic( 'option', { unselectAll: function() {check = false;} });
     
     assert.selectedCount( 1 );
 
     elem.remove();
     box
-      .multiSelectable('refresh')
-      .multiSelectable('blur');
+      .selectonic('refresh')
+      .selectonic('blur');
 
     assert.selectedCount( 0 );
     ok( check, 'There was no unselectAll callback!' );
@@ -592,13 +592,13 @@
     elem = box.find('li:eq(0)');
     
     box
-      .multiSelectable( 'li:odd' )
-      .multiSelectable( 'option', {
+      .selectonic( 'li:odd' )
+      .selectonic( 'option', {
         stop: function() {
-          this.multiSelectable( 'cancel' );
+          this.selectonic( 'cancel' );
         }
       })
-      .multiSelectable( elem );
+      .selectonic( elem );
 
     assert.selectedCount( 10 );
     assert.notSelected( elem );
@@ -613,7 +613,7 @@
     options;
     
     box
-      .multiSelectable( 'option', {
+      .selectonic( 'option', {
         before:       function() { res.push( 'before' );       },
         focusLost:    function() { res.push( 'focusLost' );    },
         select:       function() { res.push( 'select' );       },
@@ -637,7 +637,7 @@
         loop:          true
       });
 
-    options = box.multiSelectable( 'option' );
+    options = box.selectonic( 'option' );
     ok((
       options.filter        === 'li:odd' &&
       options.mouseMode     === 'toggle' &&
@@ -684,7 +684,7 @@
     ));
 
     res = [];
-    box.multiSelectable( 'destroy' );
+    box.selectonic( 'destroy' );
     ok( res[0] === 'destroy' );
   });
 

@@ -5,7 +5,7 @@ module.exports = function(grunt) {
   // Project configuration.
   grunt.initConfig({
     // Metadata.
-    pkg: grunt.file.readJSON('jquery.multiSelectable.json'),
+    pkg: grunt.file.readJSON('bower.json'),
     banner: '/*! <%= pkg.title || pkg.name %> - v<%= pkg.version %> - ' +
       '<%= grunt.template.today("yyyy-mm-dd") %>\n' +
       '<%= pkg.homepage ? "* " + pkg.homepage + "\\n" : "" %>' +
@@ -46,7 +46,7 @@ module.exports = function(grunt) {
         options: {
           urls: (function() {
             var base = 'http://localhost:<%= connect.server.options.port %>/test/test.html';
-            var arr = ['1.7.0', '1.9.0'].map(function(version) {
+            var arr = ['1.7.0', '1.9.0', '1.10.2', '2.0.3'].map(function(version) {
               return base + '?jquery=' + version;
             });
             arr.push(base);

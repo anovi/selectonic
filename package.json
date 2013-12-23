@@ -1,11 +1,11 @@
 {
-  "name": "jquery-multiSelectable",
+  "name": "selectonic",
   "version": "0.1.0",
   "description": "jQuery plugin for making selectable lists by mouse and keyboard",
-  "main": "jquery.multiSelectable.js",
+  "main": "selectonic.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/anovi/multiSelectable.git"
+    "url": "https://github.com/anovi/selectonic.git"
   },
   "keywords": [
     "jquery",
@@ -16,7 +16,7 @@
   "author": "Alexey Novichkov <mygrib@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/anovi/multiSelectable/issues"
+    "url": "https://github.com/anovi/selectonic/issues"
   },
   "engines": {
     "node": ">= 0.8.0"

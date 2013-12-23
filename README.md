@@ -1,22 +1,22 @@
-# MultiSelectable
-jQuery-plugin for making any list of items selectable by mouse and keyboard.   It could be usefull in webapp where are different widgets like menus, dropdowns with keyboard input, lists with multiple selection and so on. It maybe too bold for just a simple menu in one place.
+# Selectonic
+jQuery based plugin for making any list of items selectable by mouse and keyboard. It could be usefull in webapp where are different widgets like menus, dropdowns with keyboard input, lists with multiple selection and so on. It maybe too bold for just a simple menu in one place.
 
-See examples on [demo page](http://anovi.github.io/multiSelectable/ "MultiSelectable — jQuery plugin").
+See examples on [demo page](http://anovi.github.io/selectonic/ "Selectonic — jQuery plugin").
 
 ## Getting started
 Download the [production version][min] (_minified_) or the [development version][max].
 
-[min]: https://raw.github.com/anovi/multiSelectable/master/dist/jquery.multiSelectable.min.js
-[max]: https://raw.github.com/anovi/multiSelectable/master/dist/jquery.multiSelectable.js
+[min]: https://raw.github.com/anovi/selectonic/master/dist/selectonic.min.js
+[max]: https://raw.github.com/anovi/selectonic/master/dist/selectonic.js
 
 …or you could install it by Bower:
 ```
-bower install jquery-multiSelectable
+bower install selectonic
 ```
 
 Use it like any jQuery plugin:
 ```javascript
-$(".itemsList").multiSelectable({
+$(".itemsList").selectonic({
 	multi: true,
     mouseMode: "select",
     keyboard: true,
@@ -149,13 +149,13 @@ Callback functions and arguments that they receives:
 </table>
 
 
-Link `this` inside callbacks refer to list's initial element wrapped in jQuery, so you may call any method inside callbacks functions like `this.multiSelectable("disable");`.
+Link `this` inside callbacks refer to list's initial element wrapped in jQuery, so you may call any method inside callbacks functions like `this.selectonic("disable");`.
 
 
 ## Methods
 Calling a method:
 ```javascript
-$(elem).multiSelectable("getSelected");
+$(elem).selectonic("getSelected");
 ```
 
 
@@ -188,19 +188,19 @@ Get or set one or more options.
 
 **Getter**:
 ```javascript
-$(elem).multiSelectable("option", "mouseMode");
+$(elem).selectonic("option", "mouseMode");
 ```
 …or you can get whole options object:
 ```javascript
-$(elem).multiSelectable("option");
+$(elem).selectonic("option");
 ```
 **Setter**:
 ```javascript
-$(elem).multiSelectable("option", "mouseMode", "toggle");
+$(elem).selectonic("option", "mouseMode", "toggle");
 ```
 or
 ```javascript
-$(elem).multiSelectable("option", {
+$(elem).selectonic("option", {
     loop: true,
     mouseMode: "select"
 });
@@ -209,10 +209,10 @@ $(elem).multiSelectable("option", {
 ### cancel
 Cancel current changes in a list or prevent it, if called in *before* callback. Method can be called only inside callback functions:
 ```javascript
-elem.multiSelectable({
+elem.selectonic({
     stop: function(event, ui) {
         if( condition ) {
-            this.multiSelectable("cancel"); // inside callback
+            this.selectonic("cancel"); // inside callback
         }
     }
 });
@@ -224,14 +224,14 @@ Detach handlers, clear data and remove plugin's classes.
 ### Selecting items by API
 If in any scenario you need auto-select items (focusing first item at the beginning) then you need pass elements to plugins interface:
 ```javascript
-$(elem).multiSelectable( $(".someElements")  );
+$(elem).selectonic( $(".someElements")  );
 ```
 or selector:
 ```javascript
-$(elem).multiSelectable(":even");
+$(elem).selectonic(":even");
 ```
 ```javascript
-$(elem).multiSelectable("li:eq(3)");
+$(elem).selectonic("li:eq(3)");
 ```
 
 

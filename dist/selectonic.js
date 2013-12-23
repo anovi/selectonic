@@ -1,15 +1,11 @@
-/*
-*
-* MultiSelectable
-* Author: Alexey Novichkov
-* Version: 0.1.0
-*
-*/
+/*! Selectonic - v0.2.0 - 2013-12-24
+* https://github.com/anovi/selectonic
+* Copyright (c) 2013 Alexey Novichkov; Licensed MIT */
 (function($, window, undefined) {
   'use strict';
 
   var
-  pluginName     = 'multiSelectable',
+  pluginName     = 'selectonic',
   document       = window.document,
   keyCode        = { DOWN:40, UP:38, SHIFT:16, END:35, HOME:36, PAGE_DOWN:34, PAGE_UP:33, A:65 },
   optionsEvents  = ['create','before','focusLost','select','unselect','unselectAll','stop','destroy'],
