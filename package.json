@@ -22,7 +22,7 @@
     "node": ">= 0.8.0"
   },
   "scripts": {
-    "test": "grunt qunit"
+    "test": "grunt test"
   },
   "devDependencies": {
     "grunt": "~0.4.2",
