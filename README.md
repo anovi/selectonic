@@ -1,4 +1,6 @@
 # Selectonic
+[![Build Status](https://travis-ci.org/anovi/selectonic.png?branch=master)](https://travis-ci.org/anovi/selectonic)
+
 jQuery based plugin for making any list of items selectable by mouse and keyboard. It could be usefull in webapp where are different widgets like menus, dropdowns with keyboard input, lists with multiple selection and so on. It maybe too bold for just a simple menu in one place.
 
 See examples on [demo page](http://anovi.github.io/selectonic/ "Selectonic — jQuery plugin").
