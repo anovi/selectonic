@@ -255,7 +255,7 @@ elem.selectonic({
 
 
 ### Selecting items by API
-If in any scenario you need auto-select items (focusing first item at the beginning) then you need pass elements to plugins interface:
+If in any scenario you need auto-select items (select first item at the beginning) then you need pass elements to plugins interface:
 ```javascript
 $(elem).selectonic( $(".someElements")  );
 ```

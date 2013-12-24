@@ -249,7 +249,7 @@
 
 
   Plugin.prototype._setOptions = function() {
-    var option, isFunction, options = {}, self = this;
+    var option, newOptions, isFunction, options = {}, self = this;
     
     if ( arguments.length === 2 ) {
       // First arg is name of option and a second is a value
@@ -289,14 +289,16 @@
       }
     });
 
-    // Set scrollable containter
-    if ( options.autoScroll !== void 0 ) { this._setScrolledElem( options.autoScroll ); }
-
-    $.extend( this.options, options );
-
+    newOptions = $.extend( {}, this.options, options );
     // Cache items selector to compare it with clicked elements
     // Plugin's class name + Item selector
-    this.options.parentSelector = '.' + this.options.listClass + ' ' + this.options.filter;
+    newOptions.parentSelector = '.' + newOptions.listClass + ' ' + newOptions.filter;
+
+    // Set scrollable containter
+    if ( options.autoScroll !== void 0 ) { this._setScrolledElem( options.autoScroll ); }
+    this.options = newOptions;
+
+
   };
 
 
@@ -472,7 +474,7 @@
       e.preventDefault();
 
       // Get all items
-      sibling = this._getItems();
+      sibling = this._getItems( this.options );
       // Set flag, that all items selected
       isAllSelect = true;
 
@@ -481,12 +483,12 @@
       switch ( key ) {
       case keyCode.HOME:
         direction = 'prev';
-        sibling = this._getItems( 'first');
+        sibling = this._getItems( this.options, 'first');
         break;
 
       case keyCode.END:
         direction = 'next';
-        sibling = this._getItems( 'last');
+        sibling = this._getItems( this.options, 'last');
         break;
 
       case keyCode.DOWN:
@@ -523,7 +525,7 @@
           isFocusSelected      = this._getIsSelected( this.ui.focus ),
           isTargetSelected     = this._getIsSelected( this.ui.target ),
           // Search for next sibling in the same direction
-          secSibling           = this._getItems( direction, sibling ),
+          secSibling           = this._getItems( this.options, direction, sibling ),
           // Check if second sibling is selected (flag)
           isSelectedSecSibling = this._getIsSelected( secSibling );
 
@@ -552,7 +554,7 @@
           // While first unselected item will be found or edge of the list will be reached
           while( this._getIsSelected(this._items) && this._items.length > 0 ) {
             // get next item in the same direction
-            this._items = this._getItems( direction, this._items );
+            this._items = this._getItems( this.options, direction, this._items );
           }
 
           // If unselected item was found it becomes target item
@@ -640,12 +642,12 @@
     var edge = ( direction === 'next' ) ? 'first' : 'last', // extreme item of the list
       // If there is the focus - try to find next sibling
       // else get first|last item of the list — depends from direction
-      res = ( this.ui.focus ) ? this._getItems( direction, this.ui.focus ) : this._getItems( edge );
+      res = ( this.ui.focus ) ? this._getItems( this.options, direction, this.ui.focus ) : this._getItems( this.options, edge );
 
     // If has not found any items and loop option is ON
     if ( (res === null || res.length === 0) && this.options.loop ) {
       // find extreme item
-      res = this._getItems( edge );
+      res = this._getItems( this.options, edge );
     }
 
     return res;
@@ -708,11 +710,11 @@
 
     // If handle option is ON and it was found
     // and item of this list was clicked
-    if( handle && elem && this.ui.handle ) {
+    if( handle && target && this.ui.handle ) {
       return target;
 
     // If achieved $el of this instance of plugin's object
-    } else if( !handle && elem ) {
+    } else if( !handle && target ) {
       return target;
     }
 
@@ -739,7 +741,7 @@
   };
 
 
-  Plugin.prototype._getItems = function( selection, elem ) {
+  Plugin.prototype._getItems = function( options, selection, elem ) {
 
     switch( selection ) {
     case 'next':
@@ -753,12 +755,12 @@
         if ( item.length === 0 ) { break; }
         // Set context, because old (< 1.10.0) versions of jQuery gives wrong result.
         item.context = document;
-        if ( item.is(this.options.parentSelector) ) { return item; }
+        if ( item.is(options.parentSelector) ) { return item; }
       }
       return null;
-    case 'first': return this.$el.find( this.options.filter ).first();
-    case 'last':  return this.$el.find( this.options.filter ).last();
-    default:      return this.$el.find( this.options.filter );
+    case 'first': return this.$el.find( options.filter ).first();
+    case 'last':  return this.$el.find( options.filter ).last();
+    default:      return this.$el.find( options.filter );
     }
   };
 
@@ -985,7 +987,7 @@
     if( !this._selected || this._selected === 0 ) { return; }
 
     // Get all items
-    items = this._getItems();
+    items = this._getItems( this.options );
     // target was only selected item ( flag used for preventing callback )
     isOnlyTargetSelected = this.ui.target && this._isTargetWasSelected && this._selected === 1;
 
@@ -1008,7 +1010,7 @@
     if( this.ui.target === this.ui.focus ) { return $( this.ui.target ); }
 
     // Detect position of target and focus in the list
-    var arr = this._getItems(),
+    var arr = this._getItems( this.options ),
       x = arr.index( this.ui.target ),
       y = arr.index( this.ui.focus ),
 
