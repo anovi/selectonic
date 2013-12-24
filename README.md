@@ -3,6 +3,13 @@
 
 jQuery based plugin for making any list of items selectable by mouse and keyboard. It could be usefull in webapp where are different widgets like menus, dropdowns with keyboard input, lists with multiple selection and so on. It maybe too bold for just a simple menu in one place.
 
+**Features**:
+- Single or multiple selection (uses CSS-classes);
+- Keyboard input like in classic filemanagers;
+- Possibility to set handle – checkbox or other element for selecting items;
+- Auto-scrolling list's element and window;
+- And other configurable stuff.
+
 See examples on [demo page](http://anovi.github.io/selectonic/ "Selectonic — jQuery plugin").
 
 ## Getting started
@@ -30,6 +37,15 @@ $(".itemsList").selectonic({
     }
 });
 ```
+
+Do not forget some css-styling:
+```css
+.j-selected {
+	color: #FFFFFF;
+	background-color: #2979d1;
+}
+```
+
 
 ## Options
 
