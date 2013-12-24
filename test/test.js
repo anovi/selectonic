@@ -565,7 +565,7 @@
     assert.selectedCount( 10 );
   });
 
-  test( 'refresh', 3, function() {
+  test( 'refresh', 4, function() {
     var
     box   = getBox(),
     elem  = box.find('li:eq(0)'),
@@ -578,11 +578,11 @@
     assert.selectedCount( 1 );
 
     elem.remove();
-    box
-      .selectonic('refresh')
-      .selectonic('blur');
-
+    box.selectonic('refresh');
     assert.selectedCount( 0 );
+    ok( !box.selectonic('getFocused'), 'Focus cleared.' );
+
+    box.selectonic('blur');
     ok( check, 'There was no unselectAll callback!' );
   });
 

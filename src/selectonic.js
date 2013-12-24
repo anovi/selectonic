@@ -1,10 +1,3 @@
-/*
-*
-* Selectonic
-* Author: Alexey Novichkov
-* Version: 0.1.0
-*
-*/
 (function($, window, undefined) {
   'use strict';
 
@@ -1110,4 +1103,3 @@
   };
 
 }(jQuery, window));
-
