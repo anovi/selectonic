@@ -354,36 +354,34 @@
         box           = this._scrolledElem || this.el,
         boxViewHeight = box.clientHeight,
         winViewHeight = $( window ).outerHeight(),
-        $item         = $( elem ),
-        itemHeight    = $item.outerHeight(),
-        boxBigger     = boxViewHeight > winViewHeight,
-        maxHeight     = boxBigger ? winViewHeight : boxViewHeight,
-        height        = itemHeight,
+        $current      = $( elem ),
+        isBoxBigger   = boxViewHeight > winViewHeight,
+        pageHeight    = isBoxBigger ? winViewHeight : boxViewHeight,
+        itemHeight    = $current.outerHeight(),
+        currentHeight = itemHeight,
+        itemsHeight   = itemHeight,
         direction     = (selection === 'pageup') ? 'prev' : 'next',
-        prevHeight    = itemHeight,
-        next, nextHeight;
+        $candidate, candHeight;
 
       while( true ) {
-        next = this._getItems( options, direction, $item );
-        if ( !next && $item.is(elem) ) {
-          break;
-        } else if ( !next ) {
-          return $item;
+        $candidate = this._getItems( options, direction, $current );
+        if ( !$candidate && $current.is( elem ) ) { break; } else if ( !$candidate ) { return $current; }
+        
+        candHeight = $candidate.outerHeight();
+        itemsHeight = itemsHeight + candHeight;
+        
+        if ( itemsHeight > pageHeight ) {
+          // If two items bigger than page than it just will give next item
+          if ( currentHeight + candHeight > pageHeight ) { return $candidate; }
+          return $current;
         }
-        nextHeight = next.outerHeight();
-        if ( height + nextHeight > maxHeight ) {
-          if ( prevHeight + nextHeight > maxHeight ) { return next; }
-          return $item;
-        }
-        height = height + nextHeight;
-        prevHeight = nextHeight;
-        $item = next;
+        currentHeight = candHeight;
+        $current = $candidate;
       }
       return null;
 
     case 'first': return this.$el.find( options.filter ).first();
     case 'last':  return this.$el.find( options.filter ).last();
-    
     default:      return this.$el.find( options.filter );
     }
   };
