@@ -636,7 +636,6 @@
   Keyboard
 
   */
-  // Handler of keyboard events
   Plugin.prototype._keyHandler = function( e ) {
 
     if ( !this.options.keyboard ) { return; }
@@ -650,7 +649,6 @@
 
     // Key is released
     if (e.type === 'keyup') {
-
       if ( key === keyCode.SHIFT ) {
         // Delete flags, that has been needed while SHIFT was held
         delete this._shiftModeAction; // while SHIFT is held
@@ -661,7 +659,6 @@
 
     // If CTRL+A or CMD+A pressed and multi option is true
     if ( key === keyCode.A && (e.metaKey || e.ctrlKey) && this.options.multi ) {
-
       /* Prevent — bacause it's strange and annoying behavior 
       when first select all items in the list, and after that 
       if hold ctrl+A longer — select all text on that page */
@@ -673,7 +670,7 @@
       isAllSelect = true;
 
     } else {
-
+      // Choose derection and try to find targeted item
       switch ( key ) {
       case keyCode.HOME:
         direction = 'prev';
@@ -707,123 +704,125 @@
       this.ui.target = sibling[0];
       this._items = sibling;
 
-      /* ------------------------------------------------------------
-      *
-      *   START - SHIFT MODE 
-      *   If focus exists and SHIFT pressed and multi option is ON
-      */
+      // If focus exists and SHIFT pressed and multi option is ON
       if ( this.ui.focus && this.options.multi && e.shiftKey && !isAllSelect ) {
-        
-        var
-          // Check if focus or target is selected
-          isFocusSelected      = this._getIsSelected( this.ui.focus ),
-          isTargetSelected     = this._getIsSelected( this.ui.target ),
-          // Search for next sibling in the same direction
-          secSibling           = this._getItems( this.options, direction, sibling ),
-          // Check if second sibling is selected (flag)
-          isSelectedSecSibling = this._getIsSelected( secSibling );
-
-        // If another arrow was pressed that means the direction was changed
-        if ( this._keyModes.shift && this._keyModes.shift !== key ) {
-          this._keyModes.shift = this._shiftModeAction = null;
-        }
-
-        // --------------------------
-        // CHAIN OF CONDITIONS
-        // TODO: do chain of conditions more clear and readable
-
-        // Focus is not selected, target is selected and selected items more than one
-        if ( !isFocusSelected && isTargetSelected && this._selected > 1 ) {
-          // Nothing to do:
-          // - Focus and target already exist
-          // - After this chain _rangeSelect or _isMultiSelect mode will be set
-
-        // If it serial selection of items by arrow key and target is already selected
-        } else if ( this._keyModes.shift && this._shiftModeAction === 'select' && isTargetSelected ) {
-
-          /* When user select range of items by holding SHIFT and presses arrow key,
-          there are already can be selected items — than focus should jump
-          through these selected items to first unselected item */
-
-          // While first unselected item will be found or edge of the list will be reached
-          while( this._getIsSelected(this._items) && this._items.length > 0 ) {
-            // get next item in the same direction
-            this._items = this._getItems( this.options, direction, this._items );
-          }
-
-          // If unselected item was found it becomes target item
-          // target will be selected and get the focus
-          if ( this._items.length > 0 ) { this.ui.target = this._items; }
-          
-
-        // If target and focus is selected, but next item to the target is not:
-        } else if ( isTargetSelected && isFocusSelected && !isSelectedSecSibling ) {
-          /* Sitiation is possible when user unselect items 
-          by arrow key with holding SHIFT */
-
-          // Clear flags of serial selection by SHIFT
-          this._keyModes.shift = this._shiftModeAction = null;
-          this._items = this.ui.focus;
-          // Selection will be clear on the focus
-          // focus will be set on target item
-
-        // The focus and target is selected
-        } else if ( isFocusSelected && isTargetSelected ) {
-          this._items = this.ui.focus;
-
-          // If there is no SHIFT action (first pressing arrow key with holding SHIFT)
-          // Set mode of selection
-          if ( !this._shiftModeAction ) { this._shiftModeAction = 'unselect'; }
-          // Selection will be clear on the focus
-          // focus will be set on target item
-
-        // Only target selected
-        } else if ( !isFocusSelected && isTargetSelected ) {
-          this._items = this.ui.focus;
-          this._isTargetWasSelected = false;
-          // The focus will be selected
-          // The focus will be set on target item
-
-        // Nothing is selected
-        } else if ( !isFocusSelected && !isTargetSelected ) {
-          this.ui.target = this._items = this.ui.focus;
-          // Focus will be selected
-        }
-        // END THE CHAIN OF CONDITIONS
-        // ---------------------------
-
-        // If there is no SHIFT action (first pressing arrow key with holding SHIFT)
-        // Set mode of selection
-        if ( !this._shiftModeAction ) { this._shiftModeAction = 'select';}
-
-        // If there is no SHIFT key mode (first pressing arrow key with holding SHIFT)
-        // Set pressed arrow key
-        if ( !this._keyModes.shift ) { this._keyModes.shift = key; }
-
-        if ( key === keyCode.END || key === keyCode.HOME ) {
-          // Get range of items and turn on range select mode
-          this._items = this._rangeSelect();
-
-          // Mode of multiply selection
-        } else { this._isMultiSelect = true; }
-
+        // Call multiVariator – it set all needed flags depends from arguments
+        this._multiVariator( e, key, direction, sibling );
       }
-      /*
-      *   END - SHIFT MODE
-      *
-      * ------------------------------------------------------------ */
 
       // There are all necessary attributes now
       // Call _controller
       this._controller( e );
 
-      // Recalculate plugin's box scroll and window's scroll
+      // Recalculate plugin's box and window's scrolls
       if (this.ui.focus) {
         if ( this._scrolledElem ) { this._recalcBoxScroll( this._scrolledElem ); }
         this._recalcBoxScroll( window );
       }
     }
     return e;
+  };
+
+
+  /*  FOR SHIFT MODE ONLY
+  *   - turn on shift mode flags
+  *   - solve different situations with shift+arrows selection
+  */
+  Plugin.prototype._multiVariator = function( e, key, direction, sibling ) {
+
+    var
+      // Check if focus or target is selected
+      isFocusSelected      = this._getIsSelected( this.ui.focus ),
+      isTargetSelected     = this._getIsSelected( this.ui.target ),
+      // Search for next sibling in the same direction
+      secSibling           = this._getItems( this.options, direction, sibling ),
+      // Check if second sibling is selected (flag)
+      isSelectedSecSibling = this._getIsSelected( secSibling );
+
+    // If another arrow was pressed that means the direction was changed
+    if ( this._keyModes.shift && this._keyModes.shift !== key ) {
+      this._keyModes.shift = this._shiftModeAction = null;
+    }
+
+    // --------------------------
+    // CHAIN OF CONDITIONS
+    // TODO: do chain of conditions more clear and readable
+
+    // Focus is not selected, target is selected and selected items more than one
+    if ( !isFocusSelected && isTargetSelected && this._selected > 1 ) {
+      // Nothing to do:
+      // - Focus and target already exist
+      // - After this chain _rangeSelect or _isMultiSelect mode will be set
+      return;
+
+    // If it serial selection of items by arrow key and target is already selected
+    } else if ( this._keyModes.shift && this._shiftModeAction === 'select' && isTargetSelected ) {
+
+      /* When user select range of items by holding SHIFT and presses arrow key,
+      there are already can be selected items — than focus should jump
+      through these selected items to first unselected item */
+
+      // While first unselected item will be found or edge of the list will be reached
+      while( this._getIsSelected(this._items) && this._items.length > 0 ) {
+        // get next item in the same direction
+        this._items = this._getItems( this.options, direction, this._items );
+      }
+
+      // If unselected item was found it becomes target item
+      // target will be selected and get the focus
+      if ( this._items.length > 0 ) { this.ui.target = this._items; }
+      
+
+    // If target and focus is selected, but next item to the target is not:
+    } else if ( isTargetSelected && isFocusSelected && !isSelectedSecSibling ) {
+      /* Sitiation is possible when user unselect items 
+      by arrow key with holding SHIFT */
+
+      // Clear flags of serial selection by SHIFT
+      this._keyModes.shift = this._shiftModeAction = null;
+      this._items = this.ui.focus;
+      // Selection will be clear on the focus
+      // focus will be set on target item
+
+    // The focus and target is selected
+    } else if ( isFocusSelected && isTargetSelected ) {
+      this._items = this.ui.focus;
+
+      // If there is no SHIFT action (first pressing arrow key with holding SHIFT)
+      // Set mode of selection
+      if ( !this._shiftModeAction ) { this._shiftModeAction = 'unselect'; }
+      // Selection will be clear on the focus
+      // focus will be set on target item
+
+    // Only target selected
+    } else if ( !isFocusSelected && isTargetSelected ) {
+      this._items = this.ui.focus;
+      this._isTargetWasSelected = false;
+      // The focus will be selected
+      // The focus will be set on target item
+
+    // Nothing is selected
+    } else if ( !isFocusSelected && !isTargetSelected ) {
+      this.ui.target = this._items = this.ui.focus;
+      // Focus will be selected
+    }
+    // END CHAIN OF CONDITIONS
+    // ---------------------------
+
+    // If there is no SHIFT action (first pressing arrow key with holding SHIFT)
+    // Set mode of selection
+    if ( !this._shiftModeAction ) { this._shiftModeAction = 'select';}
+
+    // If there is no SHIFT key mode (first pressing arrow key with holding SHIFT)
+    // Set pressed arrow key
+    if ( !this._keyModes.shift ) { this._keyModes.shift = key; }
+
+    if ( key === keyCode.END || key === keyCode.HOME ) {
+      // Get range of items and turn on range select mode
+      this._items = this._rangeSelect();
+
+      // Mode of multiply selection
+    } else { this._isMultiSelect = true; }
   };
 
 
