@@ -65,13 +65,11 @@ Callback functions and arguments that they receives:
 <table>
 	<thead>
 		<tr>
-			<td>
-				Callback
-			</td>
-			<td>event</td>
-			<td>ui.target</td>
-			<td>ui.focus</td>
-			<td>ui.items</td>
+			<td><strong>Callback</strong></td>
+			<td><strong>event</strong></td>
+			<td><strong>ui.target</strong></td>
+			<td><strong>ui.focus</strong></td>
+			<td><strong>ui.items</strong></td>
 		</tr>
 	</thead>
 	<tbody>
@@ -88,7 +86,7 @@ Callback functions and arguments that they receives:
 			<td>
 				<strong>before</strong> — calls in every work cycle before any changes.
 			</td>
-			<td>event</td>
+			<td>YES</td>
 			<td>if exist</td>
 			<td>if exist</td>
 			<td>—</td>
@@ -97,16 +95,16 @@ Callback functions and arguments that they receives:
 			<td>
 				<strong>select</strong> — when one or more elements has been selected.
 			</td>
-			<td>event</td>
-			<td>Yes</td>
-			<td>Yes</td>
+			<td>YES</td>
+			<td>YES</td>
+			<td>YES</td>
 			<td>jquery collection of selected elements</td>
 		</tr>
 		<tr>
 			<td>
 				<strong>unselect</strong> — one or more elements has been unselected.
 			</td>
-			<td>event</td>
+			<td>YES</td>
 			<td>if exist</td>
 			<td>if exist</td>
 			<td>jquery collection of unselected elements</td>
@@ -115,7 +113,7 @@ Callback functions and arguments that they receives:
 			<td>
 				<strong>unselectAll</strong> — when all elements in the list has been unselected.
 			</td>
-			<td>event</td>
+			<td>YES</td>
 			<td>if exist</td>
 			<td>if exist</td>
 			<td>jquery collection of unselected elements</td>
@@ -124,16 +122,16 @@ Callback functions and arguments that they receives:
 			<td>
 				<strong>focusLost</strong> — when the focus of the list is lost.
 			</td>
-			<td>event</td>
+			<td>YES</td>
 			<td>—</td>
-			<td>Link on focused element. Link will be removed after this callback.</td>
+			<td>YES. Link will be removed after this callback.</td>
 			<td>—</td>
 		</tr>
 		<tr>
 			<td>
 				<strong>stop</strong> — calls in the end of every work cycle.
 			</td>
-			<td>event</td>
+			<td>YES</td>
 			<td>if exist</td>
 			<td>if exist</td>
 			<td>all changed items (if they were)</td>
@@ -160,30 +158,48 @@ Calling a method:
 $(elem).selectonic("getSelected");
 ```
 
-
-### isEnabled
-Returns `true` if list is in enabled state.
-
-### blur
-Clears selection and focus in a list.
-
-### getSelected
-Get jQuery collection of selected elements.
-
-### getSelectedId
-Get array of id's of selected elements.
-
-### getFocused
-Get focused element or `null` if there is no one.
-
-### disable
-Disable selectable list, but keep data and save it state.
-
-### enable
-Turn on disabled plugin.
-
-### refresh
-Refresh plugin data. That is necessary when some items in a list has been removed.
+<table width="100%">
+	<tr>
+		<th valign="top" width="120px" align="left">Method</th>
+		<th valign="top" align="left">Description</th>
+	</tr>
+	<tr>
+		<td valign="top"><strong>isEnabled</strong></td>
+		<td valign="top">Returns <code>true</code> if list is in enabled state.</td>
+	</tr>
+	<tr>
+		<td valign="top"><strong>blur</strong></td>
+		<td valign="top">Clears selection and focus in a list.</td>
+	</tr>
+	<tr>
+		<td valign="top"><strong>getSelected</strong></td>
+		<td valign="top">Get jQuery collection of selected elements.</td>
+	</tr>
+	<tr>
+		<td valign="top"><strong>getSelectedId</strong></td>
+		<td valign="top">Get array of id's of selected elements.</td>
+	</tr>
+	<tr>
+		<td valign="top"><strong>getFocused</strong></td>
+		<td valign="top">Get focused element or <code>null</code> if there is no one.</td>
+	</tr>
+	<tr>
+		<td valign="top"><strong>disable</strong></td>
+		<td valign="top">Disable selectable list, but keep data and save it state.</td>
+	</tr>
+	<tr>
+		<td valign="top"><strong>enable</strong></td>
+		<td valign="top">Turn on disabled plugin.</td>
+	</tr>
+	<tr>
+		<td valign="top"><strong>refresh</strong></td>
+		<td valign="top">Refresh plugin data. That is necessary when some items in a list has been removed.</td>
+	</tr>
+	<tr>
+		<td valign="top"><strong>destroy</strong></td>
+		<td valign="top">Detach handlers, clear data and remove plugin's classes.</td>
+	</tr>
+</table>
 
 ### option
 Get or set one or more options.
@@ -220,8 +236,6 @@ elem.selectonic({
 });
 ```
 
-### destroy
-Detach handlers, clear data and remove plugin's classes.
 
 ### Selecting items by API
 If in any scenario you need auto-select items (focusing first item at the beginning) then you need pass elements to plugins interface:
