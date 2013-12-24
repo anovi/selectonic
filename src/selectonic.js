@@ -296,9 +296,27 @@
 
     // Set scrollable containter
     if ( options.autoScroll !== void 0 ) { this._setScrolledElem( options.autoScroll ); }
+    if ( newOptions.handle !== void 0 ) { this._setHandle( newOptions ); }
     this.options = newOptions;
+  };
 
 
+  Plugin.prototype._setHandle = function( options ) {
+    if ( options.handle === null ) { return; }
+    
+    // Try to find element
+    var handle = this._getItems( options, 'first' ).find( options.handle );
+
+    if ( !handle.jquery || handle.length === 0 ) {
+      throw new Error( 'There are no elements in list matches \"' + options.handle + '\" - specified in \"handle\" option.' );
+    }
+
+    // Try to find checkbox in handle
+    var checkbox = handle.find( 'input[type=checkbox]:eq(0)' ).first();
+    // Set checkbox if found
+    if ( checkbox.jquery && checkbox.length > 0 ) {
+      this._checkbox = options.handle + ' :checkbox';
+    } else { this._checkbox = null; }
   };
 
 
@@ -446,8 +464,13 @@
   Plugin.prototype._keyHandler = function( e ) {
 
     if ( !this.options.keyboard ) { return; }
-    // If options for preventing plugin in html inputs and e.target is input, than return
-    if ( this.options.preventInputs && e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') { return; }
+    // If options for preventing plugin in html inputs 
+    // and e.target is input but is not checkbox, than return
+    if ( 
+      this.options.preventInputs &&
+      (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') &&
+      !$( e.target ).is(':checkbox')
+    ) { return; }
 
     var key = e.which, // pressed key
       sibling,         // sibling element
@@ -688,7 +711,7 @@
 
     var elem = e.target,
       handle = this.options.handle,
-      $elem, target;
+      $elem, target, $checkbox;
 
     // While plugin's element or top of the DOM is achieved
     while ( elem !== null && elem !== this.el ) {
@@ -711,6 +734,13 @@
     // If handle option is ON and it was found
     // and item of this list was clicked
     if( handle && target && this.ui.handle ) {
+      if ( this._checkbox ) {
+        $checkbox = $( e.target );
+        this._isTargetCheckbox = $checkbox.is( this._checkbox );
+        this.ui.$checkbox = this._isTargetCheckbox ? $checkbox : $elem.find( this._checkbox );
+      } else {
+        this.ui.$checkbox = null;
+      }
       return target;
 
     // If achieved $el of this instance of plugin's object
@@ -784,17 +814,24 @@
   // Mouse events handler - set necessary paramaters and calls _controller
   Plugin.prototype._mouseHandler = function( e ) {
 
-    var options = this.options;
+    var options = this.options,
+      type = e.type;
+
+    if ( type === 'click' && this._preventCheckChange ) {
+      delete this._preventCheckChange;
+      // Prevent unchecking of checkbox
+      e.preventDefault();
+    }
 
     // If hybrid mode
     if ( options.event === 'hybrid' ) {
 
       // It is click and mouse was not pressed on item
-      if ( e.type === 'click' && !this._mouseDownMode ) { return; }
+      if ( type === 'click' && !this._mouseDownMode ) { return; }
 
       this.ui.target = this._getTarget(e);
 
-      if ( this.ui.target && e.type === 'mousedown' ) {
+      if ( this.ui.target && type === 'mousedown' ) {
 
         this._isTargetWasSelected = this._getIsSelected( this.ui.target );
         if ( this._isTargetWasSelected ) {
@@ -807,8 +844,8 @@
       if ( this._mouseDownMode ) { delete this._mouseDownMode; }
 
     // if type of event do not match
-    } else if ( e.type !== options.event ) {
-      return;
+    } else if ( type !== options.event ) {
+      return e;
 
     // Get target
     } else { this.ui.target = this._getTarget(e); }
@@ -930,8 +967,10 @@
         isSelected = self._getIsSelected( item ),
         // Condition - if item is not selected (_select) or items is selected (_unselect)
         selectedCondition = ( aboveZero ) ? !isSelected : isSelected,
+        isTarget = item === self.ui.target,
         // if the item is target and is selected
-        isSelectedTarget = ( item === self.ui.target && self._isTargetWasSelected );
+        isSelectedTarget = ( isTarget && self._isTargetWasSelected ),
+        $item, isMousedown;
 
       /*  If it's unselecting and item is selected target,
         and is not 'multi' or 'range' select mode
@@ -952,10 +991,22 @@
         }
         self._selected += delta;
       }
+      // Finally add/remove class to item 
+      $item = $( item ).toggleClass( self.options.selectedClass, aboveZero );
+      isMousedown = self.options.event === 'mousedown';
 
-      // Finally add/remove class to item
-      $( item ).toggleClass( self.options.selectedClass, aboveZero );
-
+      // Toggle checkbox if it exists
+      if ( self._checkbox ) {
+        // Find checkbox and set check/uncheck
+        $item.find( self._checkbox ).prop('checked', aboveZero);
+        if (
+          ( isTarget && self._isTargetCheckbox && isMousedown ) ||
+          ( isSelectedTarget && aboveZero )
+        ) {
+          // Prevent any changes of checkbox when mouse button will be released
+          self._preventCheckChange = true;
+        }
+      }
     });
 
     // If it is not cancellation
@@ -969,14 +1020,14 @@
 
 
   Plugin.prototype._select = function( e, items, silent ) {
-    this._forEachItem( items, 1 );
+    this._forEachItem( items, 1, e );
     if ( !silent ) { this._callEvent('select', e); }
     if( this._isPrevented && !this._isCancellation ) { this._cancel( e ); }
   };
 
 
   Plugin.prototype._unselect = function( e, items, silent ) {
-    this._forEachItem( items, -1 );
+    this._forEachItem( items, -1, e );
     if ( !silent ) { this._callEvent('unselect', e); }
     if( this._isPrevented && !this._isCancellation ) { this._cancel( e ); }
   };
@@ -1084,11 +1135,13 @@
     delete this.ui.items;
     delete this.ui.target;
     delete this.ui.handle;
+    delete this.ui.$checkbox;
     delete this._items;
     delete this._isRangeSelect;
     delete this._isMultiSelect;
     delete this._isTargetWasSelected;
     delete this._isWasSelected;
+    delete this._isTargetCheckbox;
   };
 
 
