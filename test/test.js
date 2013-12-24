@@ -25,6 +25,7 @@
     mouseMode:     'select',
     event:         'mousedown',
     handle:        null,
+    textSelection: true,
 
     multi:         true,
     scrolledElem:  true,
@@ -50,6 +51,28 @@
 
   getBox = function () {
     return testBox.find('#sublist');
+  },
+
+  getSelectionText = function() {
+    var txt = '';
+    if (txt = window.getSelection) {
+      // Not IE, use getSelection
+      txt = window.getSelection().toString();
+    } else {
+      // IE, use object selection
+      txt = document.selection.createRange().text;
+    }
+    return txt;
+  },
+
+  clearSelection = function() {
+    if ( window.getSelection ) {
+      // Normal browsers
+      window.getSelection().removeAllRanges();
+    } else {
+      // IE<9
+      document.selection.clear();
+    }
   };
 
   QUnit.assert.selected = function( elem ) {
@@ -125,6 +148,9 @@
         break;
       case 'refresh':
         $.extend( advanced, { selectionBlur: true, focusBlur: true });
+        break;
+      case 'Text selection':
+        $.extend( advanced, { textSelection: false });
         break;
     }
 
@@ -322,6 +348,23 @@
     elem.find('.handle').trigger('mousedown');
     assert.selected( elem );
   });
+
+  test( 'Text selection', 1, function() {
+    var 
+    box = getBox(),
+    elem = box.find('li:eq(3)'),
+    secElem = box.find('li:eq(5)');
+
+    clearSelection();
+
+    Syn.click( {}, elem );
+    Syn.type('[shift]', box);
+    Syn.click( {}, secElem );
+    Syn.type('[shift-up]', box);
+
+    ok( getSelectionText() === '', 'There are no text selection.' );
+  });
+
 
 
   /*

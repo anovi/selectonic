@@ -36,16 +36,17 @@ $(".itemsList").selectonic({
 Option | Description | Type | Default
 --- | --- | --- | ---
 **multi** | User can select many items in a list. | Boolean | true
+**filter** | Matches child elements, that can be selected. | String | "* >"
 **focusBlur** | List loses focus when user clicks outside of the list. | Boolean | false
 **selectionBlur** | List clears selection when user clicks outside of the list. | Boolean | false
+**mouseMode** | `select` – mouse click selects target item and clear other selection in a list; to add/remove item to selection user need holding **ctrl** key (file manager style);<br>`toggle` – mouse click to select/unselect items (like group of checkboxes); | String | "select"
+**event** | `mousedown` – item will be selected when user push on left mouse button. <br>`click` – item will be selected when user click (press and release) on left mouse button. <br>`hybrid` – unselected items will react on mousedown, but selected items will react on click (press and release). It can be usefull when there is another plugin, for example to dragging selected items. | String | "mousedown"
+**handle** | Matches child elemets, that will be served as clickable area inside each item to select/unselect these items. | String | null
+**textSelection** | Allow text selection in a list's element. It could be annoying when you selecting items with `shift`+`click`. | Boolean | false
 **keyboard** | Possibility to use keys **Up**, **Down** and **Home**, **End** to move cursor (focus), select range of items by holding **shift** and select all items by pressing **ctrl+A**. | Boolean | false
 **autoScroll** | Scrollable element. When user moves cursor by keys **Up**, **Down**, **Home**, **End** – plugin calculates elements's scroll position in a way that focused item is always visible. Accepts values: <br>`true` – list's element is scrollable; <br>`false` – no scrollable element; <br>`selector (String)` – custom element that is not list's element. | Boolean or String | true
 **loop** | If `keyboard: true` and focused element is last in a list, pressing key **Down** set focus to first element of the list; oppositely with **Up** key, when focus on a first element. | Boolean | false
 **preventInputs** | Prevent any reactions on keyboard input when focus is on a text input or textarea.  | Boolean | true |
-**handle** | Matches child elemets, that will be served as clickable area inside each item to select/unselect these items. | String | null
-**mouseMode** | `select` – mouse click selects target item and clear other selection in a list; to add/remove item to selection user need holding **ctrl** key (file manager style);<br>`toggle` – mouse click to select/unselect items (like group of checkboxes); | String | "select"
-**event** | `mousedown` – item will be selected when user push on left mouse button. <br>`click` – item will be selected when user click (press and release) on left mouse button. <br>`hybrid` – unselected items will react on mousedown, but selected items will react on click (press and release). It can be usefull when there is another plugin, for example to dragging selected items. | String | "mousedown"
-**filter** | Matches child elements, that can be selected. | String | "* >"
 **listClass** | HTML class for selectable list. | String | "j-selectable"
 **focusClass** | HTML class for focused element. | String | "j-focused"
 **selectedClass** | HTML class for selected element. | String | "j-selected"

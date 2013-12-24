@@ -20,11 +20,17 @@
     focusBlur:      false,
     selectionBlur:  false,
     handle:         null,        /* Selector | null */
+    textSelection:  false,
     // Keyboard
     keyboard:       false,
-    scrolledElem:   true,        /* Selector | false | true */
+    autoScroll:     true,        /* Selector | false | true */
     loop:           false,
     preventInputs:  true,
+    // Classes
+    listClass:      ( 'j-selectable' ),
+    focusClass:     ( 'j-focused' ),
+    selectedClass:  ( 'j-selected' ),
+    disabledClass:  ( 'j-disabled' ),
     // Callbacks
     create:         null,
     before:         null,
@@ -33,12 +39,7 @@
     unselect:       null,
     unselectAll:    null,
     stop:           null,
-    destroy:        null,
-    // Classes
-    listClass:      ( 'j-selectable' ),
-    focusClass:     ( 'j-focused' ),
-    selectedClass:  ( 'j-selected' ),
-    disabledClass:  ( 'j-disabled' )
+    destroy:        null
   };
 
   /* 
@@ -297,7 +298,7 @@
     });
 
     // Set scrollable containter
-    if ( options.scrolledElem !== void 0 ) { this._setScrolledElem( options.scrolledElem ); }
+    if ( options.autoScroll !== void 0 ) { this._setScrolledElem( options.autoScroll ); }
 
     $.extend( this.options, options );
 
@@ -404,6 +405,11 @@
       if( this.options.keyboard && this._isEnable ) { this._keyHandler(e); }
       return e;
     }, this );
+    
+    // Handler for selection start
+    this._selectstartHandler = $.proxy( function() {
+      if ( !this.options.textSelection ) { return false; }
+    }, this );
 
     $( document ).on(
       'click' + '.' + this._name + ' ' + 'mousedown' + '.' + this._name,
@@ -413,6 +419,11 @@
     $( document ).on(
       'keydown' + '.' + this._name + ' ' + 'keyup' + '.' + this._name,
       this._keyEventHandler
+    );
+
+    this.$el.on(
+      'selectstart' + '.' + this._name,
+      this._selectstartHandler
     );
   };
 
@@ -428,6 +439,11 @@
     $( document ).off(
       'keydown' + '.' + this._name + ' ' + 'keyup' + '.' + this._name,
       this._keyEventHandler
+    );
+
+    this.$el.off(
+      'selectstart' + '.' + this._name,
+      this._selectstartHandler
     );
   };
 

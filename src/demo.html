@@ -127,22 +127,14 @@
 
 <script type="text/javascript">
     var mainList;
-    
-    $('#list').on( 'selectstart', function (e) {
-        e.preventDefault();
-    });
-
-    // mainList = $("#list ul").selectonic({
-        // event: 'hybrid'
-    // });
 
     mainList = $("#list ul").selectonic({
         // filter:         '> *',
-        filter:         'li:odd',
+        // filter:         'li:odd',
         mouseMode:      'select',
         event:          'mousedown',
-        // scrolledElem:   '#list',
-        // scrolledElem:   null,
+        autoScroll:   '#list',
+        // autoScroll:   null,
         multi:          true,
         focusBlur:      true,
         selectionBlur:  true,
