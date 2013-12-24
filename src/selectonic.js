@@ -12,15 +12,15 @@
     filter:         '> *',
     multi:          true,
     // Mouse
-    mouseMode:      'select',    /* select | toggle */
-    event:          'mousedown', /* mousedown | click | hybrid */
+    mouseMode:      'select',    /* 'select' | 'toggle' */
+    event:          'mousedown', /* 'mousedown' | 'click' | 'hybrid' */
     focusBlur:      false,
     selectionBlur:  false,
-    handle:         null,        /* Selector | null */
+    handle:         null,        /* String | null */
     textSelection:  false,
     // Keyboard
     keyboard:       false,
-    autoScroll:     true,        /* Selector | false | true */
+    autoScroll:     true,        /* String | false | true */
     loop:           false,
     preventInputs:  true,
     // Classes
@@ -71,7 +71,7 @@
   Public API
 
   */
-  Plugin.command = function( options ) {
+  Plugin._command = function( options ) {
 
     var
       pluginObject = Plugin.getDataObject( this ),
@@ -1104,12 +1104,12 @@
 
     // If string passed
     if( options && options.charAt ) {
-      return Plugin.command.apply( this, arguments );
+      return Plugin._command.apply( this, arguments );
     }
 
     // DOM element passed
     else if ( options && (options.addClass || options.parentNode) ) {
-      return Plugin.command.call( this, options );
+      return Plugin._command.call( this, options );
     }
 
     // Create instances
