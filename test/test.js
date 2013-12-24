@@ -4,6 +4,7 @@
     TODO: more apppropriate test for mouseMode option
     TODO: test for scrolledElem option
     TODO: test situation when items are not direct chilren of container
+    TODO: several lists on the page
   */
 
   /*

@@ -710,11 +710,11 @@
 
     // If handle option is ON and it was found
     // and item of this list was clicked
-    if( handle && target && this.ui.handle ) {
+    if( handle && elem && this.ui.handle ) {
       return target;
 
     // If achieved $el of this instance of plugin's object
-    } else if( !handle && target ) {
+    } else if( !handle && elem ) {
       return target;
     }
 
