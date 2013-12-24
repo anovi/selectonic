@@ -347,8 +347,43 @@
         if ( item.is(options.parentSelector) ) { return item; }
       }
       return null;
+    
+    case 'pageup':
+    case 'pagedown':
+      var
+        box           = this._scrolledElem || this.el,
+        boxViewHeight = box.clientHeight,
+        winViewHeight = $( window ).outerHeight(),
+        $item         = $( elem ),
+        itemHeight    = $item.outerHeight(),
+        boxBigger     = boxViewHeight > winViewHeight,
+        maxHeight     = boxBigger ? winViewHeight : boxViewHeight,
+        height        = itemHeight,
+        direction     = (selection === 'pageup') ? 'prev' : 'next',
+        prevHeight    = itemHeight,
+        next, nextHeight;
+
+      while( true ) {
+        next = this._getItems( options, direction, $item );
+        if ( !next && $item.is(elem) ) {
+          break;
+        } else if ( !next ) {
+          return $item;
+        }
+        nextHeight = next.outerHeight();
+        if ( height + nextHeight > maxHeight ) {
+          if ( prevHeight + nextHeight > maxHeight ) { return next; }
+          return $item;
+        }
+        height = height + nextHeight;
+        prevHeight = nextHeight;
+        $item = next;
+      }
+      return null;
+
     case 'first': return this.$el.find( options.filter ).first();
     case 'last':  return this.$el.find( options.filter ).last();
+    
     default:      return this.$el.find( options.filter );
     }
   };
@@ -691,6 +726,16 @@
         direction = 'prev';
         sibling = this._findNextSibling( 'prev' );
         break;
+
+      case keyCode.PAGE_DOWN:
+        direction = 'next';
+        sibling = this._findNextSibling( 'pagedown' );
+        break;
+
+      case keyCode.PAGE_UP:
+        direction = 'prev';
+        sibling = this._findNextSibling( 'pageup' );
+        break;
       }
     }
 
@@ -833,7 +878,7 @@
   */
   Plugin.prototype._findNextSibling = function( direction ) {
 
-    var edge = ( direction === 'next' ) ? 'first' : 'last', // extreme item of the list
+    var edge = ( direction === 'next' || direction === "pagedown" ) ? 'first' : 'last', // extreme item of the list
       // If there is the focus - try to find next sibling
       // else get first|last item of the list — depends from direction
       res = ( this.ui.focus ) ? this._getItems( this.options, direction, this.ui.focus ) : this._getItems( this.options, edge );

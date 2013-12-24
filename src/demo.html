@@ -53,7 +53,7 @@
 <body>
 	
 
-    <div id="list" class="">
+    <div id="list" class="scrollable">
         <ul class="">
             <li id="elem0"><span class="handle">
                     <input type="checkbox">
@@ -153,7 +153,9 @@
             // console.log( this );
             // this.selectonic("cancel")
         },
-        select: function( event, ui ) {},
+        select: function( event, ui ) {
+            // console.log( $(ui.target).attr('id') );
+        },
         unSelect: function( event, ui ) { console.log('unSelect')},
         unSelectAll: function( event, ui ) {console.log('unSelectAll')},
         stop: function( event, ui ) {},
