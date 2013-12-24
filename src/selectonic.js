@@ -279,11 +279,6 @@
       }
     });
 
-    $.each( optionsStrings, function(index, val) {
-      option = options[val];
-      if( option ) { option = $.trim( String(option) ); } // Turn in a string and trim spaces
-    });
-
     // Ensure that callbacks options are functions
     $.each( optionsEvents, function(index, name) {
       option = options[name];
