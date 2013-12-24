@@ -1,6 +1,6 @@
 {
   "name": "selectonic",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "jQuery plugin for making selectable lists by mouse and keyboard",
   "main": "selectonic.js",
   "repository": {
