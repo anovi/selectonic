@@ -1,23 +1,4 @@
 {
-  "name": "selectonic",
-  "version": "0.2.1",
-  "description": "jQuery plugin for making selectable lists by mouse and keyboard",
-  "main": "selectonic.js",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/anovi/selectonic.git"
-  },
-  "keywords": [
-    "jquery",
-    "selectable",
-    "selection",
-    "lists"
-  ],
-  "author": "Alexey Novichkov <mygrib@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/anovi/selectonic/issues"
-  },
   "engines": {
     "node": ">= 0.8.0"
   },
