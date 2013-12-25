@@ -40,7 +40,7 @@
   };
 
   /* 
-    Arguments:
+    Constructor
     element – html element
     options – plugin initial options
   */
@@ -725,15 +725,15 @@
         sibling = this._findNextSibling( 'prev' );
         break;
 
-      case keyCode.PAGE_DOWN:
-        direction = 'next';
-        sibling = this._findNextSibling( 'pagedown' );
-        break;
+      // case keyCode.PAGE_DOWN:
+      //   direction = 'next';
+      //   sibling = this._findNextSibling( 'pagedown' );
+      //   break;
 
-      case keyCode.PAGE_UP:
-        direction = 'prev';
-        sibling = this._findNextSibling( 'pageup' );
-        break;
+      // case keyCode.PAGE_UP:
+      //   direction = 'prev';
+      //   sibling = this._findNextSibling( 'pageup' );
+      //   break;
       }
     }
 
