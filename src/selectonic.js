@@ -1167,4 +1167,15 @@
     });
   };
 
+
+
+
+
+  /* DEVELOPMENT */
+  window[ '_' + pluginName ] = Plugin;
+
+
+
+
+
 }(jQuery, window));

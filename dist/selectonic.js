@@ -1,4 +1,4 @@
-/*! Selectonic - v0.2.2 - 2013-12-24
+/*! Selectonic - v0.2.2 - 2013-12-27
 * https://github.com/anovi/selectonic
 * Copyright (c) 2013 Alexey Novichkov; Licensed MIT */
 (function($, window, undefined) {
@@ -43,7 +43,7 @@
   };
 
   /* 
-    Arguments:
+    Constructor
     element – html element
     options – plugin initial options
   */
@@ -350,6 +350,39 @@
         if ( item.is(options.parentSelector) ) { return item; }
       }
       return null;
+    
+    case 'pageup':
+    case 'pagedown':
+      var
+        box           = this._scrolledElem || this.el,
+        boxViewHeight = box.clientHeight,
+        winViewHeight = $( window ).outerHeight(),
+        $current      = $( elem ),
+        isBoxBigger   = boxViewHeight > winViewHeight,
+        pageHeight    = isBoxBigger ? winViewHeight : boxViewHeight,
+        itemHeight    = $current.outerHeight(),
+        currentHeight = itemHeight,
+        itemsHeight   = itemHeight,
+        direction     = (selection === 'pageup') ? 'prev' : 'next',
+        $candidate, candHeight;
+
+      while( true ) {
+        $candidate = this._getItems( options, direction, $current );
+        if ( !$candidate && $current.is( elem ) ) { break; } else if ( !$candidate ) { return $current; }
+        
+        candHeight = $candidate.outerHeight();
+        itemsHeight = itemsHeight + candHeight;
+        
+        if ( itemsHeight > pageHeight ) {
+          // If two items bigger than page than it just will give next item
+          if ( currentHeight + candHeight > pageHeight ) { return $candidate; }
+          return $current;
+        }
+        currentHeight = candHeight;
+        $current = $candidate;
+      }
+      return null;
+
     case 'first': return this.$el.find( options.filter ).first();
     case 'last':  return this.$el.find( options.filter ).last();
     default:      return this.$el.find( options.filter );
@@ -694,6 +727,16 @@
         direction = 'prev';
         sibling = this._findNextSibling( 'prev' );
         break;
+
+      // case keyCode.PAGE_DOWN:
+      //   direction = 'next';
+      //   sibling = this._findNextSibling( 'pagedown' );
+      //   break;
+
+      // case keyCode.PAGE_UP:
+      //   direction = 'prev';
+      //   sibling = this._findNextSibling( 'pageup' );
+      //   break;
       }
     }
 
@@ -836,7 +879,7 @@
   */
   Plugin.prototype._findNextSibling = function( direction ) {
 
-    var edge = ( direction === 'next' ) ? 'first' : 'last', // extreme item of the list
+    var edge = ( direction === 'next' || direction === "pagedown" ) ? 'first' : 'last', // extreme item of the list
       // If there is the focus - try to find next sibling
       // else get first|last item of the list — depends from direction
       res = ( this.ui.focus ) ? this._getItems( this.options, direction, this.ui.focus ) : this._getItems( this.options, edge );

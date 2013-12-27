@@ -89,6 +89,26 @@ module.exports = function(grunt) {
         tasks: ['jshint:test', 'qunit']
       },
     },
+    replace: {
+      all: {
+        options: {
+          patterns: [{
+            match: /\s*\/\* DEVELOPMENT \*\/(\n|.)+\}\(jQuery, window\)\);\n*$/,
+            replacement: '\n\n}(jQuery, window));',
+            expression: true
+          }]
+        },
+        files: [
+          {
+            expand: true,
+            flatten: true,
+            src: ['<%= concat.dist.dest %>'],
+            dest: 'dist/'
+          }
+        ]
+        
+      }
+    }
   });
 
   // These plugins provide necessary tasks.
@@ -99,9 +119,10 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-replace');
 
   // Register Tasks.
-  grunt.registerTask('default', ['connect','jshint', 'qunit', 'clean', 'concat', 'uglify']);
+  grunt.registerTask('default', ['connect','jshint', 'qunit', 'clean', 'concat', 'replace', 'uglify']);
   grunt.registerTask('test', ['connect', 'jshint', 'qunit']);
 
 };

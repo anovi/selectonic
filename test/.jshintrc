@@ -28,6 +28,7 @@
     "strictEqual",
     "notStrictEqual",
     "throws",
-    "Syn"
+    "Syn",
+    "_selectonic"
   ]
 }
