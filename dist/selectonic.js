@@ -1,4 +1,4 @@
-/*! Selectonic - v0.2.2 - 2013-12-27
+/*! Selectonic - v0.2.3 - 2013-12-28
 * https://github.com/anovi/selectonic
 * Copyright (c) 2013 Alexey Novichkov; Licensed MIT */
 (function($, window, undefined) {
@@ -15,7 +15,6 @@
     this.$el             = $( element );
     this.ui              = {};   // Object for DOM elements
     this._selected       = 0;    // Amount of selected items
-    this._prevItemsState = [];   // States of changed items before they will be changed
     this._isEnable       = true; // Flag that plugin is enabled - used by handlers
     this._keyModes       = {};   // to saving holding keys
     this.options         = {};
@@ -199,9 +198,9 @@
       $(params.changedItems),
       $.proxy(
         function( index, item ) {
-          // there is boolean value in array _prevItemsState
+          // there is boolean value in array prevItemsState
           // with same index that item have in _changedItems
-          if ( this._prevItemsState[ index ] ) {
+          if ( params.prevItemsState[ index ] ) {
             this._select( e, params, $(item), true );
           } else {
             this._unselect( e, params, $(item), true );
@@ -210,10 +209,12 @@
       )
     );
     // Restore old focus
-    // this._setFocus( params.prevFocus );
+    if ( params.prevFocus ) {
+      this._setFocus( params.prevFocus );
+    }
     delete params.isCancellation;
     delete this._isPrevented;
-    params.isWasCancelled = true;
+    params.wasCancelled = true;
   };
 
   
@@ -277,10 +278,9 @@
   // Get item, that was clicked
   // or null, if click was not on an item
   Plugin.prototype._getTarget = function( e ) {
-
     var elem = e.target,
       handle = this.options.handle,
-      $elem, target;
+      $elem, target, handleElem;
 
     // While plugin's element or top of the DOM is achieved
     while ( elem !== null && elem !== this.el ) {
@@ -294,7 +294,7 @@
       }
       // If handle option is ON and that elem match to handle's selector
       if( handle && $elem.is( handle ) ) {
-        this.ui.handle = elem;
+        handleElem = elem;
       }
       // Get parent element
       elem = elem.parentNode;
@@ -302,7 +302,7 @@
 
     // If handle option is ON and it was found
     // and item of this list was clicked
-    if( handle && elem && this.ui.handle ) {
+    if( handle && elem && handleElem ) {
       return target;
 
     // If achieved $el of this instance of plugin's object
@@ -398,14 +398,14 @@
       return cb.call( this.$el );
     }
     ui = {};
-    if ( params.target )   { ui.target = params.target; }
-    if ( params.prevFocus )  { ui.focus  = params.prevFocus; }
+    if ( params.target ) { ui.target = params.target; }
+    if ( this.ui.focus ) { ui.focus  = this.ui.focus; }
 
     switch ( name ) {
       case 'select':      ui.items = params.selected; break;
       case 'unselectAll':
       case 'unselect':    ui.items = params.unselected; break;
-      case 'stop':        if ( !params.isWasCancelled ) { ui.items = params.changedItems; } break;
+      case 'stop':        if ( !params.wasCancelled ) { ui.items = params.changedItems; } break;
     }
     // Pass to callback: elem, event object and new ui object
     cb.call( this.$el, event || null, ui );
@@ -414,13 +414,10 @@
 
   // Control the state of a list
   // this method calls from _keyHandler and _mouseHandler or API
-  // and do changes depending on input parameters
+  // and do changes depending from passed params
   Plugin.prototype._controller = function( e, params ) {
     params.changedItems = [];
-
-    // Old focus elem
-    params.prevFocus = ( this.ui.focus ) ? this.ui.focus : null;
-
+    params.prevItemsState = [];
     // Callback
     this._callEvent('before', e, params);
 
@@ -431,10 +428,8 @@
       return;
     }
 
-    /* Set necessary variables */
-
     // Flag - if there was any selected items before changes
-    params.isWasSelected = ( this._selected > 0 );
+    params.wasSelected = ( this._selected > 0 );
 
     // Flag - if target was selectedl before changes
     if ( params.target && params.isTargetWasSelected === undefined ) {
@@ -447,19 +442,17 @@
     */
     if ( params.isRangeSelect && params.isTargetWasSelected && params.target === this.ui.focus ) {
       // do nothing
-    }
 
     // For range selections and multi-selection
-    else if ( params.isRangeSelect || params.isMultiSelect ) {
+    } else if ( params.isRangeSelect || params.isMultiSelect ) {
       if ( params.isTargetWasSelected ) {
         this._unselect( e, params, params.items );
       } else {
         this._select( e, params, params.items );
       }
-    }
 
     // Single selection
-    else if ( params.target ) {
+    } else if ( params.target ) {
 
       // If thre are selected
       if ( this._selected ) {
@@ -474,22 +467,28 @@
           this._unselectAll( e, params );
         }
       }
-
       // Select item. Callback 'select' calls only if target was selected
       this._select( e, params, params.items, params.isTargetWasSelected );
 
     } else {
-
-      // it is not item of list was clicked and 'focusBlur' option is ON
-      if ( this.options.focusBlur ) { this._blur(e, params); }
-
       // if there are selected items and 'selectionBlur' option is true
       if ( this._selected > 0 && this.options.selectionBlur ) { this._unselectAll( e, params ); }
     }
 
-    // Set new focus
-    this._setFocus( params.target );
+    if( !this._selected && params.wasSelected ) {
+      // Callback 
+      this._callEvent('unselectAll', e, params);
+    }
+    
+    // Cache old focus
+    params.prevFocus = ( this.ui.focus ) ? this.ui.focus : null;
 
+    // it is not item of list was clicked and 'focusBlur' option is ON
+    if ( !params.target && this.options.focusBlur ) {
+      this._blur(e, params);
+    // or set new
+    } else if ( params.target ) { this._setFocus( params.target ); }
+    
     // End of the cycle
     this._stop( e, params );
   };
@@ -530,7 +529,7 @@
         // it is not cancellation
         if( !params.isCancellation ) {
           changedItems.push( item );
-          self._prevItemsState.push( isSelected );
+          params.prevItemsState.push( isSelected );
         }
         self._selected += delta;
       }
@@ -542,7 +541,6 @@
 
     // If it is not cancellation
     if( !params.isCancellation ) {
-      // this.ui.items = $( changedItems );
       params[ (aboveZero?'selected':'unselected') ] = $( changedItems );
 
       // Add items of this iteration to array of changed elements
@@ -586,7 +584,6 @@
 
 
   Plugin.prototype._rangeSelect = function( params ) {
-
     params.isRangeSelect = true;
 
     // If target is focused item - do nothing
@@ -605,7 +602,6 @@
 
 
   Plugin.prototype._getIsSelected = function( target ) {
-
     // If was get one item or nothing
     if( $(target).length <= 1 ) {
       return $( target ).hasClass( this.options.selectedClass );
@@ -621,7 +617,6 @@
 
 
   Plugin.prototype._blur = function( e, params, silent ) {
-
     // If is not silent mode and focus exists
     if( !silent && this.ui.focus ) {
       // Callback of focus lost
@@ -637,7 +632,6 @@
 
 
   Plugin.prototype._setFocus = function( target ) {
-
     if( !target ) { return; }
 
     if( this.ui.focus ) {
@@ -653,25 +647,8 @@
 
 
   Plugin.prototype._stop = function( e, params ) {
-
-    // Callback if there were selected items and now are not
-    if( !this._selected && params.isWasSelected ) { this._callEvent('unselectAll', e, params); }
-
-    // this.ui.items = params.changedItems;
     this._callEvent('stop', e, params);
     if( this._isPrevented ) { this._cancel( e, params ); }
-
-    // Clear variables that need only during work of cycle
-    // params.changedItems = [];
-    this._prevItemsState = [];
-    // delete this.ui.items;
-    // delete params.target;
-    delete this.ui.handle;
-    // delete params.items;
-    // delete params.isRangeSelect;
-    // delete params.isMultiSelect;
-    // delete params.isTargetWasSelected;
-    // delete params.isWasSelected;
   };
 
   
@@ -798,11 +775,10 @@
 
 
   /*  FOR SHIFT MODE ONLY
-  *   - turn on shift mode flags
-  *   - solve different situations with shift+arrows selection
+  *   - turns on shift mode flags
+  *   - solves different situations with shift+arrows selection
   */
   Plugin.prototype._multiVariator = function( e, params, key, direction, sibling ) {
-
     var
       // Check if focus or target is selected
       isFocusSelected      = this._getIsSelected( this.ui.focus ),
@@ -890,7 +866,6 @@
   direction – next|prev
   */
   Plugin.prototype._findNextSibling = function( direction ) {
-
     var edge = ( direction === 'next' || direction === "pagedown" ) ? 'first' : 'last', // extreme item of the list
       // If there is the focus - try to find next sibling
       // else get first|last item of the list — depends from direction
@@ -901,7 +876,6 @@
       // find extreme item
       res = this._getItems( this.options, edge );
     }
-
     return res;
   };
 
@@ -942,7 +916,6 @@
   */
   // Mouse events handler - set necessary paramaters and calls _controller
   Plugin.prototype._mouseHandler = function( e ) {
-
     var options = this.options,
     params = {};
 
@@ -973,7 +946,6 @@
     // Get target
     } else { params.target = this._getTarget(e); }
 
-
     // If multi options is true and target exists
     if( options.multi && params.target ) {
 
@@ -999,7 +971,6 @@
 
   */
   Plugin._command = function( options ) {
-
     var
       pluginObject = Plugin.getDataObject( this ),
       apiMethod, selector;
@@ -1049,7 +1020,6 @@
 
 
   Plugin.prototype.option = function() {
-
     var secArg = arguments[1], arg = arguments.length;
 
     // Received two strings

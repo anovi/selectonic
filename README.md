@@ -74,11 +74,11 @@ Option | Description | Type | Default
 Callback functions except `create` and `destroy` may get arguments:
 * `event` — event object from mouse or keyboard handlers.
 * `ui` — object that contains properties with HTML elements:
-	* `target` — link to targeted element, that has clicked or chosen by keyboard.
-	* `focus` — link to focused element.
+	* `target` — link to an element, that has clicked or chosen by keyboard.
+	* `focus` — link to an element that has been a target previously;
 	* `items` — jquery collection of changed items – it could differ from event to event. Look at a table below.
 
-Callback functions and arguments that they receives:
+Callback functions in order which they are called and with arguments which they are receives:
 <table>
 	<thead>
 		<tr>
@@ -104,8 +104,8 @@ Callback functions and arguments that they receives:
 				<strong>before</strong> — calls in every work cycle before any changes.
 			</td>
 			<td>YES</td>
-			<td>if exist</td>
-			<td>if exist</td>
+			<td>if exists</td>
+			<td>if exists</td>
 			<td>—</td>
 		</tr>
 		<tr>
@@ -114,7 +114,7 @@ Callback functions and arguments that they receives:
 			</td>
 			<td>YES</td>
 			<td>YES</td>
-			<td>if exist</td>
+			<td>if exists</td>
 			<td>jquery collection of selected elements</td>
 		</tr>
 		<tr>
@@ -122,8 +122,8 @@ Callback functions and arguments that they receives:
 				<strong>unselect</strong> — one or more elements has been unselected.
 			</td>
 			<td>YES</td>
-			<td>if exist</td>
-			<td>if exist</td>
+			<td>if exists</td>
+			<td>if exists</td>
 			<td>jquery collection of unselected elements</td>
 		</tr>
 		<tr>
@@ -131,8 +131,8 @@ Callback functions and arguments that they receives:
 				<strong>unselectAll</strong> — when all elements in the list has been unselected.
 			</td>
 			<td>YES</td>
-			<td>if exist</td>
-			<td>if exist</td>
+			<td>if exists</td>
+			<td>if exists</td>
 			<td>jquery collection of unselected elements</td>
 		</tr>
 		<tr>
@@ -149,8 +149,8 @@ Callback functions and arguments that they receives:
 				<strong>stop</strong> — calls in the end of every work cycle.
 			</td>
 			<td>YES</td>
-			<td>if exist</td>
-			<td>if exist</td>
+			<td>if exists</td>
+			<td>if exists – but it will already be new focus.</td>
 			<td>all changed items (if they were)</td>
 		</tr>
 		<tr>
