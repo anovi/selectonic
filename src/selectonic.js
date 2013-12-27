@@ -751,6 +751,23 @@
       if ( this.ui.focus && this.options.multi && e.shiftKey && !isAllSelect ) {
         // Call multiVariator – it set all needed flags depends from arguments
         this._multiVariator( e, key, direction, sibling );
+
+        // If there is no SHIFT action (first pressing arrow key with holding SHIFT)
+        // Set mode of selection
+        if ( !this._shiftModeAction ) { this._shiftModeAction = 'select';}
+
+        // If there is no SHIFT key mode (first pressing arrow key with holding SHIFT)
+        // Set pressed arrow key
+        if ( !this._keyModes.shift ) { this._keyModes.shift = key; }
+
+        if ( key === keyCode.END || key === keyCode.HOME ) {
+          // Get range of items and turn on range select mode
+          this._items = this._rangeSelect();
+
+        // Mode of multiply selection
+        } else {
+          this._isMultiSelect = true;
+        }
       }
 
       // There are all necessary attributes now
@@ -851,21 +868,6 @@
     }
     // END CHAIN OF CONDITIONS
     // ---------------------------
-
-    // If there is no SHIFT action (first pressing arrow key with holding SHIFT)
-    // Set mode of selection
-    if ( !this._shiftModeAction ) { this._shiftModeAction = 'select';}
-
-    // If there is no SHIFT key mode (first pressing arrow key with holding SHIFT)
-    // Set pressed arrow key
-    if ( !this._keyModes.shift ) { this._keyModes.shift = key; }
-
-    if ( key === keyCode.END || key === keyCode.HOME ) {
-      // Get range of items and turn on range select mode
-      this._items = this._rangeSelect();
-
-      // Mode of multiply selection
-    } else { this._isMultiSelect = true; }
   };
 
 
