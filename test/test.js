@@ -774,9 +774,7 @@
     var
     box  = getBox(),
     elem = box.find('li:eq(1)'),
-    sec  = box.find('li:eq(3)'),
-    res  = [],
-    options;
+    sec  = box.find('li:eq(3)');
     
     // Set options
     box.selectonic( 'option', {
