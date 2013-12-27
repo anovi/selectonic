@@ -53,6 +53,11 @@ module.exports = function(grunt) {
             return arr;
           })()
         }
+      },
+      dev: {
+        options: {
+          urls: ['./test/test.html']
+        }
       }
     },
     jshint: {
@@ -82,11 +87,11 @@ module.exports = function(grunt) {
       },
       src: {
         files: '<%= jshint.src.src %>',
-        tasks: ['jshint:src', 'qunit']
+        tasks: ['jshint:src', 'qunit:dev']
       },
       test: {
         files: '<%= jshint.test.src %>',
-        tasks: ['jshint:test', 'qunit']
+        tasks: ['jshint:src', 'qunit:dev']
       },
     },
     replace: {
@@ -122,7 +127,8 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-replace');
 
   // Register Tasks.
-  grunt.registerTask('default', ['connect','jshint', 'qunit', 'clean', 'concat', 'replace', 'uglify']);
-  grunt.registerTask('test', ['connect', 'jshint', 'qunit']);
+  grunt.registerTask('default', ['connect','jshint', 'qunit:all', 'clean', 'concat', 'replace', 'uglify']);
+  grunt.registerTask('test', ['connect', 'jshint', 'qunit:all']);
+  grunt.registerTask('dtest', ['jshint', 'qunit:dev']);
 
 };
