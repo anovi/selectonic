@@ -6,7 +6,7 @@ jQuery based plugin for making any list of items selectable by mouse and keyboar
 **Features**:
 - Single or multiple selection (uses CSS-classes);
 - Keyboard input like in classic filemanagers;
-- Possibility to set handle – checkbox or other element for selecting items;
+- Possibility to set handle – elements for selecting items;
 - Auto-scrolling list's element and window;
 - And other configurable stuff.
 
@@ -57,7 +57,7 @@ Option | Description | Type | Default
 **selectionBlur** | List clears selection when user clicks outside of the list. | Boolean | false
 **mouseMode** | `select` – mouse click selects target item and clear other selection in a list; to add/remove item to selection user need holding **ctrl** key (file manager style);<br>`toggle` – mouse click to select/unselect items (like group of checkboxes); | String | "select"
 **event** | `mousedown` – item will be selected when user push on left mouse button. <br>`click` – item will be selected when user click (press and release) on left mouse button. <br>`hybrid` – unselected items will react on mousedown, but selected items will react on click (press and release). It can be usefull when there is another plugin, for example to dragging selected items. | String | "mousedown"
-**handle** | Matches child elemets, that will be served as clickable area inside each item to select/unselect these items. | String | null
+**handle** | Matches child elemets, that will be served as clickable area inside each item to select/unselect these items. I do not reccomend to use `<input type="checkbox">` for that purpose. If you need a checkbox - make a custom one with html/css. | String | null
 **textSelection** | Allow text selection in a list's element. It could be annoying when you selecting items with `shift`+`click`. | Boolean | false
 **keyboard** | Possibility to use keys **Up**, **Down** and **Home**, **End** to move cursor (focus), select range of items by holding **shift** and select all items by pressing **ctrl+A**. | Boolean | false
 **autoScroll** | Scrollable element. When user moves cursor by keys **Up**, **Down**, **Home**, **End** – plugin calculates elements's scroll position in a way that focused item is always visible. Accepts values: <br>`true` – list's element is scrollable; <br>`false` – no scrollable element; <br>`selector (String)` – custom element that is not list's element. | Boolean or String | true
