@@ -114,7 +114,7 @@ Callback functions and arguments that they receives:
 			</td>
 			<td>YES</td>
 			<td>YES</td>
-			<td>YES</td>
+			<td>if exist</td>
 			<td>jquery collection of selected elements</td>
 		</tr>
 		<tr>

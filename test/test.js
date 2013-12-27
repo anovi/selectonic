@@ -76,6 +76,18 @@
     }
   };
 
+  $.fn.shiftMousedown = function() {
+    var e = $.Event( "mousedown" );
+    e.shiftKey = true;
+    this.trigger( e );
+  };
+
+  $.fn.metaMousedown = function() {
+    var e = $.Event( "mousedown" );
+    e.metaKey = true;
+    this.trigger( e );
+  };
+
   QUnit.assert.selected = function( elem ) {
     var actual = elem.hasClass('selected');
     QUnit.push(actual, actual, true, 'Selected');
@@ -159,6 +171,12 @@
     createList( res );
   });
 
+  QUnit.testDone( function () {
+    var box = getBox();
+    if (box.hasClass('selectable')) {
+      box.selectonic('destroy');
+    }
+  });
 
   /*
   *
@@ -648,7 +666,7 @@
     assert.notSelected( elem );
   });
 
-  test( 'option', 6, function() {
+  test( 'option', 7, function() {
     var
     box  = getBox(),
     elem = box.find('li:eq(1)'),
@@ -656,6 +674,7 @@
     res  = [],
     options;
     
+    // Set options
     box
       .selectonic( 'option', {
         before:       function() { res.push( 'before' );       },
@@ -681,6 +700,7 @@
         loop:          true
       });
 
+    // Check getting options object
     options = box.selectonic( 'option' );
     ok((
       options.filter        === 'li:odd' &&
@@ -696,13 +716,15 @@
       options.loop          === true ),
     'Options assigned!');
 
+    // Click
     Syn.click( {}, elem.find('.handle') );
     ok((
       res[0] === 'before' &&
       res[1] === 'select' &&
       res[2] === 'stop'
-    ));
+    ), 'Click on list without any selection.');
 
+    // Click outside list
     res = [];
     Syn.click( {}, $('body') );
     ok((
@@ -711,25 +733,396 @@
       res[2] === 'unselect' &&
       res[3] === 'unselectAll' &&
       res[4] === 'stop'
-    ));
+    ), 'Click outside list');
 
+    // Click outside sec
     res = [];
     Syn.click( {}, $('body') );
-    ok((res[0] === 'before' && res[1] === 'stop'));
+    ok((res[0] === 'before' && res[1] === 'stop'), 'Click outside second');
 
+    // Select item
     Syn.click( {}, elem.find('.handle') );
     res = [];
+    // Select another item
     Syn.click( {}, sec.find('.handle') );
     ok((
       res[0] === 'before' &&
       res[1] === 'unselect' &&
       res[2] === 'select' &&
       res[3] === 'stop'
-    ));
+    ), 'Select another item');
 
+    // Disable handle
+    box.selectonic('option', 'handle', null);
+    // Select item
+    Syn.click( {}, elem );
+    ok((
+      res[0] === 'before' &&
+      res[1] === 'unselect' &&
+      res[2] === 'select' &&
+      res[3] === 'stop'
+    ), 'Select item without handle');
+
+    // Destroing plugin
     res = [];
     box.selectonic( 'destroy' );
-    ok( res[0] === 'destroy' );
+    ok( res[0] === 'destroy', 'Plugin destroied!' );
   });
+
+
+  test( 'before arguments', 20, function() {
+    var
+    box  = getBox(),
+    elem = box.find('li:eq(1)'),
+    sec  = box.find('li:eq(3)'),
+    res  = [],
+    options;
+    
+    // Set options
+    box.selectonic( 'option', {
+      filter:        'li:odd',
+      mouseMode:     'toggle',
+      event:         'hybrid',
+      // handle:        '.handle',
+
+      multi:         true,
+      scrolledElem:  false,
+      preventInputs: false,
+      
+      focusBlur:     true,
+      selectionBlur: true,
+      keyboard:      true,
+      loop:          true,
+
+      before: function( e, ui ) {
+        ok( e, 'event' );
+        ok( ui, 'ui' );
+        ok( ui.target, 'ui.target' );
+        ok( !ui.focus, 'No focus' );
+        ok( !ui.items, 'No items' );
+      },
+      focusLost: function() { },
+      select: function() { },
+      unselect: function() { },
+      unselectAll: function() { },
+      stop: function() { },
+      destroy: function() { }
+    });
+    
+    // Click
+    Syn.click( {}, elem );
+
+    // Select another item
+    box.selectonic( 'option', {
+      before: function( e, ui ) {
+        ok( e, 'event' );
+        ok( ui, 'ui' );
+        ok( ui.target, 'ui.target' );
+        ok( ui.focus, 'focus' );
+        ok( !ui.items, 'items' );
+      }
+    });
+    Syn.click( {}, sec.find('.handle') );
+
+    // Click outside list
+    box.selectonic( 'option', {
+      before: function( e, ui ) {
+        ok( e, 'event' );
+        ok( ui, 'ui' );
+        ok( !ui.target, 'No ui.target' );
+        ok( ui.focus, 'focus' );
+        ok( !ui.items, 'No items' );
+      }
+    });
+    Syn.click( {}, $('body') );
+
+    // Click outside second time
+    box.selectonic( 'option', {
+      before: function( e, ui ) {
+        ok( e, 'event' );
+        ok( ui, 'ui' );
+        ok( !ui.target, 'No ui.target' );
+        ok( !ui.focus, 'No focus' );
+        ok( !ui.items, 'No items' );
+      }
+    });
+    Syn.click( {}, $('body') );
+    box.selectonic( 'option', 'before', null );
+  });
+
+
+  test( 'select arguments', 11, function() {
+    var
+    box  = getBox(),
+    elem = box.find('li:eq(1)'),
+    sec  = box.find('li:eq(3)');
+    
+    // Set options
+    box.selectonic( 'option', {
+      multi:         true,
+      focusBlur:     true,
+      selectionBlur: true,
+      keyboard:      true,
+
+      select: function( e, ui ) {
+        ok( e, 'event' );
+        ok( ui, 'ui' );
+        ok( ui.target, 'target' );
+        ok( !ui.focus, 'focus' );
+        ok( ui.items, 'items' );
+      }
+    });
+    
+    // Click
+    Syn.click( {}, elem );
+
+    // Multi selection
+    box.selectonic( 'option', {
+      select: function( e, ui ) {
+        ok( e, 'event' );
+        ok( ui, 'ui' );
+        ok( ui.target, 'target' );
+        ok( ui.focus, 'focus' );
+        ok( ui.items, 'items' );
+        ok( ui.items.length === 2, '2 items' );
+      }
+    });
+    var e = $.Event( "mousedown" );
+    e.shiftKey = true;
+    sec.trigger( e );
+
+    // Click outside list
+    Syn.click( {}, $('body') );
+  });
+
+
+  test( 'unselect arguments', 12, function() {
+    var
+    box  = getBox(),
+    elem = box.find('li:eq(1)'),
+    sec  = box.find('li:eq(3)');
+    
+    // Set options
+    box.selectonic( 'option', {
+      multi:         true,
+      focusBlur:     true,
+      selectionBlur: true,
+      keyboard:      true,
+
+      unselect: function( e, ui ) {
+        ok( e, 'event' );
+        ok( ui, 'ui' );
+        ok( ui.target, 'target' );
+        ok( ui.focus, 'focus' );
+        ok( ui.items, 'items' );
+        ok( ui.items.length === 2, '2 items' );
+      }
+    });
+    
+    // Multi selection
+    Syn.click( {}, elem );
+    sec.shiftMousedown();
+    // Select one
+    Syn.click( {}, elem );
+
+    // Click outside list
+    sec.shiftMousedown();
+    box.selectonic( 'option', {
+      unselect: function( e, ui ) {
+        ok( e, 'event' );
+        ok( ui, 'ui' );
+        ok( !ui.target, 'No target' );
+        ok( ui.focus, 'focus' );
+        ok( ui.items, 'items' );
+        ok( ui.items.length === 3, '3 items' );
+      }
+    });
+    Syn.click( {}, $('body') );
+    Syn.click( {}, $('body') );
+  });
+
+
+  test( 'unselectAll arguments', 18, function() {
+    var
+    box  = getBox(),
+    elem = box.find('li:eq(1)'),
+    sec  = box.find('li:eq(3)');
+    
+    // Set options
+    box.selectonic( 'option', {
+      multi:         true,
+      focusBlur:     true,
+      selectionBlur: true,
+      keyboard:      true,
+
+      unselectAll: function( e, ui ) {
+        ok( e, 'event' );
+        ok( ui, 'ui' );
+        ok( ui.target, 'target' );
+        ok( ui.focus, 'focus' );
+        ok( ui.items, 'items' );
+        ok( ui.items.length === 3, '3 items' );
+      }
+    });
+    // Unselect all items without focuss loss
+    Syn.click( {}, elem );
+    sec.shiftMousedown();
+    elem.shiftMousedown();
+
+    // Click outside list
+    sec.shiftMousedown();
+    box.selectonic( 'option', {
+      unselectAll: function( e, ui ) {
+        ok( e, 'event' );
+        ok( ui, 'ui' );
+        ok( !ui.target, 'No target' );
+        ok( ui.focus, 'focus' );
+        ok( ui.items, 'items' );
+        ok( ui.items.length === 3, '3 items' );
+      }
+    });
+    Syn.click( {}, $('body') );
+    Syn.click( {}, $('body') );
+
+    // Unselect one item without focuss loss
+    box.selectonic( 'option', {
+      unselectAll: function( e, ui ) {
+        ok( e, 'event' );
+        ok( ui, 'ui' );
+        ok( ui.target, 'target' );
+        ok( ui.focus, 'focus' );
+        ok( ui.items, 'items' );
+        ok( ui.items.length === 1, '1 items' );
+      }
+    });
+    Syn.click( {}, elem );
+    elem.metaMousedown();
+  });
+
+
+  test( 'focusLost arguments', 5, function() {
+    var
+    box  = getBox(),
+    elem = box.find('li:eq(1)');
+    
+    // Set options
+    box.selectonic( 'option', {
+      filter:        'li:odd',
+      mouseMode:     'toggle',
+      event:         'hybrid',
+      // handle:        '.handle',
+
+      multi:         true,
+      scrolledElem:  false,
+      preventInputs: false,
+      
+      focusBlur:     true,
+      selectionBlur: true,
+      keyboard:      true,
+      loop:          true,
+
+      focusLost: function( e, ui ) {
+        ok( e, 'event' );
+        ok( ui, 'ui' );
+        ok( !ui.target, 'No ui.target' );
+        ok( ui.focus, 'focus' );
+        ok( !ui.items, 'No items' );
+      }
+    });
+    
+    // Click
+    Syn.click( {}, elem );
+
+    // Click outside list
+    Syn.click( {}, $('body') );
+    Syn.click( {}, $('body') );
+  });
+
+
+  test( 'stop arguments', 34, function() {
+    var
+    box  = getBox(),
+    elem = box.find('li:eq(1)'),
+    sec  = box.find('li:eq(3)'),
+    third = box.find('li:eq(5)');
+    
+    // Set options
+    box.selectonic( 'option', {
+      multi:         true,
+      scrolledElem:  false,
+      preventInputs: false,
+      
+      focusBlur:     true,
+      selectionBlur: true,
+      keyboard:      true,
+      loop:          true,
+
+      stop: function( e, ui ) {
+        ok( e, 'event' );
+        ok( ui, 'ui' );
+        ok( ui.target, 'target' );
+        ok( !ui.focus, 'No focus' );
+        ok( ui.items, 'items' );
+      }
+    });
+    
+    // Click
+    Syn.click( {}, elem );
+
+    // Range
+    box.selectonic( 'option', 'stop', function( e, ui ) {
+      ok( e, 'event' );
+      ok( ui, 'ui' );
+      ok( ui.target, 'target' );
+      ok( ui.focus, 'focus' );
+      ok( ui.items, 'items' );
+      ok( ui.items.length === 2, '2 items' );
+    });
+    sec.shiftMousedown();
+
+    // Click unselected item
+    box.selectonic( 'option', 'stop', function( e, ui ) {
+      ok( e, 'event' );
+      ok( ui, 'ui' );
+      ok( ui.target, 'target' );
+      ok( ui.focus, 'focus' );
+      ok( ui.items, 'items' );
+      ok( ui.items.length === 4, '4 items' );
+    });
+    Syn.click( {}, third );
+
+    // Select and call `cancel` method
+    box.selectonic( 'option', {
+      select: function( e, ui ) {
+        ok( e, 'event' );
+        ok( ui, 'ui' );
+        ok( ui.target, 'target' );
+        ok( ui.focus, 'focus' );
+        ok( ui.items, 'items' );
+        ok( ui.items.length === 4, '4 items' );
+        this.selectonic('cancel');
+      },
+      stop: function( e, ui ) {
+        ok( e, 'event' );
+        ok( ui, 'ui' );
+        ok( ui.target, 'target' );
+        ok( ui.focus, 'focus' );
+        ok( !ui.items, 'items' );
+      }
+    });
+    elem.shiftMousedown();
+
+    // Click outside list
+    box.selectonic( 'option', 'stop', function( e, ui ) {
+      ok( e, 'event' );
+      ok( ui, 'ui' );
+      ok( !ui.target, 'No target' );
+      ok( ui.focus, 'focus' );
+      ok( ui.items, 'items' );
+      ok( ui.items.length === 1, '1 item' );
+    });
+    Syn.click( {}, $('body') );
+  });
+
 
 }(jQuery, Syn));

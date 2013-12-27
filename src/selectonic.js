@@ -188,7 +188,7 @@
 
 
   Plugin.prototype._cancel = function( e, params ) {
-    this._isCancellation = true;
+    params.isCancellation = true;
 
     // Restore items states
     $.each(
@@ -208,8 +208,9 @@
     );
     // Restore old focus
     // this._setFocus( params.prevFocus );
-    delete this._isCancellation;
+    delete params.isCancellation;
     delete this._isPrevented;
+    params.isWasCancelled = true;
   };
 
   
@@ -395,8 +396,14 @@
     }
     ui = {};
     if ( params.target )   { ui.target = params.target; }
-    if ( this.ui.items )    { ui.items  = this.ui.items; }
     if ( params.prevFocus )  { ui.focus  = params.prevFocus; }
+
+    switch ( name ) {
+      case 'select':      ui.items = params.selected; break;
+      case 'unselectAll':
+      case 'unselect':    ui.items = params.unselected; break;
+      case 'stop':        if ( !params.isWasCancelled ) { ui.items = params.changedItems; } break;
+    }
     // Pass to callback: elem, event object and new ui object
     cb.call( this.$el, event || null, ui );
   };
@@ -407,6 +414,9 @@
   // and do changes depending on input parameters
   Plugin.prototype._controller = function( e, params ) {
     params.changedItems = [];
+
+    // Old focus elem
+    params.prevFocus = ( this.ui.focus ) ? this.ui.focus : null;
 
     // Callback
     this._callEvent('before', e, params);
@@ -419,28 +429,26 @@
     }
 
     /* Set necessary variables */
-    // Old focus elem
-    params.prevFocus = ( this.ui.focus ) ? this.ui.focus : null;
 
     // Flag - if there was any selected items before changes
     params.isWasSelected = ( this._selected > 0 );
 
     // Flag - if target was selectedl before changes
-    if ( params.target && params._isTargetWasSelected === undefined ) {
-      params._isTargetWasSelected = this._getIsSelected( params.target );
+    if ( params.target && params.isTargetWasSelected === undefined ) {
+      params.isTargetWasSelected = this._getIsSelected( params.target );
     }
 
     /* 
     If it is range selection
     and target is selected and equal to focus
     */
-    if ( params.isRangeSelect && params._isTargetWasSelected && params.target === this.ui.focus ) {
+    if ( params.isRangeSelect && params.isTargetWasSelected && params.target === this.ui.focus ) {
       // do nothing
     }
 
     // For range selections and multi-selection
     else if ( params.isRangeSelect || params.isMultiSelect ) {
-      if ( params._isTargetWasSelected ) {
+      if ( params.isTargetWasSelected ) {
         this._unselect( e, params, params.items );
       } else {
         this._select( e, params, params.items );
@@ -457,7 +465,7 @@
         if ( this._selected === 1 && this._getIsSelected(this.ui.focus) ) {
           /* It is case, when user moves cursor by keys or chooses single items by mouse 
           — need just clear selection from focus — no need run go whole DOM of list */
-          this._unselect( e, params, this.ui.focus, params._isTargetWasSelected );
+          this._unselect( e, params, this.ui.focus, params.isTargetWasSelected );
 
         } else {
           this._unselectAll( e, params );
@@ -465,7 +473,7 @@
       }
 
       // Select item. Callback 'select' calls only if target was selected
-      this._select( e, params, params.items, params._isTargetWasSelected );
+      this._select( e, params, params.items, params.isTargetWasSelected );
 
     } else {
 
@@ -502,7 +510,7 @@
         // Condition - if item is not selected (_select) or items is selected (_unselect)
         selectedCondition = ( aboveZero ) ? !isSelected : isSelected,
         // if the item is target and is selected
-        isSelectedTarget = ( item === self.ui.target && self._isTargetWasSelected );
+        isSelectedTarget = ( item === params.target && params.isTargetWasSelected );
 
       /*  If it's unselecting and item is selected target,
         and is not 'multi' or 'range' select mode
@@ -511,13 +519,13 @@
       if (
         isSelectedTarget &&
         !aboveZero &&
-        !self._isMultiSelect &&
-        !self._isRangeSelect
+        !params.isMultiSelect &&
+        !params.isRangeSelect
       ) { return; }
 
       if( selectedCondition ) {
         // it is not cancellation
-        if( !self._isCancellation ) {
+        if( !params.isCancellation ) {
           changedItems.push( item );
           self._prevItemsState.push( isSelected );
         }
@@ -530,8 +538,9 @@
     });
 
     // If it is not cancellation
-    if( !this._isCancellation ) {
-      this.ui.items = $( changedItems );
+    if( !params.isCancellation ) {
+      // this.ui.items = $( changedItems );
+      params[ (aboveZero?'selected':'unselected') ] = $( changedItems );
 
       // Add items of this iteration to array of changed elements
       params.changedItems = params.changedItems.concat( changedItems );
@@ -542,14 +551,14 @@
   Plugin.prototype._select = function( e, params, items, silent ) {
     this._forEachItem( items, 1, params);
     if ( !silent ) { this._callEvent('select', e, params); }
-    if( this._isPrevented && !this._isCancellation ) { this._cancel( e, params ); }
+    if( this._isPrevented && !params.isCancellation ) { this._cancel( e, params ); }
   };
 
 
   Plugin.prototype._unselect = function( e, params, items, silent ) {
     this._forEachItem( items, -1, params );
     if ( !silent ) { this._callEvent('unselect', e, params); }
-    if( this._isPrevented && !this._isCancellation ) { this._cancel( e, params ); }
+    if( this._isPrevented && !params.isCancellation ) { this._cancel( e, params ); }
   };
 
 
@@ -560,9 +569,9 @@
     // Get all items
     items = this._getItems( this.options );
     // target was only selected item ( flag used for preventing callback )
-    isOnlyTargetSelected = params.target && params._isTargetWasSelected && this._selected === 1;
+    isOnlyTargetSelected = params.target && params.isTargetWasSelected && this._selected === 1;
 
-    this.ui.items = null;
+    // this.ui.items = null;
     this._unselect( e, params, items, isOnlyTargetSelected );
   };
 
@@ -645,20 +654,20 @@
     // Callback if there were selected items and now are not
     if( !this._selected && params.isWasSelected ) { this._callEvent('unselectAll', e, params); }
 
-    this.ui.items = params.changedItems;
+    // this.ui.items = params.changedItems;
     this._callEvent('stop', e, params);
     if( this._isPrevented ) { this._cancel( e, params ); }
 
     // Clear variables that need only during work of cycle
     // params.changedItems = [];
     this._prevItemsState = [];
-    delete this.ui.items;
+    // delete this.ui.items;
     // delete params.target;
     delete this.ui.handle;
     // delete params.items;
     // delete params.isRangeSelect;
     // delete params.isMultiSelect;
-    // delete params._isTargetWasSelected;
+    // delete params.isTargetWasSelected;
     // delete params.isWasSelected;
   };
 
@@ -858,7 +867,7 @@
     // Only target selected
     } else if ( !isFocusSelected && isTargetSelected ) {
       params.items = this.ui.focus;
-      params._isTargetWasSelected = false;
+      params.isTargetWasSelected = false;
       // The focus will be selected
       // The focus will be set on target item
 
@@ -944,8 +953,8 @@
 
       if ( params.target && e.type === 'mousedown' ) {
 
-        params._isTargetWasSelected = this._getIsSelected( params.target );
-        if ( params._isTargetWasSelected ) {
+        params.isTargetWasSelected = this._getIsSelected( params.target );
+        if ( params.isTargetWasSelected ) {
           this._mouseDownMode = true;
           return;
         }
