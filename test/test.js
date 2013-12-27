@@ -141,6 +141,7 @@
     
     switch ( info.name ) {
       case 'Blurable mousedown':
+      case 'cancel':
         $.extend( advanced, { focusBlur: true, selectionBlur: true });
         break;
       case 'Toggle mousedown':
@@ -648,10 +649,12 @@
     ok( check, 'There was no unselectAll callback!' );
   });
 
-  test( 'cancel', 2, function() {
+  test( 'cancel', 6, function() {
     var
     box  = getBox(),
-    elem = box.find('li:eq(0)');
+    elem = box.find('li:eq(0)'),
+    sec = box.find('li:eq(5)'),
+    focus;
     
     box
       .selectonic( 'li:odd' )
@@ -664,6 +667,28 @@
 
     assert.selectedCount( 10 );
     assert.notSelected( elem );
+
+    box.selectonic( 'option', 'stop', null );
+    Syn.click( {}, elem );
+    focus = box.selectonic('getFocused');
+    box.selectonic( 'option', {
+      before: function() {
+        this.selectonic('cancel');
+      }
+    });
+    sec.shiftMousedown();
+    assert.selectedCount( 1 );
+    assert.selectedFocus( elem );
+
+    box.selectonic( 'option', 'before', null );
+    box.selectonic( 'option', {
+      stop: function() {
+        this.selectonic('cancel');
+      }
+    });
+    Syn.click( {}, $('body') );
+    assert.selectedCount( 1 );
+    assert.selectedFocus( elem );
   });
 
   test( 'option', 7, function() {
@@ -729,9 +754,9 @@
     Syn.click( {}, $('body') );
     ok((
       res[0] === 'before' &&
-      res[1] === 'focusLost' &&
-      res[2] === 'unselect' &&
-      res[3] === 'unselectAll' &&
+      res[1] === 'unselect' &&
+      res[2] === 'unselectAll' &&
+      res[3] === 'focusLost' &&
       res[4] === 'stop'
     ), 'Click outside list');
 
@@ -1059,7 +1084,7 @@
         ok( e, 'event' );
         ok( ui, 'ui' );
         ok( ui.target, 'target' );
-        ok( !ui.focus, 'No focus' );
+        ok( ui.focus, 'focus' );
         ok( ui.items, 'items' );
       }
     });
@@ -1115,7 +1140,7 @@
       ok( e, 'event' );
       ok( ui, 'ui' );
       ok( !ui.target, 'No target' );
-      ok( ui.focus, 'focus' );
+      ok( !ui.focus, 'No focus' );
       ok( ui.items, 'items' );
       ok( ui.items.length === 1, '1 item' );
     });
