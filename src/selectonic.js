@@ -181,13 +181,9 @@
   };
 
 
-  Plugin.prototype._prevent = function() {
-    this._isPrevented = true;
-  };
-
-
   Plugin.prototype._cancel = function( e, params ) {
-    params.isCancellation = true;
+    if ( params.wasCancelled ) { return; }
+    params.isCancellation = this._isPrevented = true;
 
     // Restore items states
     $.each(
@@ -206,11 +202,8 @@
       )
     );
     // Restore old focus
-    if ( params.prevFocus ) {
-      this._setFocus( params.prevFocus );
-    }
+    if ( params.prevFocus ) { this._setFocus( params.prevFocus ); }
     delete params.isCancellation;
-    delete this._isPrevented;
     params.wasCancelled = true;
   };
 
@@ -415,13 +408,14 @@
   Plugin.prototype._controller = function( e, params ) {
     params.changedItems = [];
     params.prevItemsState = [];
+    delete this._isPrevented;
     // Callback
     this._callEvent('before', e, params);
 
     // If cancel flag is true any changes will be prevented
     if( this._isPrevented ) {
       this._cancel( e, params ); // cancellation
-      this._stop( e );
+      this._stop( e, params );
       return;
     }
 
@@ -484,7 +478,7 @@
     if ( !params.target && this.options.focusBlur ) {
       this._blur(e, params);
     // or set new
-    } else if ( params.target ) { this._setFocus( params.target ); }
+    } else if ( params.target && !params.wasCancelled ) { this._setFocus( params.target ); }
     
     // End of the cycle
     this._stop( e, params );
@@ -803,7 +797,6 @@
 
     // If it serial selection of items by arrow key and target is already selected
     } else if ( this._keyModes.shift && this._shiftModeAction === 'select' && isTargetSelected ) {
-
       /* When user select range of items by holding SHIFT and presses arrow key,
       there are already can be selected items — than focus should jump
       through these selected items to first unselected item */
@@ -1087,11 +1080,7 @@
 
 
   Plugin.prototype.getFocused = function() {
-    if (this.ui.focus) {
-      return this.ui.focus;
-    } else {
-      return null;
-    }
+    if (this.ui.focus) { return this.ui.focus; } else { return null; }
   };
 
 
@@ -1110,13 +1099,12 @@
 
 
   Plugin.prototype.cancel = function() {
-    this._prevent();
+    this._isPrevented = true;
     return this.$el;
   };
 
 
   Plugin.prototype.refresh = function() {
-
     var focus = this.ui.focus;
 
     // Check if focus is visible

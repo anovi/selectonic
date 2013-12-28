@@ -649,7 +649,7 @@
     ok( check, 'There was no unselectAll callback!' );
   });
 
-  test( 'cancel', 6, function() {
+  test( 'cancel', 10, function() {
     var
     box  = getBox(),
     elem = box.find('li:eq(0)'),
@@ -668,6 +668,7 @@
     assert.selectedCount( 10 );
     assert.notSelected( elem );
 
+    // Cancel in before callback
     box.selectonic( 'option', 'stop', null );
     Syn.click( {}, elem );
     focus = box.selectonic('getFocused');
@@ -680,12 +681,28 @@
     assert.selectedCount( 1 );
     assert.selectedFocus( elem );
 
-    box.selectonic( 'option', 'before', null );
+    // Second cancel in stop callback
+    box.selectonic( 'option', 'stop', function() {
+      this.selectonic('cancel');
+    });
+    sec.shiftMousedown();
+    assert.selectedCount( 1 );
+    assert.selectedFocus( elem );
+
+    // First cancel in select and second in stop
     box.selectonic( 'option', {
-      stop: function() {
+      before: null,
+      select: function() {
         this.selectonic('cancel');
       }
     });
+    sec.shiftMousedown();
+    assert.selectedCount( 1 );
+    assert.selectedFocus( elem );
+
+    // Only in stop
+    box.selectonic( 'option', 'select', null );
+    // Try click outside
     Syn.click( {}, $('body') );
     assert.selectedCount( 1 );
     assert.selectedFocus( elem );
