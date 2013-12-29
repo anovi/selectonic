@@ -323,7 +323,8 @@
   };
 
 
-  Plugin.prototype._getItems = function( options, selection, elem ) {
+  Plugin.prototype._getItems = function( params, selection, elem ) {
+    var items;
 
     switch( selection ) {
     case 'next':
@@ -337,7 +338,7 @@
         if ( item.length === 0 ) { break; }
         // Set context, because old (< 1.10.0) versions of jQuery gives wrong result.
         item.context = window.document;
-        if ( item.is(options.parentSelector) ) { return item; }
+        if ( item.is(this.options.parentSelector) ) { return item; }
       }
       return null;
     
@@ -357,7 +358,7 @@
         $candidate, candHeight;
 
       while( true ) {
-        $candidate = this._getItems( options, direction, $current );
+        $candidate = this._getItems( params, direction, $current );
         if ( !$candidate && $current.is( elem ) ) { break; } else if ( !$candidate ) { return $current; }
         
         candHeight = $candidate.outerHeight();
@@ -373,9 +374,20 @@
       }
       return null;
 
-    case 'first': return this.$el.find( options.filter ).first();
-    case 'last':  return this.$el.find( options.filter ).last();
-    default:      return this.$el.find( options.filter );
+    case 'first':
+      items = params.allItems ? params.allItems : this.$el.find( this.options.filter );
+      params.allItems = items;
+      return items.first();
+
+    case 'last':
+      items = params.allItems ? params.allItems : this.$el.find( this.options.filter );
+      params.allItems = items;
+      return items.last();
+
+    default:
+      items = params.allItems ? params.allItems : this.$el.find( this.options.filter );
+      params.allItems = items;
+      return items;
     }
   };
 
@@ -406,6 +418,7 @@
   // this method calls from _keyHandler and _mouseHandler or API
   // and do changes depending from passed params
   Plugin.prototype._controller = function( e, params ) {
+    var method, allItems, items, top, bot, initial;
     params.changedItems = [];
     params.prevItemsState = [];
     delete this._isPrevented;
@@ -434,13 +447,51 @@
     if ( params.isRangeSelect && params.isTargetWasSelected && params.target === this.ui.focus ) {
       // do nothing
 
-    // For range selections and multi-selection
-    } else if ( params.isRangeSelect || params.isMultiSelect ) {
-      if ( params.isTargetWasSelected ) {
-        this._unselect( e, params, params.items );
-      } else {
+    } else if ( params.isRangeSelect ) {
+      allItems = this._getItems( params );
+      top = ( params.rangeStart < params.rangeEnd ) ? params.rangeStart: params.rangeEnd;
+      bot = ( params.rangeStart < params.rangeEnd ) ? params.rangeEnd : params.rangeStart;
+
+      if ( params.isNewRange ) {
+        items = allItems.slice( 0, top );
+        items = items.add( allItems.slice( bot + 1 ) );
+        this._unselect( e, params, items );
         this._select( e, params, params.items );
+      
+      } else if (
+        this._solidInitialElem &&
+        !params.isTargetWasSelected &&
+        (initial = params.items.index( this._solidInitialElem )) >= 0
+      ) {
+        initial = (params.rangeStart < params.rangeEnd) ? params.rangeStart + initial : params.rangeEnd + initial;
+
+        if (
+          (params.rangeEnd <= initial && initial < params.rangeStart) ||
+          (params.rangeEnd >= initial && initial > params.rangeStart)
+        ) {
+          items = initial > params.rangeStart ? allItems.slice( top, initial ) : allItems.slice( initial+1, bot+1 );
+          if (items.length > 0) {
+            this._unselect( e, params, items );
+          }
+        }
+        if (
+          (params.rangeEnd < initial && initial <= params.rangeStart) ||
+          (params.rangeEnd > initial && initial >= params.rangeStart)
+        ) {
+          items = initial > params.rangeEnd ? allItems.slice( top, initial ) : allItems.slice( initial+1, bot+1 );
+          if (items.length > 0) {
+            this._select( e, params, items );
+          }
+        }
+
+      } else {
+        method = params.isTargetWasSelected ? this._unselect : this._select;
+        method.call( this, e, params, params.items );
       }
+
+    } else if ( params.isMultiSelect ) {
+      method = params.isTargetWasSelected ? this._unselect : this._select;
+      method.call( this, e, params, params.items );
 
     // Single selection
     } else if ( params.target ) {
@@ -559,7 +610,7 @@
     if( !this._selected || this._selected === 0 ) { return; }
 
     // Get all items
-    items = this._getItems( this.options );
+    items = this._getItems( params );
     // target was only selected item ( flag used for preventing callback )
     isOnlyTargetSelected = params.target && params.isTargetWasSelected && this._selected === 1;
 
@@ -581,13 +632,16 @@
     if( params.target === this.ui.focus ) { return $( params.target ); }
 
     // Detect position of target and focus in the list
-    var arr = this._getItems( this.options ),
+    var arr = this._getItems( params ),
       x = arr.index( params.target ),
       y = arr.index( this.ui.focus ),
 
     // Get array of items between focus and target
     subArr =     ( x < y ) ? arr.slice( x, y ) : arr.slice( y, x );
     subArr.push( ( x < y ) ? arr[ y ]          : arr[ x ] );
+
+    params.rangeStart = y;
+    params.rangeEnd = x;
     return subArr;
   };
 
@@ -652,7 +706,6 @@
   Plugin.prototype._keyHandler = function( e ) {
 
     if ( !this.options.keyboard ) { return; }
-    // If options for preventing plugin in html inputs and e.target is input, than return
     if ( this.options.preventInputs && e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') { return; }
 
     var key = e.which, // pressed key
@@ -670,57 +723,42 @@
       }
       return;
     }
-
     // If CTRL+A or CMD+A pressed and multi option is true
     if ( key === Plugin.keyCode.A && (e.metaKey || e.ctrlKey) && this.options.multi ) {
-      /* Prevent — bacause it's strange and annoying behavior 
-      when first select all items in the list, and after that 
-      if hold ctrl+A longer — select all text on that page */
-      e.preventDefault();
-
-      // Get all items
-      sibling = this._getItems( this.options );
-      // Set flag, that all items selected
+      sibling = this._getItems( params );
       isAllSelect = true;
 
     } else {
-      // Choose derection and try to find targeted item
+      // Choose direction and try to find targeted item
       switch ( key ) {
       case Plugin.keyCode.HOME:
         direction = 'prev';
-        sibling = this._getItems( this.options, 'first');
+        sibling = this._getItems( params, 'first');
         break;
-
       case Plugin.keyCode.END:
         direction = 'next';
-        sibling = this._getItems( this.options, 'last');
+        sibling = this._getItems( params, 'last');
         break;
-
       case Plugin.keyCode.DOWN:
         direction = 'next';
-        sibling = this._findNextSibling( 'next' );
+        sibling = this._findNextSibling( 'next', params );
         break;
-
       case Plugin.keyCode.UP:
         direction = 'prev';
-        sibling = this._findNextSibling( 'prev' );
+        sibling = this._findNextSibling( 'prev', params );
         break;
-
-      // case Plugin.keyCode.PAGE_DOWN:
-      //   direction = 'next';
-      //   sibling = this._findNextSibling( 'pagedown' );
-      //   break;
-
-      // case Plugin.keyCode.PAGE_UP:
-      //   direction = 'prev';
-      //   sibling = this._findNextSibling( 'pageup' );
-      //   break;
+      case Plugin.keyCode.PAGE_DOWN:
+        direction = 'next';
+        sibling = this._findNextSibling( 'pagedown', params );
+        break;
+      case Plugin.keyCode.PAGE_UP:
+        direction = 'prev';
+        sibling = this._findNextSibling( 'pageup', params );
+        break;
       }
     }
-
     // If sibling has found, that one of the arrows was pressed
     if ( sibling && sibling.length > 0 ) {
-
       // Disable default window scroll by arrow keys
       e.preventDefault();
 
@@ -731,28 +769,32 @@
       // If focus exists and SHIFT pressed and multi option is ON
       if ( this.ui.focus && this.options.multi && e.shiftKey && !isAllSelect ) {
         // Call multiVariator – it set all needed flags depends from arguments
-        this._multiVariator( e, params, key, direction, sibling );
-
-        // If there is no SHIFT action (first pressing arrow key with holding SHIFT)
         // Set mode of selection
-        if ( !this._shiftModeAction ) { this._shiftModeAction = 'select'; }
-
-        // If there is no SHIFT key mode (first pressing arrow key with holding SHIFT)
-        // Set pressed arrow key
-        if ( !this._keyModes.shift ) { this._keyModes.shift = key; }
-
-        if ( key === Plugin.keyCode.END || key === Plugin.keyCode.HOME ) {
-          // Get range of items and turn on range select mode
+        if (
+          key === Plugin.keyCode.END ||
+          key === Plugin.keyCode.HOME || 
+          key === Plugin.keyCode.PAGE_UP || 
+          key === Plugin.keyCode.PAGE_DOWN
+        ) {
           params.items = this._rangeSelect( params );
-
-        // Mode of multiply selection
+          params.isTargetWasSelected = this._getIsSelected( params.target );
+          if ( params.isTargetWasSelected ) {
+            params.items = ( params.rangeStart < params.rangeEnd ) ? params.items.slice(0, params.items.length-1) : params.items.slice( 1 );
+          }
         } else {
+          this._multiVariator( e, params, key, direction, sibling );
           params.isMultiSelect = true;
         }
-      }
+        if ( !this._solidInitialElem ) {
+          this._solidInitialElem = this.ui.focus;
+          params.isNewRange = true;
+        }
+        if ( !this._shiftModeAction ) { this._shiftModeAction = 'select'; }
+        if ( !this._keyModes.shift  ) { this._keyModes.shift  = key;      }
+
+      } else { delete this._solidInitialElem; }
 
       // There are all necessary attributes now
-      // Call _controller
       this._controller( e, params );
 
       // Recalculate plugin's box and window's scrolls
@@ -773,80 +815,51 @@
     var
       // Check if focus or target is selected
       isFocusSelected      = this._getIsSelected( this.ui.focus ),
-      isTargetSelected     = this._getIsSelected( params.target ),
+      isTargetSelected     = params.isTargetWasSelected = this._getIsSelected( params.target ),
       // Search for next sibling in the same direction
-      secSibling           = this._getItems( this.options, direction, sibling ),
+      secSibling           = this._getItems( params, direction, sibling ),
       // Check if second sibling is selected (flag)
-      isSelectedSecSibling = this._getIsSelected( secSibling );
+      isSelectedSecSibling = this._getIsSelected( secSibling ),
+      prevItem;
 
     // If another arrow was pressed that means the direction was changed
     if ( this._keyModes.shift && this._keyModes.shift !== key ) {
       this._keyModes.shift = this._shiftModeAction = null;
     }
 
-    // --------------------------
-    // CHAIN OF CONDITIONS
-    // TODO: do chain of conditions more clear and readable
-
-    // Focus is not selected, target is selected and selected items more than one
-    if ( !isFocusSelected && isTargetSelected && this._selected > 1 ) {
-      // Nothing to do:
-      // - Focus and target already exist
-      // - After this chain _rangeSelect or _isMultiSelect mode will be set
-      return;
-
-    // If it serial selection of items by arrow key and target is already selected
-    } else if ( this._keyModes.shift && this._shiftModeAction === 'select' && isTargetSelected ) {
-      /* When user select range of items by holding SHIFT and presses arrow key,
-      there are already can be selected items — than focus should jump
-      through these selected items to first unselected item */
+    if ( this._keyModes.shift && this._shiftModeAction === 'select' && isTargetSelected ) {
+      /* When user select range of items by holding SHIFT and presses arrow key, there are already can be
+      selected items — focus should jump through these selected items to first unselected item */
 
       // While first unselected item will be found or edge of the list will be reached
       while( this._getIsSelected(params.items) && params.items.length > 0 ) {
         // get next item in the same direction
-        params.items = this._getItems( this.options, direction, params.items );
+        prevItem = params.items;
+        params.items = this._getItems( params, direction, params.items );
       }
-
       // If unselected item was found it becomes target item
       // target will be selected and get the focus
-      if ( params.items.length > 0 ) { params.target = params.items; }
-      
+      params.target = params.items ? params.items : prevItem;
 
-    // If target and focus is selected, but next item to the target is not:
     } else if ( isTargetSelected && isFocusSelected && !isSelectedSecSibling ) {
-      /* Sitiation is possible when user unselect items 
-      by arrow key with holding SHIFT */
+      /* Sitiation is possible when user unselect items by arrow key with holding SHIFT */
 
       // Clear flags of serial selection by SHIFT
       this._keyModes.shift = this._shiftModeAction = null;
       params.items = this.ui.focus;
-      // Selection will be clear on the focus
-      // focus will be set on target item
+      // Selection will be clear on the focus, focus will be set on target item
 
-    // The focus and target is selected
     } else if ( isFocusSelected && isTargetSelected ) {
       params.items = this.ui.focus;
-
       // If there is no SHIFT action (first pressing arrow key with holding SHIFT)
       // Set mode of selection
       if ( !this._shiftModeAction ) { this._shiftModeAction = 'unselect'; }
-      // Selection will be clear on the focus
-      // focus will be set on target item
+      // Selection will be clear on the focus, focus will be set on target item
 
-    // Only target selected
-    } else if ( !isFocusSelected && isTargetSelected ) {
-      params.items = this.ui.focus;
-      params.isTargetWasSelected = false;
-      // The focus will be selected
-      // The focus will be set on target item
-
-    // Nothing is selected
-    } else if ( !isFocusSelected && !isTargetSelected ) {
-      params.target = params.items = this.ui.focus;
+    } else if ( !isFocusSelected ) {
       // Focus will be selected
+      params.target = params.items = this.ui.focus;
     }
-    // END CHAIN OF CONDITIONS
-    // ---------------------------
   };
 
 
@@ -855,16 +868,16 @@
   when UP or DOWN keys was pressed — find next item or first/last of the list
   direction – next|prev
   */
-  Plugin.prototype._findNextSibling = function( direction ) {
+  Plugin.prototype._findNextSibling = function( direction, params ) {
     var edge = ( direction === 'next' || direction === "pagedown" ) ? 'first' : 'last', // extreme item of the list
       // If there is the focus - try to find next sibling
       // else get first|last item of the list — depends from direction
-      res = ( this.ui.focus ) ? this._getItems( this.options, direction, this.ui.focus ) : this._getItems( this.options, edge );
+      res = ( this.ui.focus ) ? this._getItems( params, direction, this.ui.focus ) : this._getItems( params, edge );
 
     // If has not found any items and loop option is ON
     if ( (res === null || res.length === 0) && this.options.loop ) {
       // find extreme item
-      res = this._getItems( this.options, edge );
+      res = this._getItems( params, edge );
     }
     return res;
   };
@@ -950,6 +963,7 @@
     }
 
     if ( params.target && !params.items ) { params.items = $( params.target ); }
+    delete this._solidInitialElem;
     this._controller( e, params );
   };
 
@@ -1048,12 +1062,12 @@
 
   Plugin.prototype.select = function( elem ) {
     var params = {};
-
     // Set params for _controller method:
     params.items = ( elem.addClass ) ? elem : $( elem );
     params.target = elem[0] || elem;
 
     // Call _controller with null instead of event object
+    delete this._solidInitialElem;
     this._controller( null, params );
     return this.$el;
   };

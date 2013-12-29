@@ -29,14 +29,6 @@
 [ ]|            | –            | [ ]
 [ ]|            | –            | [ ]
 
-   | marks      | arrows       | Shift-arrow
----| ---        | ---          | ---
-[ ]|            | –            | [ ]
-[ ]|            | –            | [ ]
-[X]| F-unselect | –            | [X]     
-[ ]| T          | –            | [X] F-select
-[ ]|            | –            | [ ]
-
 ### Jump
 
    | marks      | arrows       | Shift-arrow
@@ -44,7 +36,7 @@
 [X]|            | –            | [X]
 [X]| F–select   | –            | [X]
 [X]| T          | –            | [X]
-[ ]|            | –            | [X] F    
+[ ]|            | –            | [X] F-select
 [ ]|            | –            | [ ]
 
    | marks      | arrows       | Shift-arrow
@@ -53,7 +45,7 @@
 [X]| F–select   | –            | [X]
 [X]| T          | –            | [X]
 [X]|            | –            | [X]    
-[X]|            | –            | [X] F
+[X]|            | –            | [X] F–select
 
 ### Empty focus
 
@@ -80,6 +72,24 @@
 [X]|            | [ ]          | [X]
 [X]|            | [ ]          | [X]
 [ ]|            | [ ]          | [ ]
+
+## Home/End
+
+   | marks      | pageUp/Down  | Shift
+---| ---        | ---          | ---
+[ ]|            | [ ]          | [ ]
+[ ]| F          | [ ]          | [X] F
+[ ]|            | [ ]          | [ ]
+[ ]|            | [ ]          | [ ]
+[ ]| T          | [X] F        | [ ]
+
+   | marks      | pageUp/Down  | Shift
+---| ---        | ---          | ---
+[ ]|            | [ ]          | [ ]
+[X]| F          | [ ]          | [X]
+[ ]|            | [ ]          | [X]
+[ ]|            | [ ]          | [X]
+[ ]| T          | [X] F        | [X] F
 
 
 ## PageUp/PageDown
@@ -118,7 +128,7 @@
 
    | marks      | pageUp/Down  | Shift
 ---| ---        | ---          | ---
-[X]| F          | [ ]          | [ ]
+[X]| F          | [ ]          | [X]
 [X]|            | [ ]          | [X]
 [ ]|            | [ ]          | [X]
 [ ]| T          | [X] F        | [X] F
