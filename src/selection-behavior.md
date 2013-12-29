@@ -1,165 +1,146 @@
 
+# Select mode
 
-# Up/Down and Shift-Up/Down
+## Up/Down and Shift-Up/Down
 
 ### Normal
 
-   | marks      | simple       | Shift-arrow  | Shift-pU/pD
----| ---        | ---          | ---          | ---
-[ ]|            |              |              |
-[x]| F          |              |              |
-[ ]| T          | sel/focus    | sel/focus    |
-[ ]|            |              |              |
-[ ]|            |              |              |
+   | marks      | arrows       | Shift-arrow
+---| ---        | ---          | ---
+[ ]|            | [ ]          | [ ]
+[X]| F          | [ ]          | [X]
+[ ]| T          | [X] F        | [X] F    
+[ ]|            | [ ]          | [ ]
+[ ]|            | [ ]          | [ ]
 
-   | marks      | simple       | Shift-arrow  | Shift-pU/pD
----| ---        | ---          | ---          | ---
-[ ]|            |              |              |
-[x]| F          | unselect     | unselect     |
-[x]| T          | focus        | focus        |
-[ ]|            |              |              |
-[ ]|            |              |              |
+   | marks      | arrows       | Shift-arrow
+---| ---        | ---          | ---
+[ ]|            | [ ]          | [ ]
+[X]| F          | [ ]          | [ ]     
+[X]| T          | [X] F        | [X] F
+[ ]|            | [ ]          | [ ]
+[ ]|            | [ ]          | [ ]
+
+   | marks      | arrows       | Shift-arrow
+---| ---        | ---          | ---
+[ ]|            | –            | [ ]
+[X]| F-unselect | –            | [ ]     
+[X]| T          | –            | [X] F
+[ ]|            | –            | [ ]
+[ ]|            | –            | [ ]
+
+   | marks      | arrows       | Shift-arrow
+---| ---        | ---          | ---
+[ ]|            | –            | [ ]
+[ ]|            | –            | [ ]
+[X]| F-unselect | –            | [X]     
+[ ]| T          | –            | [X] F-select
+[ ]|            | –            | [ ]
 
 ### Jump
 
-   | marks      | simple       | Shift-arrow  | Shift-pU/pD
----| ---        | ---          | ---          | ---
-[x]|            | –            |              |
-[x]| F–select   | –            |              |
-[x]| T          | –            |              |
-[ ]|            | –            | sel/focus    |
-[ ]|            | –            |              |
+   | marks      | arrows       | Shift-arrow
+---| ---        | ---          | ---
+[X]|            | –            | [X]
+[X]| F–select   | –            | [X]
+[X]| T          | –            | [X]
+[ ]|            | –            | [X] F    
+[ ]|            | –            | [ ]
 
-### onFocus
-
-   | marks      | simple       | Shift-arrow  | Shift-pU/pD
----| ---        | ---          | ---          | ---
-[ ]|            |              |              |
-[ ]| F          | select       | select       | select
-[ ]| T          |              |              |
-[ ]|            |              |              |
-[ ]|            |              |              |
+   | marks      | arrows       | Shift-arrow
+---| ---        | ---          | ---
+[X]|            | –            | [X]
+[X]| F–select   | –            | [X]
+[X]| T          | –            | [X]
+[X]|            | –            | [X]    
+[X]|            | –            | [X] F
 
 ### Empty focus
 
-   | marks      | simple       | Shift-arrow  | Shift-pU/pD
----| ---        | ---          | ---          | ---
-[ ]|            |              |              |
-[ ]| F          |              | sel&focus    |
-[x]| T          | focus        |              |
-[ ]|            |              |              |
-[ ]|            |              |              |
+   | marks      | arrows       | Shift-arrow
+---| ---        | ---          | ---
+[ ]|            | [ ]          | [ ]
+[ ]| F          | [ ]          | [X] F
+[ ]| T          | [X] F        | [ ]
+[ ]|            | [ ]          | [ ]
+[ ]|            | [ ]          | [ ]
 
-   | marks      | simple       | Shift-arrow  | Shift-pU/pD
----| ---        | ---          | ---          | ---
-[ ]| F          |              | sel/focus    |
-[x]| T          | focus        |              |
-[x]|            | unselect     |              |
-[x]|            | unselect     |              |
-[ ]|            |              |              |
+   | marks      | arrows       | Shift-arrow
+---| ---        | ---          | ---
+[ ]|            | [ ]          | [ ]
+[ ]| F          | [ ]          | [X] F
+[X]| T          | [X] F        | [ ]
+[ ]|            | [ ]          | [ ]
+[ ]|            | [ ]          | [ ]
 
-
-
-# Shift PageUp/PageDown
-
-1-[ ]T
-2-[ ]
-3-[ ]
-4-[ ]
-5-[ ]
-Select 1
-Focus 1
-
-1-[ ]
-2-[x]F
-3-[ ]
-4-[ ]T
-5-[ ]
-Select 34
-Focus 4
-
-1-[ ]
-2-[ ]F
-3-[ ]
-4-[ ]T
-5-[ ]
-Select 2
-
-1-[ ]
-2-[x]F
-3-[x]
-4-[x]T
-5-[ ]
-Unselect 23
-Focus 4
-
-1-[ ]
-2-[ ]F
-3-[ ]
-4-[x]T
-5-[ ]
-Unselect 4
-Focus 4
-
-1-[ ]
-2-[ ]
-3-[ ]
-4-[ ]
-5-[x]Fv
-
-1-[ ]
-2-[ ]
-3-[ ]
-4-[ ]
-5-[ ]Fv
-Select 5
-
-1-[x]
-2-[x]F v Selecting
-3-[ ]
-4-[x]T
-5-[ ]
-Select 3
-Focus 4
-
-1-[x]
-2-[x]F v selecting
-3-[x]
-4-[x]T
-5-[x]
-Focus 4 - ugly and strage
-
-1-[ ]
-2-[ ]F v unselecting
-3-[ ]
-4-[x]T
-5-[x]
-Unselect 4
-Focus 4 
-
-1-[ ]
-2-[ ]F v unselecting
-3-[x]
-4-[ ]T
-5-[ ]
-Unselect 3
-Focus 4
-
-1-[ ]
-2-[ ]
-3-[ ]
-4-[ ]
-5-[ ]
+   | marks      | arrows       | Shift-arrow
+---| ---        | ---          | ---
+[ ]| F          | [ ]          | [X] F    
+[X]| T          | [X] F        | [X]
+[X]|            | [ ]          | [X]
+[X]|            | [ ]          | [X]
+[ ]|            | [ ]          | [ ]
 
 
+## PageUp/PageDown
+
+   | marks      | pageUp/Down  | Shift
+---| ---        | ---          | ---
+[ ]|            | [ ]          | [ ]
+[ ]| F          | [ ]          | [X] F
+[ ]|            | [ ]          | [ ]
+[ ]| T          | [X] F        | [ ]
+[ ]|            | [ ]          | [ ]
+
+   | marks      | pageUp/Down  | Shift
+---| ---        | ---          | ---
+[ ]|            | [ ]          | [ ]
+[X]| F          | [ ]          | [X]
+[ ]|            | [ ]          | [X]
+[ ]| T          | [X] F        | [X] F
+[ ]|            | [ ]          | [ ]
+
+   | marks      | pageUp/Down  | Shift
+---| ---        | ---          | ---
+[ ]|            | [ ]          | [ ]
+[X]| F          | [ ]          | [X]
+[ ]|            | [ ]          | [X]
+[X]| T          | [X] F        | [X] F
+[X]|            | [ ]          | [ ]
+
+   | marks      | pageUp/Down  | Shift
+---| ---        | ---          | ---
+[X]|            | [ ]          | [ ]
+[X]| F          | [ ]          | [X]
+[ ]|            | [ ]          | [X]
+[ ]| T          | [X] F        | [X] F
+[ ]|            | [ ]          | [ ]
+
+   | marks      | pageUp/Down  | Shift
+---| ---        | ---          | ---
+[X]| F          | [ ]          | [ ]
+[X]|            | [ ]          | [X]
+[ ]|            | [ ]          | [X]
+[ ]| T          | [X] F        | [X] F
+[ ]|            | [ ]          | [ ]
 
 
+# Toggle mode
+
+   | marks      | arrows       | Shift
+---| ---        | ---          | ---
+[ ]|            | [ ]          | [ ]
+[X]| F          | [X]          | [X] F
+[ ]| T          | [ ] F        | [ ] F
+[ ]|            | [ ]          | [ ]
+[ ]|            | [ ]          | [ ]
+
+   | marks      | arrows       | Shift
+---| ---        | ---          | ---
+[ ]|            | [ ]          | [ ]
+[X]| F          | [X]          | [X]
+[X]| T          | [X] F        | [X] F
+[ ]|            | [ ]          | [ ]
+[ ]|            | [ ]          | [ ]
 
 
-   | marks      | simple       | Shift-arrow  | Shift-pU/pD
----| ---        | ---          | ---          | ---
-[ ]|            |              |              |
-[ ]|            |              |              |
-[ ]|            |              |              |
-[ ]|            |              |              |
-[ ]|            |              |              |
