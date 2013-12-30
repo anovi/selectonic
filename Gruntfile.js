@@ -2,6 +2,9 @@
 
 module.exports = function(grunt) {
 
+  var jqueries = ['1.7.0', '1.9.0', '1.10.2'];
+  // var jqueries = ['1.7.0', '1.9.0', '1.10.2', '2.0.3'];
+
   // Project configuration.
   grunt.initConfig({
     // Metadata.
@@ -45,19 +48,23 @@ module.exports = function(grunt) {
       all: {
         options: {
           urls: (function() {
-            var base = 'http://localhost:<%= connect.server.options.port %>/test/test.html';
-            var arr = ['1.7.0', '1.9.0', '1.10.2', '2.0.3'].map(function(version) {
-              return base + '?jquery=' + version;
-            });
-            arr.push(base);
+            var path, arr = [], paths = [
+            'http://localhost:<%= connect.server.options.port %>/test/test.html',
+            'http://localhost:<%= connect.server.options.port %>/test/keyboard.html'
+            ];
+            for (var i = 0; i < paths.length; i++) {
+              path = paths[i];
+              for (var y = 0; y < jqueries.length; y++) {
+                arr.push( path + '?jquery=' + jqueries[y] );
+              }
+              arr.push( path );
+            }
             return arr;
           })()
         }
       },
       dev: {
-        options: {
-          urls: ['./test/test.html']
-        }
+        src: ['./test/*.html']
       }
     },
     jshint: {
