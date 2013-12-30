@@ -418,7 +418,7 @@
   // this method calls from _keyHandler and _mouseHandler or API
   // and do changes depending from passed params
   Plugin.prototype._controller = function( e, params ) {
-    var method, allItems, items, top, bot, initial;
+    var method, allItems, items, top, bot, initial, beforeStart, afterStart, beforeEnd, afterEnd;
     params.changedItems = [];
     params.prevItemsState = [];
     delete this._isPrevented;
@@ -452,38 +452,45 @@
       top = ( params.rangeStart < params.rangeEnd ) ? params.rangeStart: params.rangeEnd;
       bot = ( params.rangeStart < params.rangeEnd ) ? params.rangeEnd : params.rangeStart;
 
-      if ( params.isNewRange ) {
+      // New solid selectioin
+      if ( params.isNewSolidSelection ) {
+        // Get items from top to first range item (not include)
         items = allItems.slice( 0, top );
+        // Add items from last range item (not include) to the end of list
         items = items.add( allItems.slice( bot + 1 ) );
         this._unselect( e, params, items );
         this._select( e, params, params.items );
       
+      // Existing Solid selection and target not selected
+      // And initial selection elem is in current range
       } else if (
         this._solidInitialElem &&
         !params.isTargetWasSelected &&
         (initial = params.items.index( this._solidInitialElem )) >= 0
       ) {
-        initial = (params.rangeStart < params.rangeEnd) ? params.rangeStart + initial : params.rangeEnd + initial;
+        // Need to unselect items from start to initial elem and select from initial elem to the end
+        initial     = (params.rangeStart < params.rangeEnd) ? params.rangeStart + initial : params.rangeEnd + initial;
+        beforeStart = initial < params.rangeStart;
+        afterStart  = params.rangeStart < initial;
+        beforeEnd   = initial < params.rangeEnd;
+        afterEnd    = params.rangeEnd < initial;
 
-        if (
-          (params.rangeEnd <= initial && initial < params.rangeStart) ||
-          (params.rangeEnd >= initial && initial > params.rangeStart)
-        ) {
-          items = initial > params.rangeStart ? allItems.slice( top, initial ) : allItems.slice( initial+1, bot+1 );
+        if (( !beforeEnd && beforeStart ) || ( !afterEnd && afterStart)) {
+          // Items from range start to initial solid selection elem (but not include)
+          items = afterStart ? allItems.slice( top, initial ) : allItems.slice( initial+1, bot+1 );
           if (items.length > 0) {
             this._unselect( e, params, items );
           }
         }
-        if (
-          (params.rangeEnd < initial && initial <= params.rangeStart) ||
-          (params.rangeEnd > initial && initial >= params.rangeStart)
-        ) {
-          items = initial > params.rangeEnd ? allItems.slice( top, initial ) : allItems.slice( initial+1, bot+1 );
+        if (( afterEnd && !afterStart ) || ( beforeEnd && !beforeStart )) {
+          // Items from range end to initial selection elem (but not include)
+          items = afterEnd ? allItems.slice( top, initial ) : allItems.slice( initial+1, bot+1 );
           if (items.length > 0) {
             this._select( e, params, items );
           }
         }
 
+      // Common range select
       } else {
         method = params.isTargetWasSelected ? this._unselect : this._select;
         method.call( this, e, params, params.items );
@@ -787,7 +794,7 @@
         // Set solid selection
         if ( !this._solidInitialElem && params.target !== this.ui.focus ) {
           this._solidInitialElem = this.ui.focus;
-          params.isNewRange = true;
+          params.isNewSolidSelection = true;
         }
 
         // Set mode of selection
