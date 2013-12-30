@@ -75,7 +75,7 @@
   */
   Plugin.prototype._init = function() {
     this.$el.addClass( this.options.listClass );            // Add class to box
-    this._onHandler();                                      // Attach handlers6
+    this._bindEvents();                                      // Attach handlers6
     this.$el.data( 'plugin_' + Plugin.pluginName, this );   // Save plugin's object instance
     this._callEvent('create');                              // Callback
   };
@@ -135,11 +135,8 @@
 
   Plugin.prototype._destroy = function() {
 
-    // Callback before removing plugin data
     this._callEvent('destroy');
-
-    // Detach handlers
-    this._offHandler();
+    this._unbindEvents();
 
     // If focus exists
     if( this.ui.focus ) {
@@ -212,7 +209,7 @@
 
   
   // Attath handlers
-  Plugin.prototype._onHandler = function() {
+  Plugin.prototype._bindEvents = function() {
 
     // Handler for mouse events
     this._mouseEventHandler = $.proxy( function(e) {
@@ -249,7 +246,7 @@
 
   
   // Detach handlers
-  Plugin.prototype._offHandler = function() {
+  Plugin.prototype._unbindEvents = function() {
 
     $( window.document ).off(
       'click' + '.' + this._name + ' ' + 'mousedown' + '.' + this._name,
@@ -501,7 +498,7 @@
 
   Plugin.prototype._perfomRangeSelect = function( e, params ) {
     var method, items, initial, beforeStart, afterStart, beforeEnd, afterEnd,
-    
+
     endAfterStart = params.rangeStart < params.rangeEnd,
     allItems      = this._getItems( params ),
     top           = ( endAfterStart ) ? params.rangeStart: params.rangeEnd,
@@ -553,7 +550,7 @@
   };
 
 
-  Plugin.prototype._forEachItem = function( items, delta, params ) {
+  Plugin.prototype._changeItemsStates = function( items, delta, params ) {
     /*
     'delta' is number to modifying selection counter
     above zero 'delta' from _select/ sub zero 'delta' from _unselect
@@ -609,14 +606,14 @@
 
 
   Plugin.prototype._select = function( e, params, items, silent ) {
-    this._forEachItem( items, 1, params);
+    this._changeItemsStates( items, 1, params);
     if ( !silent ) { this._callEvent('select', e, params); }
     if( this._isPrevented && !params.isCancellation ) { this._cancel( e, params ); }
   };
 
 
   Plugin.prototype._unselect = function( e, params, items, silent ) {
-    this._forEachItem( items, -1, params );
+    this._changeItemsStates( items, -1, params );
     if ( !silent ) { this._callEvent('unselect', e, params); }
     if( this._isPrevented && !params.isCancellation ) { this._cancel( e, params ); }
   };
@@ -664,13 +661,12 @@
 
 
   Plugin.prototype._getIsSelected = function( target ) {
+    var options = this.options;
+    
     // If was get one item or nothing
     if( $(target).length <= 1 ) {
-      return $( target ).hasClass( this.options.selectedClass );
+      return $( target ).hasClass( options.selectedClass );
     }
-
-    var options = this.options;
-
     // Return array of boolean values
     return $.map( $(target), function( item ) {
       return $( item ).hasClass( options.selectedClass );
@@ -806,7 +802,7 @@
           params.isNewSolidSelection = true;
         }
 
-        // Set mode of selection
+        // Set selection mode
         if ( !this._shiftModeAction ) { this._shiftModeAction = 'select'; }
         if ( !this._keyModes.shift  ) { this._keyModes.shift  = key;      }
 
@@ -1017,7 +1013,7 @@
   Public API
 
   */
-  Plugin._command = function( options ) {
+  Plugin._callPublicMethod = function( options ) {
     var
       pluginObject = Plugin.getDataObject( this ),
       apiMethod, selector;
@@ -1183,12 +1179,12 @@
 
     // If string passed
     if( options && options.charAt ) {
-      return Plugin._command.apply( this, arguments );
+      return Plugin._callPublicMethod.apply( this, arguments );
     }
 
     // DOM element passed
     else if ( options && (options.addClass || options.parentNode) ) {
-      return Plugin._command.call( this, options );
+      return Plugin._callPublicMethod.call( this, options );
     }
 
     // Create instances
