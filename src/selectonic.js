@@ -766,33 +766,37 @@
       params.target = sibling[0];
       params.items = sibling;
 
-      // If focus exists and SHIFT pressed and multi option is ON
-      if ( this.ui.focus && this.options.multi && e.shiftKey && !isAllSelect ) {
-        // Call multiVariator – it set all needed flags depends from arguments
-        // Set mode of selection
+      // SHIFT mode
+      if (
+        this.ui.focus && 
+        this.options.multi && 
+        e.shiftKey && 
+        !isAllSelect
+      ) {
+        // Call multiVariator or rangeVariator – 
+        // it set all needed params depends from arguments
         if (
-          key === Plugin.keyCode.END ||
-          key === Plugin.keyCode.HOME || 
-          key === Plugin.keyCode.PAGE_UP || 
-          key === Plugin.keyCode.PAGE_DOWN
+          key === Plugin.keyCode.END     || key === Plugin.keyCode.HOME ||
+          key === Plugin.keyCode.PAGE_UP || key === Plugin.keyCode.PAGE_DOWN
         ) {
-          params.items = this._rangeSelect( params );
-          params.isTargetWasSelected = this._getIsSelected( params.target );
-          if ( params.isTargetWasSelected ) {
-            params.items = ( params.rangeStart < params.rangeEnd ) ? params.items.slice(0, params.items.length-1) : params.items.slice( 1 );
-          }
+          this._rangeVariator( params );
         } else {
-          this._multiVariator( e, params, key, direction, sibling );
-          params.isMultiSelect = true;
+          this._multiVariator( params, key, direction, sibling );
         }
-        if ( !this._solidInitialElem ) {
+
+        // Set solid selection
+        if ( !this._solidInitialElem && params.target !== this.ui.focus ) {
           this._solidInitialElem = this.ui.focus;
           params.isNewRange = true;
         }
+
+        // Set mode of selection
         if ( !this._shiftModeAction ) { this._shiftModeAction = 'select'; }
         if ( !this._keyModes.shift  ) { this._keyModes.shift  = key;      }
 
-      } else { delete this._solidInitialElem; }
+      } else {
+        delete this._solidInitialElem;
+      }
 
       // There are all necessary attributes now
       this._controller( e, params );
@@ -807,15 +811,37 @@
   };
 
 
+  Plugin.prototype._rangeVariator = function( params ) {
+    var
+      isFocusSelected = this._getIsSelected( this.ui.focus ),
+      isTargetSelected = params.isTargetWasSelected = this._getIsSelected( params.target );
+
+    if ( !isFocusSelected && !isTargetSelected ) {
+      // Only target will be selected
+      params.target = params.items = this.ui.focus;
+      params.isMultiSelect = true;
+    } else {
+      // Range will be selected
+      params.items = this._rangeSelect( params );
+      // Cut target from end or begin because we do not want to unselect it
+      if ( isTargetSelected ) {
+        params.items = params.rangeStart < params.rangeEnd ? (
+        params.items.slice(0, params.items.length-1)
+        ) : (params.items.slice(1) );
+      }
+    }
+  };
+
+
   /*  FOR SHIFT MODE ONLY
   *   - turns on shift mode flags
   *   - solves different situations with shift+arrows selection
   */
-  Plugin.prototype._multiVariator = function( e, params, key, direction, sibling ) {
+  Plugin.prototype._multiVariator = function( params, key, direction, sibling ) {
     var
       // Check if focus or target is selected
       isFocusSelected      = this._getIsSelected( this.ui.focus ),
-      isTargetSelected     = params.isTargetWasSelected = this._getIsSelected( params.target ),
+      isTargetSelected     = this._getIsSelected( params.target ),
       // Search for next sibling in the same direction
       secSibling           = this._getItems( params, direction, sibling ),
       // Check if second sibling is selected (flag)
@@ -860,6 +886,7 @@
       // Focus will be selected
       params.target = params.items = this.ui.focus;
     }
+    params.isMultiSelect = true;
   };
 
 
