@@ -42,6 +42,14 @@
       // IE<9
       document.selection.clear();
     }
+  },
+
+  
+  elems = function() {
+    var elems = getBox().find('li');
+    return function( eq ) {
+      return elems.eq( eq );
+    };
   };
 
 
@@ -50,12 +58,14 @@
     var e = $.Event( "mousedown" );
     e.shiftKey = true;
     this.trigger( e );
+    return this;
   };
 
   $.fn.metaMousedown = function() {
     var e = $.Event( "mousedown" );
     e.metaKey = true;
     this.trigger( e );
+    return this;
   };
 
 
@@ -107,6 +117,7 @@
   _Utils.getBox           = getBox;
   _Utils.getSelectionText = getSelectionText;
   _Utils.clearSelection   = clearSelection;
+  _Utils.elems            = elems;
 
   window._Utils = _Utils;
   return _Utils;
