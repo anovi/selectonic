@@ -2,7 +2,7 @@
   
   /*
     TODO: more apppropriate test for mouseMode option
-    TODO: test for scrolledElem option
+    TODO: test for autoScroll option
     TODO: test situation when items are not direct chilren of container
     TODO: several lists on the page
   */
@@ -32,7 +32,7 @@
     textSelection: true,
 
     multi:         true,
-    scrolledElem:  true,
+    autoScroll:    true,
     preventInputs: true,
     
     focusBlur:     false,
@@ -540,7 +540,7 @@
         handle:        '.handle',
 
         multi:         false,
-        scrolledElem:  false,
+        autoScroll:  false,
         preventInputs: false,
         
         focusBlur:     true,
@@ -557,7 +557,7 @@
       options.event         === 'hybrid' &&
       options.handle        === '.handle' &&
       options.multi         === false &&
-      options.scrolledElem  === false &&
+      options.autoScroll  === false &&
       options.preventInputs === false &&
       options.focusBlur     === true &&
       options.selectionBlur === true &&
@@ -618,7 +618,6 @@
     ok( res[0] === 'destroy', 'Plugin destroied!' );
   });
 
-
   test( 'before arguments', 20, function() {
     var
     box  = getBox(),
@@ -633,7 +632,7 @@
       // handle:        '.handle',
 
       multi:         true,
-      scrolledElem:  false,
+      autoScroll:  false,
       preventInputs: false,
       
       focusBlur:     true,
@@ -860,7 +859,7 @@
       // handle:        '.handle',
 
       multi:         true,
-      scrolledElem:  false,
+      autoScroll:  false,
       preventInputs: false,
       
       focusBlur:     true,
@@ -896,7 +895,7 @@
     // Set options
     box.selectonic( 'option', {
       multi:         true,
-      scrolledElem:  false,
+      autoScroll:  false,
       preventInputs: false,
       
       focusBlur:     true,
@@ -970,6 +969,43 @@
     });
     Syn.click( {}, $('body') );
   });
+
+
+  test( 'API exceptions', 6, function() {
+    var box = getBox();
+    try {
+      box.selectonic( 'option', false );
+    } catch (err) {
+      ok( err.message.match(/Format.*option.*/), 'Wrong option format' );
+    }
+    try {
+      box.selectonic( 'option', 'mouseMode', 'superlalala' );
+    } catch (err) {
+      ok( err.message.match(/Option.*values.*/), 'Option only allowed values' );
+    }
+    try {
+      box.selectonic( 'option', 'listClass', 'superlalala' );
+    } catch (err) {
+      ok( err.message.match(/change.*class.*/), 'Is not allowed change classnames' );
+    }
+    try {
+      box.selectonic( 'option', 'before', 'superlalala' );
+    } catch (err) {
+      ok( err.message.match(/Option.*function.*/), 'Should be a function' );
+    }
+    try {
+      box.selectonic( 'option', 'autoScroll', '#superlalala' );
+    } catch (err) {
+      ok( err.message.match(/elements.*selector.*/), 'No elems matches selector for autoScroll' );
+    }
+    try {
+      $('#list').selectonic( 'option', 'autoScroll', '#superlalala' );
+    } catch (err) {
+      ok( err.message.match(/plugin/), 'Elem has no plugin attached' );
+    }
+  });
+
+
 
 
 }(jQuery, Syn));
