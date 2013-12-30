@@ -323,15 +323,15 @@
   };
 
 
-  Plugin.prototype._getItems = function( params, selection, elem ) {
+  Plugin.prototype._getItems = function( params, target, elem ) {
     var items;
 
-    switch( selection ) {
+    switch( target ) {
     case 'next':
     case 'prev':
       var
       item = elem.jquery ? elem : $( elem ),
-      find = $.fn[selection];
+      find = $.fn[target];
 
       while (true) {
         item = find.call( item );
@@ -354,7 +354,7 @@
         itemHeight    = $current.outerHeight(),
         currentHeight = itemHeight,
         itemsHeight   = itemHeight,
-        direction     = (selection === 'pageup') ? 'prev' : 'next',
+        direction     = (target === 'pageup') ? 'prev' : 'next',
         $candidate, candHeight;
 
       while( true ) {
@@ -418,7 +418,7 @@
   // this method calls from _keyHandler and _mouseHandler or API
   // and do changes depending from passed params
   Plugin.prototype._controller = function( e, params ) {
-    var method, allItems, items, top, bot, initial, beforeStart, afterStart, beforeEnd, afterEnd;
+    var method;
     params.changedItems = [];
     params.prevItemsState = [];
     delete this._isPrevented;
@@ -439,63 +439,21 @@
     if ( params.target && params.isTargetWasSelected === undefined ) {
       params.isTargetWasSelected = this._getIsSelected( params.target );
     }
-
-    /* 
-    If it is range selection
-    and target is selected and equal to focus
-    */
-    if ( params.isRangeSelect && params.isTargetWasSelected && params.target === this.ui.focus ) {
+    
+    // If it is range selection
+    // and target is selected and equal to focus
+    if (
+      params.isRangeSelect && 
+      params.isTargetWasSelected && 
+      params.target === this.ui.focus
+    ) {
       // do nothing
 
+    // Range
     } else if ( params.isRangeSelect ) {
-      allItems = this._getItems( params );
-      top = ( params.rangeStart < params.rangeEnd ) ? params.rangeStart: params.rangeEnd;
-      bot = ( params.rangeStart < params.rangeEnd ) ? params.rangeEnd : params.rangeStart;
+      this._perfomRangeSelect( e, params);
 
-      // New solid selectioin
-      if ( params.isNewSolidSelection ) {
-        // Get items from top to first range item (not include)
-        items = allItems.slice( 0, top );
-        // Add items from last range item (not include) to the end of list
-        items = items.add( allItems.slice( bot + 1 ) );
-        this._unselect( e, params, items );
-        this._select( e, params, params.items );
-      
-      // Existing Solid selection and target not selected
-      // And initial selection elem is in current range
-      } else if (
-        this._solidInitialElem &&
-        !params.isTargetWasSelected &&
-        (initial = params.items.index( this._solidInitialElem )) >= 0
-      ) {
-        // Need to unselect items from start to initial elem and select from initial elem to the end
-        initial     = (params.rangeStart < params.rangeEnd) ? params.rangeStart + initial : params.rangeEnd + initial;
-        beforeStart = initial < params.rangeStart;
-        afterStart  = params.rangeStart < initial;
-        beforeEnd   = initial < params.rangeEnd;
-        afterEnd    = params.rangeEnd < initial;
-
-        if (( !beforeEnd && beforeStart ) || ( !afterEnd && afterStart)) {
-          // Items from range start to initial solid selection elem (but not include)
-          items = afterStart ? allItems.slice( top, initial ) : allItems.slice( initial+1, bot+1 );
-          if (items.length > 0) {
-            this._unselect( e, params, items );
-          }
-        }
-        if (( afterEnd && !afterStart ) || ( beforeEnd && !beforeStart )) {
-          // Items from range end to initial selection elem (but not include)
-          items = afterEnd ? allItems.slice( top, initial ) : allItems.slice( initial+1, bot+1 );
-          if (items.length > 0) {
-            this._select( e, params, items );
-          }
-        }
-
-      // Common range select
-      } else {
-        method = params.isTargetWasSelected ? this._unselect : this._select;
-        method.call( this, e, params, params.items );
-      }
-
+    // Multi
     } else if ( params.isMultiSelect ) {
       method = params.isTargetWasSelected ? this._unselect : this._select;
       method.call( this, e, params, params.items );
@@ -503,29 +461,24 @@
     // Single selection
     } else if ( params.target ) {
 
-      // If thre are selected
-      if ( this._selected ) {
+      // If there is one selected item and it is focused
+      if ( this._selected && this._selected === 1 && this._getIsSelected(this.ui.focus) ) {
+        /* It is case, when user moves cursor by keys or chooses single items by mouse 
+        — need just clear selection from focus — no need run go whole DOM of list */
+        this._unselect( e, params, this.ui.focus, params.isTargetWasSelected );
 
-        // If there is one selected item and it is focused
-        if ( this._selected === 1 && this._getIsSelected(this.ui.focus) ) {
-          /* It is case, when user moves cursor by keys or chooses single items by mouse 
-          — need just clear selection from focus — no need run go whole DOM of list */
-          this._unselect( e, params, this.ui.focus, params.isTargetWasSelected );
-
-        } else {
-          this._unselectAll( e, params );
-        }
+      } else if (this._selected) {
+        this._unselectAll( e, params );
       }
       // Select item. Callback 'select' calls only if target was selected
       this._select( e, params, params.items, params.isTargetWasSelected );
 
-    } else {
-      // if there are selected items and 'selectionBlur' option is true
-      if ( this._selected > 0 && this.options.selectionBlur ) { this._unselectAll( e, params ); }
+    // if there are selected items and 'selectionBlur' option is true
+    } else if ( this._selected > 0 && this.options.selectionBlur ) { 
+      this._unselectAll( e, params );
     }
 
     if( !this._selected && params.wasSelected ) {
-      // Callback 
       this._callEvent('unselectAll', e, params);
     }
     
@@ -540,6 +493,60 @@
     
     // End of the cycle
     this._stop( e, params );
+  };
+
+
+  Plugin.prototype._perfomRangeSelect = function( e, params ) {
+    var method, items, initial, beforeStart, afterStart, beforeEnd, afterEnd,
+    
+    endAfterStart = params.rangeStart < params.rangeEnd,
+    allItems      = this._getItems( params ),
+    top           = ( endAfterStart ) ? params.rangeStart: params.rangeEnd,
+    bot           = ( endAfterStart ) ? params.rangeEnd : params.rangeStart;
+
+    // New solid selectioin
+    if ( params.isNewSolidSelection ) {
+      // Get items from top to first range item (not include)
+      items = allItems.slice( 0, top );
+      // Add items from last range item (not include) to the end of list
+      items = items.add( allItems.slice( bot + 1 ) );
+      this._unselect( e, params, items );
+      this._select( e, params, params.items );
+    
+    // Existing Solid selection and target not selected
+    // And initial selection elem is in current range
+    } else if (
+      this._solidInitialElem &&
+      !params.isTargetWasSelected &&
+      (initial = params.items.index( this._solidInitialElem )) >= 0
+    ) {
+      // Need to unselect items from start to initial elem and select from initial elem to the end
+      initial     = ( endAfterStart ) ? params.rangeStart + initial : params.rangeEnd + initial;
+      beforeStart = initial < params.rangeStart;
+      afterStart  = params.rangeStart < initial;
+      beforeEnd   = initial < params.rangeEnd;
+      afterEnd    = params.rangeEnd < initial;
+
+      if (( !beforeEnd && beforeStart ) || ( !afterEnd && afterStart)) {
+        // Items from range start to initial solid selection elem (but not include)
+        items = afterStart ? allItems.slice( top, initial ) : allItems.slice( initial+1, bot+1 );
+        if (items.length > 0) {
+          this._unselect( e, params, items );
+        }
+      }
+      if (( afterEnd && !afterStart ) || ( beforeEnd && !beforeStart )) {
+        // Items from range end to initial selection elem (but not include)
+        items = afterEnd ? allItems.slice( top, initial ) : allItems.slice( initial+1, bot+1 );
+        if (items.length > 0) {
+          this._select( e, params, items );
+        }
+      }
+
+    // Common range select
+    } else {
+      method = params.isTargetWasSelected ? this._unselect : this._select;
+      method.call( this, e, params, params.items );
+    }
   };
 
 
@@ -724,7 +731,6 @@
     // Key is released
     if (e.type === 'keyup') {
       if ( key === Plugin.keyCode.SHIFT ) {
-        // Delete flags, that has been needed while SHIFT was held
         delete this._shiftModeAction; // while SHIFT is held
         delete this._keyModes.shift; // arrow key (UP,DOWN) which pressed first in SHIFT mode
       }
