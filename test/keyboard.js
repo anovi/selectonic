@@ -55,6 +55,7 @@
   QUnit.testStart( function (info) {
     var res  = $.extend( {}, initOptions ),
     advanced = {};  
+    if (info.module === 'Toggle mode') { advanced.keyboardMode = 'toggle'; }
 
     switch ( info.name ) {
       case 'Filter odd up/down':
@@ -308,6 +309,38 @@
       .selectedFocus( el(0) )
       .selectedCount( 5 );
   });
+
+
+
+  module("Toggle mode");
+
+  test( 'Toggle', 5, function( ) {
+    var
+    box = getBox(),
+    el = elems();
+
+    Syn.type( '[down]', box );
+    Syn.type( '[shift][page-down]', box );
+    Syn.type( '[shift-up]', box );
+    assert.selectedCount( 0 );
+
+    Syn.type( '[space]', box );
+    assert
+      .selectedCount( 1 )
+      .selectedFocus( el(4) );
+    Syn.type( '[space]', box );
+
+    Syn.type( '[down]', box );
+    Syn.type( '[down]', box );
+    Syn.type( '[space]', box );
+    Syn.type( '[down]', box );
+    Syn.type( '[space]', box );
+    assert
+      .selectedCount( 2 )
+      .selectedFocus( el(7) );
+  });
+
+
 
 
 }(jQuery, Syn));

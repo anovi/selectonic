@@ -2,30 +2,29 @@
   'use strict';
 
   /* 
-    Constructor
-    element – html element
-    options – plugin initial options
+  Constructor
+  element – html element
+  options – plugin initial options
   */
   function Plugin( element, options ) {
-    this._name           = Plugin.pluginName;
-    this.el              = element;
-    this.$el             = $( element );
-    this.ui              = {};   // Object for DOM elements
-    this._selected       = 0;    // Amount of selected items
-    this._isEnable       = true; // Flag that plugin is enabled - used by handlers
-    this._keyModes       = {};   // to saving holding keys
-    this.options         = {};
+    this._name      = Plugin.pluginName;
+    this.el         = element;
+    this.$el        = $( element );
+    this.ui         = {};   // Object for DOM elements
+    this._selected  = 0;    // Amount of selected items
+    this._isEnable  = true; // Flag that plugin is enabled - used by handlers
+    this._keyModes  = {};   // to saving holding keys
+    this.options    = {};
     
-    var newOptions = $.extend( {}, Plugin.defaults, (options || {}) );
-    this._setOptions( newOptions );
+    var initialOptions = $.extend( {}, Plugin.defaults, (options || {}) );
+    this._setOptions( initialOptions );
     this._init();
   }
 
-  // var
   Plugin.pluginName     = 'selectonic';
-  Plugin.keyCode        = { DOWN:40, UP:38, SHIFT:16, END:35, HOME:36, PAGE_DOWN:34, PAGE_UP:33, A:65 };
+  Plugin.keyCode        = { DOWN:40, UP:38, SHIFT:16, END:35, HOME:36, PAGE_DOWN:34, PAGE_UP:33, A:65, SPACE:32, ENTER:13 };
   Plugin.optionsEvents  = ['create','before','focusLost','select','unselect','unselectAll','stop','destroy'];
-  Plugin.optionsStrings = ['filter','mouseMode','event','listClass','focusClass','selectedClass','disabledClass','handle'];
+  Plugin.optionsStrings = ['filter','mouseMode','event','keyboardMode','listClass','focusClass','selectedClass','disabledClass','handle'];
   Plugin.defaults       = {
     // Base
     filter:         '> *',
@@ -39,6 +38,7 @@
     textSelection:  false,
     // Keyboard
     keyboard:       false,
+    keyboardMode:   'select',    /* 'select' | 'toggle' */
     autoScroll:     true,        /* String | false | true */
     loop:           false,
     preventInputs:  true,
@@ -71,10 +71,10 @@
 
   */
   Plugin.prototype._init = function() {
-    this.$el.addClass( this.options.listClass );            // Add class to box
-    this._bindEvents();                                      // Attach handlers6
-    this.$el.data( 'plugin_' + Plugin.pluginName, this );   // Save plugin's object instance
-    this._callEvent('create');                              // Callback
+    this.$el.addClass( this.options.listClass );           // Add class to box
+    this._bindEvents();                                    // Attach handlers6
+    this.$el.data( 'plugin_' + Plugin.pluginName, this );  // Save plugin's object instance
+    this._callEvent('create');                             // Callback
   };
 
 
@@ -456,7 +456,7 @@
       method.call( this, e, params, params.items );
 
     // Single selection
-    } else if ( params.target ) {
+    } else if ( params.target && params.items ) {
 
       // If there is one selected item and it is focused
       if ( this._selected && this._selected === 1 && this._getIsSelected(this.ui.focus) ) {
@@ -471,7 +471,7 @@
       this._select( e, params, params.items, params.isTargetWasSelected );
 
     // if there are selected items and 'selectionBlur' option is true
-    } else if ( this._selected > 0 && this.options.selectionBlur ) { 
+    } else if ( !params.target && this._selected > 0 && this.options.selectionBlur ) { 
       this._unselectAll( e, params );
     }
 
@@ -720,7 +720,7 @@
 
     var key = e.which, // pressed key
       params = {},
-      sibling,         // sibling element
+      target,          // sibling element
       isAllSelect,     // flag that is all items is selected
       direction;       // next or previous (depends from pressed arrow up|down)
 
@@ -734,7 +734,7 @@
     }
     // If CTRL+A or CMD+A pressed and multi option is true
     if ( key === Plugin.keyCode.A && (e.metaKey || e.ctrlKey) && this.options.multi ) {
-      sibling = this._getItems( params );
+      target = this._getItems( params );
       isAllSelect = true;
 
     } else {
@@ -742,41 +742,50 @@
       switch ( key ) {
       case Plugin.keyCode.HOME:
         direction = 'prev';
-        sibling = this._getItems( params, 'first');
+        target = this._getItems( params, 'first');
         break;
       case Plugin.keyCode.END:
         direction = 'next';
-        sibling = this._getItems( params, 'last');
+        target = this._getItems( params, 'last');
         break;
       case Plugin.keyCode.DOWN:
         direction = 'next';
-        sibling = this._findNextSibling( 'next', params );
+        target = this._findNextTarget( 'next', params );
         break;
       case Plugin.keyCode.UP:
         direction = 'prev';
-        sibling = this._findNextSibling( 'prev', params );
+        target = this._findNextTarget( 'prev', params );
         break;
       case Plugin.keyCode.PAGE_DOWN:
         direction = 'next';
-        sibling = this._findNextSibling( 'pagedown', params );
+        target = this._findNextTarget( 'pagedown', params );
         break;
       case Plugin.keyCode.PAGE_UP:
         direction = 'prev';
-        sibling = this._findNextSibling( 'pageup', params );
+        target = this._findNextTarget( 'pageup', params );
+        break;
+      case Plugin.keyCode.SPACE:
+        target = $( this.ui.focus );
         break;
       }
     }
-    // If sibling has found, that one of the arrows was pressed
-    if ( sibling && sibling.length > 0 ) {
+    // If target has found, that one of the arrows was pressed
+    if ( target && target.length > 0 ) {
       // Disable default window scroll by arrow keys
       e.preventDefault();
 
-      // Set target to found sibling item
-      params.target = sibling[0];
-      params.items = sibling;
+      // Set target to found target item
+      params.target = target[0];
+      params.items = target;
+
+      // Toggle mode
+      if ( this.options.keyboardMode === 'toggle' ) {
+        if ( key !== Plugin.keyCode.SPACE ) { delete params.items; }
+        if ( this.options.multi ) { params.isMultiSelect = true; }
+        delete this._solidInitialElem;
 
       // SHIFT mode
-      if (
+      } else if (
         this.ui.focus && 
         this.options.multi && 
         e.shiftKey && 
@@ -790,7 +799,7 @@
         ) {
           this._rangeVariator( params );
         } else {
-          this._multiVariator( params, key, direction, sibling );
+          this._multiVariator( params, key, direction, target );
         }
 
         // Set solid selection
@@ -846,15 +855,15 @@
   *   - turns on shift mode flags
   *   - solves different situations with shift+arrows selection
   */
-  Plugin.prototype._multiVariator = function( params, key, direction, sibling ) {
+  Plugin.prototype._multiVariator = function( params, key, direction, target ) {
     var
       // Check if focus or target is selected
-      isFocusSelected      = this._getIsSelected( this.ui.focus ),
-      isTargetSelected     = this._getIsSelected( params.target ),
-      // Search for next sibling in the same direction
-      secSibling           = this._getItems( params, direction, sibling ),
-      // Check if second sibling is selected (flag)
-      isSelectedSecSibling = this._getIsSelected( secSibling ),
+      isFocusSelected       = this._getIsSelected( this.ui.focus ),
+      isTargetSelected      = this._getIsSelected( params.target ),
+      // Search for next target in the same direction
+      afterTarget           = this._getItems( params, direction, target ),
+      // Check if second target is selected (flag)
+      isSelectedAfterTarget = this._getIsSelected( afterTarget ),
       prevItem;
 
     // If another arrow was pressed that means the direction was changed
@@ -876,7 +885,7 @@
       // target will be selected and get the focus
       params.target = params.items ? params.items : prevItem;
 
-    } else if ( isTargetSelected && isFocusSelected && !isSelectedSecSibling ) {
+    } else if ( isTargetSelected && isFocusSelected && !isSelectedAfterTarget ) {
       /* Sitiation is possible when user unselect items by arrow key with holding SHIFT */
 
       // Clear flags of serial selection by SHIFT
@@ -904,7 +913,7 @@
   when UP or DOWN keys was pressed — find next item or first/last of the list
   direction – next|prev
   */
-  Plugin.prototype._findNextSibling = function( direction, params ) {
+  Plugin.prototype._findNextTarget = function( direction, params ) {
     var edge = ( direction === 'next' || direction === "pagedown" ) ? 'first' : 'last', // extreme item of the list
       // If there is the focus - try to find next sibling
       // else get first|last item of the list — depends from direction
@@ -1195,6 +1204,9 @@
 
 
   /* DEVELOPMENT */
+  /* DO NOT CHANGE THIS!
+  All code below DEVELOPMENT line ( except closing function wrapper )
+  will be automatically removed for production by grunt replace task */
   window[ '_' + Plugin.pluginName ] = Plugin;
 
 
