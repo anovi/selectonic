@@ -1,6 +1,24 @@
 (function($, window, undefined) {
   'use strict';
 
+  // For IE
+  if (typeof Array.prototype.indexOf === 'undefined') {
+    Array.prototype.indexOf = function (searchElement, fromIndex) {
+      if (!this) { throw new TypeError(); }
+      var length = this.length;
+
+      fromIndex = +fromIndex;
+      if ( isNaN(fromIndex) ) { fromIndex = 0; }
+      if ( length === 0 || fromIndex >= length ) { return -1; }
+      if ( fromIndex < 0 ) { fromIndex += length; }
+
+      while (fromIndex < length) {
+        if ( this[fromIndex++] === searchElement ) { return fromIndex; }
+      }
+      return -1;
+    };
+  }
+
   /* 
   Constructor
   element – html element
@@ -107,7 +125,7 @@
         } else if ( pos >= 0) {
           var values = Plugin.defaults[ name ];
           if ( values.indexOf( $.trim(String(option)) ) < 0 ) {
-            throw new Error( 'Option \"' + name + '\" only could be in these values: \"' + values.join('\", \"') + '\".' );
+            throw new RangeError( 'Option \"' + name + '\" only could be in these values: \"' + values.join('\", \"') + '\".' );
           }
 
         } else {
@@ -129,7 +147,7 @@
       if( void 0 === option ) { return; }
       isFunction = $.isFunction( option );
       if ( !isFunction && null !== option ) {
-        throw new Error( 'Option \"' + name + '\" should be a function or \"null\"!' );
+        throw new TypeError( 'Option \"' + name + '\" should be a function or \"null\"!' );
       }
     });
 

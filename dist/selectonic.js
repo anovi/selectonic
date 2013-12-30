@@ -1,8 +1,26 @@
-/*! Selectonic - v0.2.4 - 2013-12-30
+/*! Selectonic - v0.3.0 - 2013-12-31
 * https://github.com/anovi/selectonic
 * Copyright (c) 2013 Alexey Novichkov; Licensed MIT */
 (function($, window, undefined) {
   'use strict';
+
+  // For IE
+  if (typeof Array.prototype.indexOf === 'undefined') {
+    Array.prototype.indexOf = function (searchElement, fromIndex) {
+      if (!this) { throw new TypeError(); }
+      var length = this.length;
+
+      fromIndex = +fromIndex;
+      if ( isNaN(fromIndex) ) { fromIndex = 0; }
+      if ( length === 0 || fromIndex >= length ) { return -1; }
+      if ( fromIndex < 0 ) { fromIndex += length; }
+
+      while (fromIndex < length) {
+        if ( this[fromIndex++] === searchElement ) { return fromIndex; }
+      }
+      return -1;
+    };
+  }
 
   /* 
   Constructor
@@ -33,23 +51,23 @@
     filter:         '> *',
     multi:          true,
     // Mouse
-    mouseMode:      'select',    /* 'select' | 'toggle' */
-    event:          'mousedown', /* 'mousedown' | 'click' | 'hybrid' */
+    mouseMode:      ['select','toggle'],
+    event:          ['mousedown','click','hybrid'],
     focusBlur:      false,
     selectionBlur:  false,
-    handle:         null,        /* String | null */
+    handle:         null, /* String | null */
     textSelection:  false,
     // Keyboard
     keyboard:       false,
-    keyboardMode:   'select',    /* 'select' | 'toggle' */
-    autoScroll:     true,        /* String | false | true */
+    keyboardMode:   ['select','toggle'],
+    autoScroll:     true, /* String | false | true */
     loop:           false,
     preventInputs:  true,
     // Classes
-    listClass:      ( 'j-selectable' ),
-    focusClass:     ( 'j-focused' ),
-    selectedClass:  ( 'j-selected' ),
-    disabledClass:  ( 'j-disabled' ),
+    listClass:      'j-selectable',
+    focusClass:     'j-focused',
+    selectedClass:  'j-selected',
+    disabledClass:  'j-disabled',
     // Callbacks
     create:         null,
     before:         null,
@@ -92,22 +110,36 @@
       if ( $.isPlainObject(options) ) {
         options = arguments[0];
       } else {
-        throw new Error("Option should be a pair arguments of name and value or should be a hash of pairs.");
+        throw new Error('Format of \"option\" could be: \"option\" or \"option\",\"name\" or \"option\",\"name\",val or \"option\",{}');
       }
     }
-  
+
     // Ensure that actions are strings
-    $.each( Plugin.optionsStrings, function(index, val) {
-      option = options[val];
+    $.each( Plugin.optionsStrings, function(index, name) {
+      option = options[ name ];
       if( option ) {
-        // Turn in a string and trim spaces
-        option = $.trim( String(option) );
+        var pos = ['mouseMode','event','keyboardMode'].indexOf( name );
+        
+        // default option
+        if ( $.isArray( option ) && pos >= 0 && option === Plugin.defaults[name] ) {
+          option = option[0];
+
+        // string option with finite values
+        } else if ( pos >= 0) {
+          var values = Plugin.defaults[ name ];
+          if ( values.indexOf( $.trim(String(option)) ) < 0 ) {
+            throw new RangeError( 'Option \"' + name + '\" only could be in these values: \"' + values.join('\", \"') + '\".' );
+          }
+
+        } else {
+          option = $.trim( String(option) );
+        }
         // If it's working list and is attempt to change classes
         if ( self.options.parentSelector &&
-          (val === 'listClass' ||
-           val === 'focusClass' ||
-           val === 'selectedClass' ||
-           val === 'disabledClass')
+          (name === 'listClass' ||
+           name === 'focusClass' ||
+           name === 'selectedClass' ||
+           name === 'disabledClass')
         ) { throw new Error( 'Sorry, it\'s not allowed to dynamically change classnames!' ); }
       }
     });
@@ -118,7 +150,7 @@
       if( void 0 === option ) { return; }
       isFunction = $.isFunction( option );
       if ( !isFunction && null !== option ) {
-        throw new Error( 'Option \"' + name + '\" should be a function or \"null\"!' );
+        throw new TypeError( 'Option \"' + name + '\" should be a function or \"null\"!' );
       }
     });
 
@@ -1058,7 +1090,7 @@
     if( selector.jquery ) {
       // Call select method and give him elements
       if (selector.length > 0) { return pluginObject.select( selector ); }
-      return this;
+      return this.$el;
     }
 
     // Nothing has found
@@ -1095,7 +1127,7 @@
     if (arg === 1) {
       return $.extend({}, this.options);
     } else {
-      throw new Error('Format of \"option\" could be: \"option\" | \"option\", \"name\" | \"option\", \"name\", val | \"option\", {...}');
+      throw new Error('Format of \"option\" could be: \"option\" or \"option\",\"name\" or \"option\",\"name\",val or \"option\",{}');
     }
   };
 
