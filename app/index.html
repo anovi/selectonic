@@ -1,0 +1,448 @@
+<!doctype html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>jQuery based plugin for making any list of items selectable by mouse and keyboard</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width">
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        <!-- build:css styles/vendor.css -->
+        <link rel="stylesheet" type="text/css" href="styles/normalize.css"/>
+        <link rel="stylesheet" href="styles/prism.css">
+        <link rel="stylesheet" type="text/css" href="styles/font-awesome.min.css"/>
+        <!-- bower:css -->
+        <!-- endbower -->
+        <!-- endbuild -->
+        <!-- build:css(.tmp) styles/main.css -->
+        <link rel="stylesheet" href="styles/main.css">
+        <!-- endbuild -->
+    </head>
+    <body>
+        <!--[if lt IE 10]>
+            <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+        <![endif]-->
+
+
+
+<div class="l-wrapper">
+
+    <div class="l-plugin">
+        
+        <div class="b-list">
+            <div class="g-panel">
+                <div class="panel-head">
+                    <span class="panel-title">Sandbox</span>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-wrapper">
+                        <li id="item1" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 1</span></li>
+                        <li id="item2" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 2</span></li>
+                        <li id="item3" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 3</span></li>
+                        <li id="item4" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 4</span></li>
+                        <li id="item5" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 5</span></li>
+                        <li id="item6" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 6</span></li>
+                        <li id="item7" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 7</span></li>
+                        <li id="item8" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 8</span></li>
+                        <li id="item9" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 9</span></li>
+                        <li id="item10" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 10</span></li>
+                        <li id="item11" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 11</span></li>
+                        <li id="item12" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 12</span></li>
+                        <li id="item13" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 13</span></li>
+                        <li id="item14" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 14</span></li>
+                        <li id="item15" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 15</span></li>
+                        <li id="item16" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 16</span></li>
+                        <li id="item17" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 17</span></li>
+                        <li id="item18" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 18</span></li>
+                        <li id="item19" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 19</span></li>
+                        <li id="item20" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 20</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="b-event-log">
+            <div class="g-panel">
+                <!-- <div class="panel-head"> -->
+                    <div class="panel-toggle">
+                        <button class="b-but-pipka"></button>
+                    </div>
+                    <!-- <div class="panel-title">Log</div> -->
+                <!-- </div> -->
+                <div class="panel-body">
+                    <div class="event-log-wrapper"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    
+    <div class="b-wellcome">
+        <div class="wellcome-wrapper">
+            <h1 class="wellcome-title">selectonic</h1>
+            <p class="wellcome-title">jQuery based plugin for making any list of items <br>selectable&nbsp;by mouse and keyboard.<!--  It could be usefull in webapp where are different widgets like menus, dropdowns with keyboard input, lists with multiple selection and so on. --></p>
+            <p>Download <a class="download" href="https://raw.github.com/anovi/selectonic/master/dist/selectonic.min.js" target="_blank">production version</a> (minified) or <a class="download" href="https://raw.github.com/anovi/selectonic/master/dist/selectonic.js" target="_blank">development version</a>.<br>
+            See <a class="download" target="_blank" href="http://github.com/anovi/selectonic"> <span class="title">docs and source on GitHub <span class="icon-github"></span></span></a></p>
+        </div>
+    </div>
+
+
+    <div class="l-docs">
+        <div class="docs-wrapper">
+
+            <div class="b-options">
+                <h2>Options</h2>
+                <h4>See all options in the <a href="https://github.com/anovi/selectonic#options">docs on GitHub</a>.</h4>
+                
+                <table class="options-table">
+                    <tr>
+                        <td><input type="checkbox" id="multi"><label for="multi"><span class="g-option">multi</span></label></td>
+                        <td>
+                            <span class="options-description">User can select many items in a list.</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" id="focusBlur"><label for="focusBlur"><span class="g-option">focusBlur</span></label></td>
+                        <td>
+                            <span class="options-description">List loses focus when user clicks outside of the list.</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" id="selectionBlur"><label for="selectionBlur"><span class="g-option">selectionBlur</span></label></td>
+                        <td>
+                            <span class="options-description">List clears selection when user clicks outside of the list.</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" id="keyboard"><label for="keyboard"><span class="g-option">keyboard</span></label></td>
+                        <td>
+                            <span class="options-description">Possibility to use keys <span class="g-key">Up</span>, <span class="g-key">Down</span> and <span class="g-key">Home</span>, <span class="g-key">End</span>, <span class="g-key">PageUp</span>, <span class="g-key">PageDown</span> to move cursor (focus), select range of items by holding shift and select all items by pressing <span class="g-key">ctrl+a</span> or <span class="g-key">cmd+a</span>.</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" id="loop"><label for="loop"><span class="g-option">loop</span></label></td>
+                        <td>
+                        <span class="options-description">If keyboard: true and focused element is last in a list, pressing <span class="g-key">↓</span> set focus to first element of the list; oppositely with <span class="g-key">↑</span> key, when focus on a first element.</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" id="handle"><label for="handle"><span class="g-option">handle</span></label></td>
+                    <td>
+                        <span class="options-description">Matches child elemets, that will be served as clickable area inside each item to select/unselect these items.</span>
+                    </td></tr>
+
+
+                    <!-- mouseMode option -->
+                    <tr class="row-group">
+                        <td>
+                            <span class="g-option">mouseMode</span><br>
+                        </td>
+                        <td>
+                            <span class="options-description">how toggle selection on an item</span>
+                        </td>
+                    </tr>
+                    <tr class="options-radio">
+                        <td>
+                            <input name="mouseMode" id="mouseMode-select" type="radio" data-option="select"><label for="mouseMode-select">select</label>
+                        </td>
+                         <td>
+                            <span class="options-description">mouse click selects target item and clear other selection in a list; to add/remove item to selection user needs holds <span class="g-key">ctrl</span> key (file manager style);</span>
+                        </td>
+                    </tr>
+                    <tr class="options-radio end">
+                        <td>
+                            <input name="mouseMode" id="mouseMode-toggle" type="radio" data-option="toggle"><label for="mouseMode-toggle">toggle</label>
+                        </td>
+                         <td>
+                            <span class="options-description">mouse click to select/unselect items (like group of checkboxes).</span>
+                        </td>
+                    </tr>
+
+
+                    <!-- event option -->
+                    <tr class="row-group">
+                        <td colspan="2">
+                            <span class="g-option">event</span>
+                        </td>
+                    </tr>
+                    <tr class="options-radio">
+                        <td>
+                            <input name="event" id="event-mousedown" type="radio" data-option="mousedown"><label for="event-mousedown">mousedown</label>
+                        </td>
+                        <td>
+                            <span class="options-description">item will be selected when user push on left mouse button;</span>
+                        </td>
+                    </tr>
+
+                    <tr class="options-radio">
+                        <td>
+                            <input name="event" id="event-click" type="radio" data-option="click"><label for="event-click">click</label>
+                        </td>
+                        <td>
+                            <span class="options-description">item will be selected when user click (press and release) on left mouse button;</span>
+                        </td>
+                    </tr>
+
+                    <tr class="options-radio end">
+                        <td>
+                            <input name="event" id="event-hybrid" type="radio" data-option="hybrid"><label for="event-hybrid">hybrid</label>
+                        </td>
+                         <td>
+                            <span class="options-description">unselected items will react on mousedown, but selected items will react on click (press and release). It can be usefull when there is another plugin, for example to dragging selected items.</span>
+                        </td>
+                    </tr>
+
+                    
+                    <!-- keyboardMode option -->
+                    <tr class="row-group">
+                        <td>
+                            <span class="g-option">keyboardMode</span><br>
+                        </td>
+                        <td>
+                            <span class="options-description">how toggle selection on an item</span>
+                        </td>
+                    </tr>
+                    <tr class="options-radio">
+                        <td>
+                            <input name="keyboardMode" id="keyboardMode-select" type="radio" data-option="select"><label for="keyboardMode-select">select</label>
+                        </td>
+                         <td>
+                            <span class="options-description">pressing keys up/down selects target item and clear other selection in a list; to add/remove item to selection user needs holds <span class="g-key">shift</span> key (file manager style);</span>
+                        </td>
+                    </tr>
+                    <tr class="options-radio end">
+                        <td>
+                            <input name="keyboardMode" id="keyboardMode-toggle" type="radio" data-option="toggle"><label for="keyboardMode-toggle">toggle</label>
+                        </td>
+                         <td>
+                            <span class="options-description">keys <span class="g-key">↑</span> <span class="g-key">↓</span> and others only moves focus on items, to select/unselect items user needs press <span class="g-key">space</span>;</span>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+
+            <div class="b-methods">
+                <h2>Methods</h2>
+                <h4>See all methods in the <a href="https://github.com/anovi/selectonic#methods" target="_blank">docs on GitHub</a>.</h4>
+
+                <h3><button data-action="destroy">destroy</button></h3>
+                <p>Detach handlers, clear data and remove plugin's classes</p>
+
+                <h3><button data-action="blur">blur</button></h3>
+                <p>Clear selection in a list.</p>
+
+                <h3><button data-action="getSelected">getSelected</button></h3>
+                <p>Get array of selected elements.</p>
+
+                <h3><button data-action="getSelectedId">getSelectedId</button></h3>
+                <p>Get array of id's of selected elements.</p>
+
+                <h3><button data-action="disable">disable</button></h3>
+                <p>Disable plugin, but keep data and save it state.</p>
+
+                <h3><button data-action="enable">enable</button></h3>
+                <p>Turn on disabled plugin.</p>
+
+                <h3>refresh</h3>
+                <p>Refresh plugin data. That is necessary when some items in list was removed.</p>
+
+                <h3>option</h3>
+                <p>Get or set one ore more options.</p>
+                
+                <p>Getter:</p>
+                <pre><code class="language-javascript">elem.selectonic("option", "mouseMode");</code></pre>
+                
+                <p>Setter:</p>
+<pre>
+    <code class="language-javascript">
+    elem.selectonic("option", "mouseMode", "select");
+    elem.selectonic("option", {
+        loop: true,
+        mouseMode: "select"
+    });</code>
+</pre>
+                <h3>cancel</h3>
+                <p>Cancel last changes in a list or prevent it, if called in <em>beforeSelect</em> callback. Method can be call only inside callback functions:</p>
+<pre>
+    <code class="language-javascript">
+    elem.selectonic({
+        stop: function(event, ui) {
+            if( condition ) {
+                <strong>this.selectonic("cancel");</strong>
+            }
+        }
+    });
+    </code>
+</pre>
+
+                <h3>Select method</h3>
+<p>You can select items by plugin interface. Plugin accept selector or element:</p>
+<p><pre><code class="language-javascript">elem.selectonic(someElements);</code></pre></p>
+<p><pre><code class="language-javascript">elem.selectonic(&quot;:even&quot;);</code></pre>
+<button id="chooseEven">Choose</button></p>
+<p><pre><code class="language-javascript">elem.selectonic(&quot;li:eq(3)&quot;);</code></pre><button id="chooseThird">Choose</button></p>
+
+            </div>
+
+
+<!--             <div class="b-about">
+                <h2>Callback functions (events)</h2>
+                
+                <p>Callback functions and arguments they receives:</p>
+                
+                <dl class="g-plain-definition-list">
+                    <dt>event</dt>
+                    <dd>event object from mouse or keyboard handlers.</dd>
+                    <dt>ui</dt>
+                    <dd>object that contains properties with DOM elements:
+                        <dl>
+                            <dt>ui.target</dt>
+                            <dd>link to&nbsp;target element, that was clicked.</dd>
+                            <dt>ui.focus</dt>
+                            <dd>link to&nbsp;focused element.</dd>
+                            <dt>ui.items</dt>
+                            <dd>jquery collection of changed elements – it differ from event to&nbsp;event.</dd>
+                        </dl>
+                    </dd>
+                </dl>
+
+
+                <table>
+                    <thead>
+                        <tr>
+                            <td>
+                                Callback function
+                            </td></span>
+                            <td>event</td>
+                            <td>ui.target</td>
+                            <td>ui.focus</td>
+                            <td>ui.items</td>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span class="g-option">beforeSelect</span>
+                                <span class="options-description">— calls in every work cycle before any changes will performed</span>
+                            </td>
+                            <td>event</td>
+                            <td>if exist</td>
+                            <td>if exist</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="g-option">select</span>
+                                <span class="options-description">— when one or several elements is selected</span>
+                            </td>
+                            <td>event</td>
+                            <td>target element</td>
+                            <td>if exist</td>
+                            <td>jquery collection of elements that was selected</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="g-option">unSelect</span>
+                                <span class="options-description">— one or several elements has been unselected</span>
+                            </td>
+                            <td>event</td>
+                            <td>if exist</td>
+                            <td>if exist</td>
+                            <td>jquery collection of elements that was unselected</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="g-option">unSelectAll</span>
+                                <span class="options-description">— when all elements in list is unselected</span>
+                            </td>
+                            <td>event</td>
+                            <td>if exist</td>
+                            <td>if exist</td>
+                            <td>jquery collection of elements that was unselected</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="g-option">focusLost</span>
+                                <span class="options-description">— when the focus of list is lost</span>
+                            </td>
+                            <td>event</td>
+                            <td>—</td>
+                            <td>Link on focused element. Link will be deleted after this callback.</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="g-option">stop</span>
+                                <span class="options-description">— calls in the end of every work cycle</span>
+                            </td>
+                            <td>event</td>
+                            <td>if exist</td>
+                            <td>if exist</td>
+                            <td>all changed items (if they was)</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="g-option">create</span>
+                                <span class="options-description">— calls after initialization</span>
+                            </td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>—</td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="g-option">destroy</span>
+                                <span class="options-description">— calls before plugin will be destroyed</span>
+                            </td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>—</td>
+                            <td>—</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <p>Example of usage:</p>
+<code>$(element).selectonic({
+    select: function( event, ui ) {
+        // do something
+    }
+});</code>
+            </div> -->          
+
+
+            <div class="b-about">
+                <h2>About</h2>
+                <p>Compatibility: Requires jQuery 1.7+<br>Tested in Firefox, Chrome, Safari, Opera, IE8+</p>
+                <p>Author: Alexey Novichkov</p>
+                <p>License: Released under the MIT License. Feel free to use it in personal and commercial projects.</p>
+            </div>
+
+
+        </div>
+    </div>
+
+</div>
+
+
+        <!-- build:js scripts/vendor.js -->
+        <!-- bower:js -->
+        <script src="bower_components/jquery/jquery.js"></script>
+        <script src="bower_components/selectonic/dist/selectonic.min.js"></script>
+        <script src="scripts/prism.js"></script>
+        <!-- endbower -->
+        <!-- endbuild -->
+
+
+        <!-- build:js scripts/main.js -->
+        <script src="scripts/main.js"></script>
+        <!-- endbuild -->
+</body>
+</html>

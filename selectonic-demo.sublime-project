@@ -1,0 +1,17 @@
+{
+	"folders":
+	[
+		{
+			"path": "./",
+			"folder_exclude_patterns":
+			[
+				".tmp",
+				"dist",
+				"node_modules",
+				".hg",
+				".hgcheck",
+				"bower_components"
+			]
+		}
+	]
+}
