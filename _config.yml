@@ -1,1 +1,1 @@
-baseurl: "http://anovi.github.io/selectonic/dist"
+exclude: ["src", "selectonic-demo.sublime-project", "selectonic-demo.sublime-workspace"]
