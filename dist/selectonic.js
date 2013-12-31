@@ -1,4 +1,4 @@
-/*! Selectonic - v0.3.0 - 2013-12-31
+/*! Selectonic - v0.3.1 - 2013-12-31
 * https://github.com/anovi/selectonic
 * Copyright (c) 2013 Alexey Novichkov; Licensed MIT */
 (function($, window, undefined) {
