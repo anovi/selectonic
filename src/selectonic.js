@@ -119,7 +119,7 @@
         
         // default option
         if ( $.isArray( option ) && pos >= 0 && option === Plugin.defaults[name] ) {
-          option = option[0];
+          options[ name ] = option[0];
 
         // string option with finite values
         } else if ( pos >= 0) {
@@ -129,7 +129,7 @@
           }
 
         } else {
-          option = $.trim( String(option) );
+          options[ name ] = $.trim( String(option) );
         }
         // If it's working list and is attempt to change classes
         if ( self.options.parentSelector &&
