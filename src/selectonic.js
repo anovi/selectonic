@@ -451,12 +451,11 @@
     params.changedItems = [];
     params.prevItemsState = [];
     delete this._isPrevented;
-    // Callback
     this._callEvent('before', e, params);
 
     // If cancel flag is true any changes will be prevented
     if( this._isPrevented ) {
-      this._cancel( e, params ); // cancellation
+      this._cancel( e, params );
       this._stop( e, params );
       return;
     }
@@ -530,7 +529,7 @@
 
     endAfterStart = params.rangeStart < params.rangeEnd,
     allItems      = this._getItems( params ),
-    top           = ( endAfterStart ) ? params.rangeStart: params.rangeEnd,
+    top           = ( endAfterStart ) ? params.rangeStart : params.rangeEnd,
     bot           = ( endAfterStart ) ? params.rangeEnd : params.rangeStart;
 
     // New solid selectioin
@@ -657,7 +656,6 @@
     // target was only selected item ( flag used for preventing callback )
     isOnlyTargetSelected = params.target && params.isTargetWasSelected && this._selected === 1;
 
-    // this.ui.items = null;
     this._unselect( e, params, items, isOnlyTargetSelected );
   };
 
@@ -709,7 +707,6 @@
       // Callback of focus lost
       this._callEvent('focusLost', e, params);
     }
-
     if( this.ui.focus ) {
       // remove class from focus
       $( this.ui.focus ).removeClass( this.options.focusClass );
@@ -852,10 +849,7 @@
       this._controller( e, params );
 
       // Recalculate plugin's box and window's scrolls
-      if (this.ui.focus) {
-        if ( this._scrolledElem ) { this._recalcBoxScroll( this._scrolledElem ); }
-        this._recalcBoxScroll( window );
-      }
+      this.scroll();
     }
     return e;
   };
@@ -1172,6 +1166,14 @@
 
   Plugin.prototype.getFocused = function() {
     if (this.ui.focus) { return this.ui.focus; } else { return null; }
+  };
+
+
+  Plugin.prototype.scroll = function() {
+    if (this.ui.focus) {
+      if ( this._scrolledElem ) { this._refreshBoxScroll( this._scrolledElem ); }
+      this._refreshBoxScroll( window );
+    }
   };
 
 
