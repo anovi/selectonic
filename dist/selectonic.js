@@ -1,6 +1,6 @@
-/*! Selectonic - v0.3.1 - 2013-12-31
+/*! Selectonic - v0.3.1 - 2014-01-02
 * https://github.com/anovi/selectonic
-* Copyright (c) 2013 Alexey Novichkov; Licensed MIT */
+* Copyright (c) 2014 Alexey Novichkov; Licensed MIT */
 (function($, window, undefined) {
   'use strict';
 
@@ -21,6 +21,40 @@
       return -1;
     };
   }
+
+  // Returns a function, that, when invoked, will only be triggered at most once
+  // during a given window of time. Normally, the throttled function will run
+  // as much as it can, without ever going more than once per `wait` duration;
+  // but if you'd like to disable the execution on the leading edge, pass
+  // `{leading: false}`. To disable execution on the trailing edge, ditto.
+  var _throttle = function(func, wait, options) {
+    var context, args, result;
+    var timeout = null;
+    var previous = 0;
+    options = options || {};
+    var later = function() {
+      previous = options.leading === false ? 0 : new Date();
+      timeout = null;
+      result = func.apply(context, args);
+    };
+    return function() {
+      var now = new Date();
+      if (!previous && options.leading === false) { previous = now; }
+      var remaining = wait - (now - previous);
+      context = this;
+      args = arguments;
+      if (remaining <= 0) {
+        clearTimeout(timeout);
+        timeout = null;
+        previous = now;
+        result = func.apply(context, args);
+      } else if (!timeout && options.trailing !== false) {
+        timeout = setTimeout(later, remaining);
+      }
+      return result;
+    };
+  };
+
 
   /* 
   Constructor
@@ -57,6 +91,7 @@
     selectionBlur:  false,
     handle:         null, /* String | null */
     textSelection:  false,
+    hoverFocus:     false,
     // Keyboard
     keyboard:       false,
     keyboardMode:   ['select','toggle'],
@@ -166,28 +201,22 @@
 
 
   Plugin.prototype._destroy = function() {
-
     this._callEvent('destroy');
     this._unbindEvents();
-
-    // If focus exists
+    if ( this._focusHoverTimeout ) { clearTimeout(this._focusHoverTimeout); }
+    // remove class and property
     if( this.ui.focus ) {
-      // remove class and property
       $(this.ui.focus).removeClass( this.options.focusClass );
       delete this.ui.focus;
     }
-
-    // If there are selected items
+    // find items and remove class
     if( this._selected > 0 ) {
-      // find items and remove class
       this.getSelected().removeClass( this.options.selectedClass );
     }
-
-    // Remove classes
     this.$el.removeClass( this.options.disabledClass );
     this.$el.removeClass( this.options.listClass );
-
-    if ( this._scrolledElem ) { delete this._scrolledElem; }
+    delete this._scrolledElem;
+    delete this._solidInitialElem;
   };
 
 
@@ -198,7 +227,6 @@
       delete this._scrolledElem;
       return;
     }
-    
     if ( typeof selector === "string" ) {
       elem = $( selector );
       if (elem.length > 0) {
@@ -208,7 +236,6 @@
       }
       return;
     }
-
     this._scrolledElem = this.el;
   };
 
@@ -242,57 +269,62 @@
   
   // Attath handlers
   Plugin.prototype._bindEvents = function() {
+    var _this = this;
 
     // Handler for mouse events
-    this._mouseEventHandler = $.proxy( function(e) {
-      if ( this._isEnable ) { this._mouseHandler(e); }
+    this._mouseEvent = function(e) {
+      if ( _this._isEnable ) { _this._mouseHandler.call(_this, e); }
       return e;
-    }, this );
-
+    };
     // Handler for keyboard events
-    this._keyEventHandler = $.proxy( function(e) {
-      if( this.options.keyboard && this._isEnable ) { this._keyHandler(e); }
-      return e;
-    }, this );
-    
+    this._keyboardEvent = function(e) {
+      if( _this.options.keyboard && _this._isEnable ) { _this._keyHandler.call(_this, e); }
+    };
     // Handler for selection start
-    this._selectstartHandler = $.proxy( function() {
-      if ( !this.options.textSelection ) { return false; }
-    }, this );
+    this._selectstartEvent = function() {
+      if ( !_this.options.textSelection ) { return false; }
+    };
+    // Handler for mousemove
+    this._mousemoveEvent = _throttle( function(e) {
+      if( _this._isEnable && _this.options.hoverFocus ) { _this._mousemoveHandler.call(_this, e); }
+    }, 20);
 
     $( window.document ).on(
       'click' + '.' + this._name + ' ' + 'mousedown' + '.' + this._name,
-      this._mouseEventHandler
+      this._mouseEvent
     );
-
     $( window.document ).on(
       'keydown' + '.' + this._name + ' ' + 'keyup' + '.' + this._name,
-      this._keyEventHandler
+      this._keyboardEvent
     );
-
     this.$el.on(
       'selectstart' + '.' + this._name,
-      this._selectstartHandler
+      this._selectstartEvent
+    );
+    $( window.document ).on(
+      'mousemove' + '.' + this._name,
+      this._mousemoveEvent
     );
   };
 
   
   // Detach handlers
   Plugin.prototype._unbindEvents = function() {
-
     $( window.document ).off(
       'click' + '.' + this._name + ' ' + 'mousedown' + '.' + this._name,
-      this._mouseEventHandler
+      this._mouseEvent
     );
-
     $( window.document ).off(
       'keydown' + '.' + this._name + ' ' + 'keyup' + '.' + this._name,
-      this._keyEventHandler
+      this._keyboardEvent
     );
-
     this.$el.off(
       'selectstart' + '.' + this._name,
-      this._selectstartHandler
+      this._selectstartEvent
+    );
+    $( window.document ).off(
+      'mousemove' + '.' + this._name,
+      this._mousemoveEvent
     );
   };
 
@@ -454,12 +486,11 @@
     params.changedItems = [];
     params.prevItemsState = [];
     delete this._isPrevented;
-    // Callback
     this._callEvent('before', e, params);
 
     // If cancel flag is true any changes will be prevented
     if( this._isPrevented ) {
-      this._cancel( e, params ); // cancellation
+      this._cancel( e, params );
       this._stop( e, params );
       return;
     }
@@ -489,6 +520,10 @@
     } else if ( params.isMultiSelect ) {
       method = params.isTargetWasSelected ? this._unselect : this._select;
       method.call( this, e, params, params.items );
+
+    // Moving focus be mouse
+    } else if ( params.target && !params.items && e.type === 'mouseover' ) {
+      // do nothing - focus will be set
 
     // Single selection
     } else if ( params.target && params.items ) {
@@ -533,7 +568,7 @@
 
     endAfterStart = params.rangeStart < params.rangeEnd,
     allItems      = this._getItems( params ),
-    top           = ( endAfterStart ) ? params.rangeStart: params.rangeEnd,
+    top           = ( endAfterStart ) ? params.rangeStart : params.rangeEnd,
     bot           = ( endAfterStart ) ? params.rangeEnd : params.rangeStart;
 
     // New solid selectioin
@@ -660,7 +695,6 @@
     // target was only selected item ( flag used for preventing callback )
     isOnlyTargetSelected = params.target && params.isTargetWasSelected && this._selected === 1;
 
-    // this.ui.items = null;
     this._unselect( e, params, items, isOnlyTargetSelected );
   };
 
@@ -712,7 +746,6 @@
       // Callback of focus lost
       this._callEvent('focusLost', e, params);
     }
-
     if( this.ui.focus ) {
       // remove class from focus
       $( this.ui.focus ).removeClass( this.options.focusClass );
@@ -802,6 +835,9 @@
       case Plugin.keyCode.SPACE:
         target = $( this.ui.focus );
         break;
+      case Plugin.keyCode.ENTER:
+        if ( !this.options.multi ) { target = $( this.ui.focus ); }
+        break;
       }
     }
     // If target has found, that one of the arrows was pressed
@@ -815,7 +851,12 @@
 
       // Toggle mode
       if ( this.options.keyboardMode === 'toggle' ) {
-        if ( key !== Plugin.keyCode.SPACE ) { delete params.items; }
+        if (
+          key !== Plugin.keyCode.SPACE &&
+          !(key === Plugin.keyCode.ENTER && !this.options.multi)
+        ) {
+          delete params.items;
+        }
         if ( this.options.multi ) { params.isMultiSelect = true; }
         delete this._solidInitialElem;
 
@@ -855,10 +896,7 @@
       this._controller( e, params );
 
       // Recalculate plugin's box and window's scrolls
-      if (this.ui.focus) {
-        if ( this._scrolledElem ) { this._recalcBoxScroll( this._scrolledElem ); }
-        this._recalcBoxScroll( window );
-      }
+      this.scroll();
     }
     return e;
   };
@@ -964,10 +1002,10 @@
 
 
   /*
-  Used by _keyHandler
+  Used by _keyHandler or public scroll method
   Recalculate scroll position, if focused item is not visible in container viewport
   */
-  Plugin.prototype._recalcBoxScroll = function( box ) {
+  Plugin.prototype._refreshBoxScroll = function( box ) {
     var
       $box          = $( box ),
       isWindow      = box === window,
@@ -1045,6 +1083,39 @@
     if ( params.target && !params.items ) { params.items = $( params.target ); }
     delete this._solidInitialElem;
     this._controller( e, params );
+  };
+
+
+  Plugin.prototype._mousemoveHandler = function( e ) {
+    if ( this._isHoverFocusPrevented ) { return; }
+    var params = {}, target;
+
+    target = this._getTarget( e );
+    if (target) {
+      delete this._solidInitialElem;
+      if ( target !== this.ui.focus ) {
+        params.target = target;
+        this._controller( e, params );
+      }
+    } else {
+      this._controller( e, params );
+    }
+  };
+
+
+  Plugin.prototype._preventMouseMove = function() {
+    var _this = this;
+    this._isHoverFocusPrevented = true;
+    
+    if ( this._focusHoverTimeout ) {
+      clearTimeout( this._focusHoverTimeout );
+      delete this._focusHoverTimeout;
+    }
+
+    this._focusHoverTimeout = setTimeout( function() {
+      delete _this._isHoverFocusPrevented;
+      delete _this._focusHoverTimeout;
+    }, 250);
   };
 
 
@@ -1175,6 +1246,15 @@
 
   Plugin.prototype.getFocused = function() {
     if (this.ui.focus) { return this.ui.focus; } else { return null; }
+  };
+
+
+  Plugin.prototype.scroll = function() {
+    this._preventMouseMove();
+    if (this.ui.focus) {
+      if ( this._scrolledElem ) { this._refreshBoxScroll( this._scrolledElem ); }
+      this._refreshBoxScroll( window );
+    }
   };
 
 

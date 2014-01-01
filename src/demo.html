@@ -135,30 +135,37 @@
         event:          'mousedown',
         autoScroll:   '#list',
         // autoScroll:   null,
-        multi:          true,
+        multi:          false,
         focusBlur:      true,
-        selectionBlur:  true,
+        selectionBlur:  false,
         keyboard:       true,
         keyboardMode:   'toggle',
         preventInputs:  true,
         loop:           false,
         handle:         null,
+        hoverFocus:     true,
         // listClass: 'my-super',
 
-        create: function() {},
+        create: function() {
+            console.log( this.selectonic('option', 'hoverFocus') );
+            // this
+                // .selectonic( 'li:eq(15)' )
+                // .selectonic( 'option', 'autoScroll', '#list' )
+                // .selectonic( "scroll" );
+        },
         beforeSelect: function( event, ui ) {
-            console.log('beforeSelect');
+            // console.log('beforeSelect');
         },
         focusLost: function( event, ui ) {
-            console.log('Focus lost');
+            // console.log('Focus lost');
             // console.log( this );
             // this.selectonic("cancel")
         },
         select: function( event, ui ) {
             // console.log( $(ui.target).attr('id') );
         },
-        unSelect: function( event, ui ) { console.log('unSelect')},
-        unSelectAll: function( event, ui ) {console.log('unSelectAll')},
+        unselect: function( event, ui ) { console.log('unSelect')},
+        unselectAll: function( event, ui ) {console.log('unSelectAll')},
         stop: function( event, ui ) {},
         destroy: function() {}
     });

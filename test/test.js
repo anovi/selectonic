@@ -195,23 +195,26 @@
   });
 
   test( 'Toggle mousedown', 4, function() {
-    var
-    box        = getBox(),
-    elem       = box.find('li:eq(3)'),
-    secElem    = box.find('li:eq(5)'),
-    e          = $.Event( "mousedown" );
-    e.shiftKey = true;
+    var el = _Utils.elems();
     
-    elem.trigger('mousedown');
-    secElem.trigger('mousedown');
+    el(3).trigger('mousedown');
+    el(5).trigger('mousedown');
     assert
-      .selected( elem )
-      .selectedFocus( secElem );
+      .selected( el(3) )
+      .selectedFocus( el(5) );
     
-    elem.trigger('mousedown');
+    el(3).trigger('mousedown');
     assert
-      .notSelected( elem )
-      .focused( elem );
+      .notSelected( el(3) )
+      .focused( el(3) );
+    // el(5).trigger('mousedown');
+
+    // box.selectonic('option', 'multi', false);
+    // el(6).trigger('mousedown');
+    // el(6).trigger('mousedown');
+    // assert
+    //   .notSelected( el(6) )
+    //   .focused( el(6) );
   });
 
   asyncTest( 'Hybrid mouse', 3, function() {
