@@ -255,17 +255,17 @@ elem.selectonic({
 ```
 
 
-### Selecting items by API
-If in any scenario you need auto-select items (select first item at the beginning) then you need pass elements to plugins interface:
+### select
+If in any scenario you need auto-select items (select first item at the beginning) then you need pass element to `select` method:
 ```javascript
-$(elem).selectonic( $(".someElements")  );
+$(elem).selectonic("select", $(".someElements"));
 ```
 or selector:
 ```javascript
-$(elem).selectonic(":even");
+$(elem).selectonic("select", ":even");
 ```
 ```javascript
-$(elem).selectonic("li:eq(3)");
+$(elem).selectonic("select", "li:eq(3)");
 ```
 
 
