@@ -974,7 +974,7 @@
   });
 
 
-  test( 'API exceptions', 6, function() {
+  test( 'API exceptions', 8, function() {
     var box = getBox();
     try {
       box.selectonic( 'option', false );
@@ -989,7 +989,7 @@
     try {
       box.selectonic( 'option', 'listClass', 'superlalala' );
     } catch (err) {
-      ok( err.message.match(/change.*class.*/), 'Is not allowed change classnames' );
+      ok( err.message.match(/change.*class.*/), 'Is not allowed to change classnames' );
     }
     try {
       box.selectonic( 'option', 'before', 'superlalala' );
@@ -1005,6 +1005,16 @@
       $('#list').selectonic( 'option', 'autoScroll', '#superlalala' );
     } catch (err) {
       ok( err.message.match(/plugin/), 'Elem has no plugin attached' );
+    }
+    try {
+      box.selectonic( 'alkjsdkfjaslk', 'asdlfkjasd' );
+    } catch (err) {
+      ok( err.message.match(/method/), 'No such method!' );
+    }
+    try {
+      box.selectonic( 'select' );
+    } catch (err) {
+      ok( err.message.match(/select/), 'Should pass DOM element or selector!' );
     }
   });
 

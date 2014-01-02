@@ -53,7 +53,9 @@
       }
       return result;
     };
-  };
+  },
+
+  $document = $( window.document );
 
 
   /* 
@@ -289,11 +291,11 @@
       if( _this._isEnable && _this.options.hoverFocus ) { _this._mousemoveHandler.call(_this, e); }
     }, 20);
 
-    $( window.document ).on(
+    $document.on(
       'click' + '.' + this._name + ' ' + 'mousedown' + '.' + this._name,
       this._mouseEvent
     );
-    $( window.document ).on(
+    $document.on(
       'keydown' + '.' + this._name + ' ' + 'keyup' + '.' + this._name,
       this._keyboardEvent
     );
@@ -301,7 +303,7 @@
       'selectstart' + '.' + this._name,
       this._selectstartEvent
     );
-    $( window.document ).on(
+    $document.on(
       'mousemove' + '.' + this._name,
       this._mousemoveEvent
     );
@@ -310,11 +312,11 @@
   
   // Detach handlers
   Plugin.prototype._unbindEvents = function() {
-    $( window.document ).off(
+    $document.off(
       'click' + '.' + this._name + ' ' + 'mousedown' + '.' + this._name,
       this._mouseEvent
     );
-    $( window.document ).off(
+    $document.off(
       'keydown' + '.' + this._name + ' ' + 'keyup' + '.' + this._name,
       this._keyboardEvent
     );
@@ -322,7 +324,7 @@
       'selectstart' + '.' + this._name,
       this._selectstartEvent
     );
-    $( window.document ).off(
+    $document.off(
       'mousemove' + '.' + this._name,
       this._mousemoveEvent
     );
@@ -363,8 +365,8 @@
     } else if( !handle && elem ) {
       return target;
     }
-
-    return null; // was not clicked any selectable items of a list
+    // has not clicked any selectable items of a list
+    return null; 
   };
 
 
@@ -381,8 +383,9 @@
       });
       res = arr.length > 0 ? arr : null;
 
-    } else { res = this.$el.children( '.' + this.options.selectedClass ); }
-
+    } else {
+      res = this.$el.children( '.' + this.options.selectedClass );
+    }
     return res;
   };
 
@@ -1086,6 +1089,7 @@
   };
 
 
+  // Tries to find target under cursor when mouse moves
   Plugin.prototype._mousemoveHandler = function( e ) {
     if ( this._isHoverFocusPrevented ) { return; }
     var params = {}, target;
@@ -1103,6 +1107,8 @@
   };
 
 
+  // Prevent changing focus under cursor when user moves focus by keyboard
+  // and list's element changes scroll position
   Plugin.prototype._preventMouseMove = function() {
     var _this = this;
     this._isHoverFocusPrevented = true;
@@ -1127,43 +1133,22 @@
   */
   Plugin._callPublicMethod = function( options ) {
     var
-      pluginObject = Plugin.getDataObject( this ),
-      apiMethod, selector;
+      _this = Plugin.getDataObject( this ),
+      publicMethod, args;
 
-    if( null === pluginObject || void 0 === pluginObject ) {
+    if( null === _this || void 0 === _this ) {
       throw new Error( 'Element ' + this[0] + ' has no plugin ' + Plugin.pluginName );
     }
-
     // Try to find method
-    if ( pluginObject[options] && $.isFunction(pluginObject[options]) ) {
-      apiMethod = pluginObject[options];
+    if ( _this[options] && $.isFunction(_this[options]) ) {
+      publicMethod = _this[options];
     }
-
     // If method exists and it is not private – call him
-    if ( apiMethod && $.isFunction( apiMethod ) && options.charAt(0) !== '_' ) {
-      return apiMethod.apply( pluginObject, arguments );
+    if ( publicMethod && $.isFunction( publicMethod ) && options.charAt(0) !== '_' ) {
+      args = Array.prototype.slice.call( arguments );
+      args.shift();
+      return publicMethod.apply( _this, args );
     }
-
-    // If received DOM element
-    if ( options && options.addClass || options.nodeType ) {
-      return pluginObject.select(
-        // Filter received elements through cached selecter
-        $( options ).filter( pluginObject.options.parentSelector )
-      );
-    }
-
-    // Test for selector
-    selector = this
-      .find( options ) // Try to find
-      .filter( pluginObject.options.parentSelector ); // Filter found elements
-
-    // If there is jquery object:
-    if( selector.jquery ) {
-      // Call select method and give him elements
-      if (selector.length > 0) { return pluginObject.select( selector ); }
-      return this.$el;
-    }
-
     // Nothing has found
     throw new Error( 'Plugin \"' + Plugin.pluginName + '\" has no method \"' + options + '\"' );
   };
@@ -1174,28 +1159,26 @@
   };
 
 
-  Plugin.prototype.option = function() {
-    var secArg = arguments[1], arg = arguments.length;
+  Plugin.prototype.option = function( option, value ) {
+    var args = arguments.length;
 
-    // Received two strings
-    if( arg > 1 && secArg.charAt ) {
-      // Received two strings and any argument
-      if( arg > 2 ) {
-        this._setOptions( secArg, arguments[2] );
+    // Received string
+    if( args > 0 && typeof option === 'string' ) {
+      // Received strings and any argument
+      if( args > 1 ) {
+        this._setOptions( option, value );
         return this.$el;
       }
       // Return value of option
-      return this.options[secArg];
+      return this.options[ option ];
     }
-
-    // Received string and object
-    if( arg > 1 && $.isPlainObject( secArg ) ) {
-      this._setOptions( secArg );
+    // Received object
+    if( args > 0 && $.isPlainObject( option ) ) {
+      this._setOptions( option );
       return this.$el;
     }
-
     // Return whole options object
-    if (arg === 1) {
+    if ( args === 0 ) {
       return $.extend({}, this.options);
     } else {
       throw new Error('Format of \"option\" could be: \"option\" or \"option\",\"name\" or \"option\",\"name\",val or \"option\",{}');
@@ -1211,15 +1194,35 @@
   };
 
 
-  Plugin.prototype.select = function( elem ) {
-    var params = {};
-    // Set params for _controller method:
-    params.items = ( elem.addClass ) ? elem : $( elem );
-    params.target = elem[0] || elem;
+  Plugin.prototype.select = function( selector ) {
+    var $elem, params = {};
 
-    // Call _controller with null instead of event object
-    delete this._solidInitialElem;
-    this._controller( null, params );
+    // If received DOM $element
+    if ( selector && (selector.jquery || selector.nodeType) ) {
+      // Filter received elements through cached selecter
+      selector = selector.jquery ? selector : $( selector );
+      $elem = selector.filter( this.options.parentSelector );
+      $elem = $elem.length > 0 ? $elem : null;
+    
+    } else if (typeof selector === 'string') {
+      // Test for selector
+      $elem = this.$el
+        .find( selector ) // Try to find
+        .filter( this.options.parentSelector ); // Filter found $elements
+      $elem = ( $elem.jquery && $elem.length > 0 ) ? $elem : null;
+    } else {
+      throw new Error( 'You shold pass DOM element or selector to \"select\" method.' );
+    }
+
+    if ( $elem ) {
+      // Set params for _controller method:
+      params.items = ( $elem.addClass ) ? $elem : $( $elem );
+      params.target = $elem[0] || $elem;
+
+      // Call _controller with null instead of event object
+      delete this._solidInitialElem;
+      this._controller( null, params );
+    }
     return this.$el;
   };
 
@@ -1302,12 +1305,6 @@
     if( options && options.charAt ) {
       return Plugin._callPublicMethod.apply( this, arguments );
     }
-
-    // DOM element passed
-    else if ( options && (options.addClass || options.parentNode) ) {
-      return Plugin._callPublicMethod.call( this, options );
-    }
-
     // Create instances
     return this.each( function(key, elem) {
       if ( !Plugin.getDataObject(elem) ) { new Plugin( elem, options ); }

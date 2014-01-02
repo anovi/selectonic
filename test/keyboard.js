@@ -64,6 +64,9 @@
       case 'Loop':
         $.extend( advanced, { loop: true });
         break;
+      case 'Select by Enter':
+        $.extend( advanced, { multi: false });
+        break;
     }
 
     res = $.extend( res, advanced );
@@ -186,6 +189,27 @@
     Syn.type( '[ctrl]a', box );
     Syn.type( '[ctrl-up]', box );
     assert.selectedCount( 10 );
+  });
+
+  test( 'Selet by Enter', 4, function( ) {
+    var
+    box = getBox(),
+    el = elems();
+
+    Syn.type( '[down]', box );
+    Syn.type( '[down]', box );
+    Syn.type( '[down]', box );
+    Syn.type( '[enter]', box );
+    assert
+      .selectedCount( 1 )
+      .selectedFocus( el(2) );
+
+    Syn.type( '[down]', box );
+    Syn.type( '[down]', box );
+    Syn.type( '[enter]', box );
+    assert
+      .selectedCount( 1 )
+      .selectedFocus( el(4) );
   });
 
 

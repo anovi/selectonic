@@ -1192,26 +1192,29 @@
 
 
   Plugin.prototype.select = function( selector ) {
-    var elem, params = {};
+    var $elem, params = {};
 
-    // If received DOM element
-    if ( selector && selector.addClass || selector.nodeType ) {
+    // If received DOM $element
+    if ( selector && (selector.jquery || selector.nodeType) ) {
       // Filter received elements through cached selecter
-      elem = $( selector ).filter( this.options.parentSelector );
-      elem = elem.length > 0 ? elem : null;
+      selector = selector.jquery ? selector : $( selector );
+      $elem = selector.filter( this.options.parentSelector );
+      $elem = $elem.length > 0 ? $elem : null;
     
-    } else {
+    } else if (typeof selector === 'string') {
       // Test for selector
-      elem = this.$el
+      $elem = this.$el
         .find( selector ) // Try to find
-        .filter( this.options.parentSelector ); // Filter found elements
-      elem = ( elem.jquery && elem.length > 0 ) ? elem : null;
+        .filter( this.options.parentSelector ); // Filter found $elements
+      $elem = ( $elem.jquery && $elem.length > 0 ) ? $elem : null;
+    } else {
+      throw new Error( 'You shold pass DOM element or selector to \"select\" method.' );
     }
 
-    if ( elem ) {
+    if ( $elem ) {
       // Set params for _controller method:
-      params.items = ( elem.addClass ) ? elem : $( elem );
-      params.target = elem[0] || elem;
+      params.items = ( $elem.addClass ) ? $elem : $( $elem );
+      params.target = $elem[0] || $elem;
 
       // Call _controller with null instead of event object
       delete this._solidInitialElem;
