@@ -320,7 +320,7 @@
     secElem = box.find('li:eq(5)'),
     
     isEnabled = box
-      .selectonic('li:eq(3)')
+      .selectonic('select','li:eq(3)')
       .selectonic('disable')
       .selectonic('isEnabled');
     ok( !isEnabled, 'Is diabled!' );
@@ -339,7 +339,7 @@
     box  = getBox(),
     elem = box.find('li:eq(3)');
     
-    box.selectonic('li:eq(3)');
+    box.selectonic('select','li:eq(3)');
     assert
       .selectedFocus( elem )
       .selectedCount( 1 );
@@ -350,7 +350,7 @@
       .focused( elem )
       .selectedCount( 0 );
     box
-      .selectonic('li:eq(3)')
+      .selectonic('select','li:eq(3)')
       .selectonic( 'option', 'focusBlur', true )
       .selectonic( 'blur' );
     assert
@@ -428,13 +428,13 @@
 
   test( 'select', 2, function() {
     var
-    box     = getBox(),
-    elem    = box.find('li:eq(3)');
+    box = getBox(),
+    elem = box.find('li:eq(3)');
     
-    box.selectonic( elem );
+    box.selectonic( 'select', elem );
     assert.selected( elem );
     
-    box.selectonic( 'li:odd' );
+    box.selectonic( 'select','li:odd' );
     assert.selectedCount( 10 );
   });
 
@@ -445,7 +445,7 @@
     check = true;
     
     box
-      .selectonic( elem )
+      .selectonic( 'select', elem )
       .selectonic( 'option', { unselectAll: function() {check = false;} });
     
     assert.selectedCount( 1 );
@@ -467,7 +467,7 @@
     focus;
     
     box
-      .selectonic( 'li:odd' )
+      .selectonic( 'select','li:odd' )
       .selectonic( 'option', {
         stop: function() {
           this.selectonic( 'cancel' );

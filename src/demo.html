@@ -127,6 +127,7 @@
 
 <script type="text/javascript">
     var mainList;
+    var elem = $('li:eq(2)');
 
     mainList = $("#list ul").selectonic({
         // filter:         '> *',
@@ -148,8 +149,8 @@
 
         create: function() {
             console.log( this.selectonic('option', 'hoverFocus') );
-            // this
-                // .selectonic( 'li:eq(15)' )
+            this
+                .selectonic( 'select', elem )
                 // .selectonic( 'option', 'autoScroll', '#list' )
                 // .selectonic( "scroll" );
         },
