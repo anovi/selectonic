@@ -126,6 +126,8 @@
 <script src="selectonic.js"></script>
 
 <script type="text/javascript">
+    function say ( text ) { if ( say.enable ) {console.log( text ); } }
+
     var mainList;
     var elem = $('li:eq(2)');
 
@@ -134,13 +136,13 @@
         // filter:         'li:odd',
         mouseMode:      'select',
         event:          'mousedown',
-        autoScroll:   '#list',
+        autoScroll:     '#list',
         // autoScroll:   null,
         multi:          false,
         focusBlur:      true,
         selectionBlur:  false,
         keyboard:       true,
-        keyboardMode:   'toggle',
+        // keyboardMode:   'toggle',
         preventInputs:  true,
         loop:           false,
         handle:         null,
@@ -148,31 +150,27 @@
         // listClass: 'my-super',
 
         create: function() {
-            console.log( this.selectonic('option', 'hoverFocus') );
-            this
-                .selectonic( 'select', elem )
-                // .selectonic( 'option', 'autoScroll', '#list' )
-                // .selectonic( "scroll" );
         },
-        beforeSelect: function( event, ui ) {
-            // console.log('beforeSelect');
+        before: function( event, ui ) {
+            say('before');
         },
         focusLost: function( event, ui ) {
-            // console.log('Focus lost');
-            // console.log( this );
-            // this.selectonic("cancel")
+            say('Focus lost');
         },
         select: function( event, ui ) {
-            // console.log( $(ui.target).attr('id') );
+            say('select');
         },
-        unselect: function( event, ui ) { console.log('unSelect')},
-        unselectAll: function( event, ui ) {console.log('unSelectAll')},
-        stop: function( event, ui ) {},
+        unselect: function( event, ui ) {
+            say('unselect');
+        },
+        unselectAll: function( event, ui ) {
+            say('unselectAll');
+        },
+        stop: function( event, ui ) {
+            say( '-----------------------------------' );
+        },
         destroy: function() {}
     });
-
-    // mainList.selectonic("li:odd");
-    // mainList.selectonic("option", 'listClass', 'mysuper');
 
     /**
     * Benchmarking
