@@ -240,11 +240,11 @@
 
   // prepareA();
   // moveOnElem( elem, $document );
-  // moveOnBody( body, $document );
+  // moveOnBody( deepDiv, $document );
 
   // prepareB();
-  // moveOnElem( elem, $elem );
-  // moveOnBody( body, $document );
+  // moveOnElem( elem, $mainList );
+  // moveOnBody( deepDiv, $document );
 
 
 
