@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js ie7 lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js ie8 lt-ie9"> <![endif]-->
+<!--[if IE 9]>         <html class="no-js ie9"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Selectonic — benchmark test for focusing items by mouse move</title>
+        <meta name="description" content="Selectonic — jQuery plugin for making selectable lists by mouse and keyboard, configurable with options, methods and callbacks | Author: Alexey Novichkov">
+        <meta name="viewport" content="width=device-width">
+        
+        <style>
+            body {
+                margin: 20px;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            #list {
+                margin: 50px;
+            }
+            #list ul {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+            #list li {
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+                line-height: 2em;
+                background: #efefef;
+                border: 5px solid #ffffdd;
+            }
+            #list li.j-selected {
+                background: #ddF;
+            }
+            #list li.j-focused {
+                outline: 1px solid #07d;
+            }
+            #list .handle {
+                display: none;
+            }
+
+            .scrollable {
+                height: 300px;
+                overflow: auto;
+            }
+        </style>
+</head>
+<body>
+
+<div id="list"></div>
+
+<script src="../bower_components/jquery-1.10.2/jquery.js"></script>
+<script src="../bower_components/benchmark/benchmark.js"></script>
+<script src="../bower_components/syn/dist/syn.js"></script>
+<script src="../src/selectonic.js"></script>
+<script src="hoverFocus.js"></script>
+
+</body>
+</html>

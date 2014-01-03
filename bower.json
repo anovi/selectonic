@@ -12,7 +12,12 @@
     "./dist/selectonic.js",
     "./dist/selectonic.min.js"
   ],
-  "keywords": ["list", "jquery", "selectable", "selection"],
+  "keywords": [
+    "list",
+    "jquery",
+    "selectable",
+    "selection"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/anovi/selectonic.git"
@@ -44,6 +49,7 @@
     "jquery-1.7.0": "jquery#1.7.0",
     "jquery-1.9.0": "jquery#1.9.0",
     "jquery-1.10.2": "jquery#1.10.2",
-    "jquery-2.0.3": "jquery#2.0.3"
+    "jquery-2.0.3": "jquery#2.0.3",
+    "benchmark": "~1.0.0"
   }
 }
