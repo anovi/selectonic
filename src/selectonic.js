@@ -1192,7 +1192,7 @@
 
 
   Plugin.prototype.select = function( selector ) {
-    var $elem, params = {};
+    var $elem;
 
     // If received DOM $element
     if ( selector && (selector.jquery || selector.nodeType) ) {
@@ -1212,24 +1212,19 @@
     }
 
     if ( $elem ) {
-      // Set params for _controller method:
-      params.items = ( $elem.addClass ) ? $elem : $( $elem );
-      params.target = $elem[0] || $elem;
-
-      // Call _controller with null instead of event object
       delete this._solidInitialElem;
-      this._controller( null, params );
+      this._controller( null, {
+        items:  ( $elem.addClass ) ? $elem : $( $elem ),
+        target: $elem[0] || $elem
+      });
     }
     return this.$el;
   };
 
 
   Plugin.prototype.blur = function() {
-    var params = {};
-    // If target is not exist, _blur will be called
-    params.target = null;
     // Call _controller with null instead of event object
-    this._controller( null, params );
+    this._controller( null, { target: null } );
     return this.$el;
   };
 
