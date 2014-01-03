@@ -33,6 +33,7 @@
     "**/.*",
     "src",
     "libs",
+    "benchmark",
     "node_modules",
     "bower_components",
     "Gruntfile.js",

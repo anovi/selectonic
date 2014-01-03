@@ -158,7 +158,6 @@
   *
   */
   var beforeCalled,
-  $results = $("#results"),
   $mainList = $("#list #sublist"),
   $elem     = $('li:eq(0) .text'),
   $deepDiv  = $('#deepDiv'),
@@ -167,7 +166,6 @@
   elemX     = $elem.offset().left + 1,
   elemY     = $elem.offset().top + 1,
   $body     = $('body'),
-  body      = $body[0],
   $document = $( window.document ),
   done      = function() {},
   options   = {
@@ -184,7 +182,6 @@
     },
     focusLost:      function() {
       done();
-      // console.log('focusLost')
     }
   },
   
@@ -203,53 +200,7 @@
     e.pageY = 2;
     e.target = target;
     catcher.trigger( e );
-  },
-
-  say = function( text ) {
-    var row = $('<div>');
-    row.html( text );
-    $results.append( row );
-  },
-
-  watch = function( benchmark) {
-    var box = $('<div id=' + benchmark.id + '>'), cycles;
-
-    box.html( '<h2>' + benchmark.name + '</h2>' );
-    box.append('<div class=\"cycles\"></div>');
-    cycles = box.find('.cycles');
-    $results.append( box );
-
-    benchmark.on( 'start', function( ) {
-      box.append( '<div>Starting...</div>' );
-    });
-
-    benchmark.on( 'complete', function( event ) {
-      box.append( String(event.target) );
-      box.append( '<div>Complete!</div>' );
-    });
-    
-    benchmark.on( 'cycle', function() {
-      // cycles.html( 'Cycles ran: ' +  this.cycle );
-    });
-
-    benchmark.setFastest = function() {
-      box.find('h2').append('<span class=fastest>Fastest</span>');
-    };
   };
-
-  // prepareA();
-  // beforeCalled = 0;
-  // moveOnElem( elem, $document );
-  // moveOnBody( deepDiv, $document );
-  // console.log( beforeCalled );
-
-  // prepareB();
-  // beforeCalled = 0;
-  // moveOnElem( elem, $mainList );
-  // moveOnBody( deepDiv, $document );
-  // console.log( beforeCalled );
-  
-  console.log( Benchmark.platform );
 
 
   /*
@@ -258,14 +209,6 @@
   *
   */
   var suite = new Benchmark.Suite();
-
-  suite
-  .on('complete', function() {
-    this.filter('fastest').forEach( function( testCase ) {
-      testCase.setFastest();
-    });
-  });
-
 
 
   /*
@@ -311,9 +254,7 @@
   });
 
 
-  suite.forEach( function( testCase ) {
-    watch( testCase );
-  });
+
   // run
   suite.run({ 'async': true });
   // suite.run();
