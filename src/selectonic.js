@@ -405,10 +405,20 @@
         if ( item.is(this.options.parentSelector) ) { return item; }
       }
       return null;
-    
+
     case 'pageup':
     case 'pagedown':
+    /*
+    * There are two versions of algorithm for searching target depending from page height.
+    * Page's height is window's or _scrolledElem's height ( which is smaller ).
+    * Both algorithms runs loop until total item's height reaches maximum possible value,
+    * but lower than page height. But first version gets from DOM one next element every cycle,
+    * and second version gets all items at the beginning and then iterates through them.
+    * And it set allItems and rangeStart and rangeEnd for params. So second version used only 
+    * for Shift+pageUp/Down cases for performance and can be enabled by flag params.isShiftPageRange.
+    */ 
       var
+        _isOptimized  = params.isShiftPageRange, 
         box           = this._scrolledElem || this.el,
         boxViewHeight = box.clientHeight,
         winViewHeight = $( window ).outerHeight(),
@@ -419,18 +429,41 @@
         currentHeight = itemHeight,
         itemsHeight   = itemHeight,
         direction     = (target === 'pageup') ? 'prev' : 'next',
-        $candidate, candHeight;
+        $candidate, candHeight, currentIndex, allItems, cand;
+
+        if ( _isOptimized ) {
+          direction = (target === 'pageup') ? -1 : 1;
+          allItems = this._getItems( params );
+          params.rangeStart = currentIndex = allItems.index( elem );
+        }
 
       while( true ) {
-        $candidate = this._getItems( params, direction, $current );
-        if ( !$candidate && $current.is( elem ) ) { break; } else if ( !$candidate ) { return $current; }
+        if ( _isOptimized ) {
+          currentIndex = currentIndex + direction;
+          cand = currentIndex >= 0 ? allItems.eq( currentIndex ) : null;
+          $candidate = cand && cand.length > 0 ? cand : null;
+        } else {
+          $candidate = this._getItems( params, direction, $current );  
+        }
+        
+        if ( !$candidate && $current.is( elem ) ) {
+          break;
+        } else if ( !$candidate  ) {
+          if ( _isOptimized ) { params.rangeEnd = currentIndex - direction; }
+          return $current;
+        }
         
         candHeight = $candidate.outerHeight();
         itemsHeight = itemsHeight + candHeight;
         
         if ( itemsHeight > pageHeight ) {
           // If two items bigger than page than it just will give next item
-          if ( currentHeight + candHeight > pageHeight ) { return $candidate; }
+          if ( currentHeight + candHeight > pageHeight ) {
+            if ( _isOptimized ) { params.rangeEnd = currentIndex; }
+            return $candidate;
+          }
+          
+          if ( _isOptimized ) { params.rangeEnd = currentIndex - direction; }
           return $current;
         }
         currentHeight = candHeight;
@@ -712,7 +745,7 @@
     if( params.target === this.ui.focus ) { return $( params.target ); }
 
     // Detect position of target and focus in the list
-    var arr = this._getItems( params ),
+    var arr = params.allItems ? params.allItems : this._getItems( params ),
       x = arr.index( params.target ),
       y = arr.index( this.ui.focus ),
 
@@ -720,6 +753,7 @@
     subArr =     ( x < y ) ? arr.slice( x, y ) : arr.slice( y, x );
     subArr.push( ( x < y ) ? arr[ y ]          : arr[ x ] );
 
+    params.allItems = arr;
     params.rangeStart = y;
     params.rangeEnd = x;
     return subArr;
@@ -785,12 +819,7 @@
 
     if ( !this.options.keyboard ) { return; }
     if ( this.options.preventInputs && e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') { return; }
-
-    var key = e.which, // pressed key
-      params = {},
-      target,          // sibling element
-      isAllSelect,     // flag that is all items is selected
-      direction;       // next or previous (depends from pressed arrow up|down)
+    var key = e.which, params = {}, target, isAllSelect, direction, page;
 
     // Key is released
     if (e.type === 'keyup') {
@@ -803,19 +832,11 @@
     // If CTRL+A or CMD+A pressed and multi option is true
     if ( key === Plugin.keyCode.A && (e.metaKey || e.ctrlKey) && this.options.multi ) {
       target = this._getItems( params );
-      isAllSelect = true;
+      isAllSelect = true; // flag that is all items is selected
 
     } else {
       // Choose direction and try to find targeted item
       switch ( key ) {
-      case Plugin.keyCode.HOME:
-        direction = 'prev';
-        target = this._getItems( params, 'first');
-        break;
-      case Plugin.keyCode.END:
-        direction = 'next';
-        target = this._getItems( params, 'last');
-        break;
       case Plugin.keyCode.DOWN:
         direction = 'next';
         target = this._findNextTarget( 'next', params );
@@ -824,13 +845,21 @@
         direction = 'prev';
         target = this._findNextTarget( 'prev', params );
         break;
-      case Plugin.keyCode.PAGE_DOWN:
-        direction = 'next';
-        target = this._findNextTarget( 'pagedown', params );
-        break;
-      case Plugin.keyCode.PAGE_UP:
+      case Plugin.keyCode.HOME:
         direction = 'prev';
-        target = this._findNextTarget( 'pageup', params );
+        target = this._getItems( params, 'first');
+        break;
+      case Plugin.keyCode.END:
+        direction = 'next';
+        target = this._getItems( params, 'last');
+        break;
+      case Plugin.keyCode.PAGE_DOWN:
+      case Plugin.keyCode.PAGE_UP:
+        var isDown = key === Plugin.keyCode.PAGE_DOWN;
+        direction  = isDown ? 'next' : 'prev';
+        page       = isDown ? 'pagedown' : 'pageup';
+        params.isShiftPageRange = this.options.multi && e.shiftKey && !isAllSelect;
+        target = this._findNextTarget( page, params );
         break;
       case Plugin.keyCode.SPACE:
         target = $( this.ui.focus );
@@ -904,7 +933,7 @@
 
   Plugin.prototype._rangeVariator = function( params ) {
     var
-      isFocusSelected = this._getIsSelected( this.ui.focus ),
+      isFocusSelected = void 0 === params.isFocusSelected ? this._getIsSelected( this.ui.focus ) : params.isFocusSelected,
       isTargetSelected = params.isTargetWasSelected = this._getIsSelected( params.target );
 
     if ( !isFocusSelected && !isTargetSelected ) {
@@ -931,7 +960,7 @@
   Plugin.prototype._multiVariator = function( params, key, direction, target ) {
     var
       // Check if focus or target is selected
-      isFocusSelected       = this._getIsSelected( this.ui.focus ),
+      isFocusSelected       = void 0 === params.isFocusSelected ? this._getIsSelected( this.ui.focus ) : params.isFocusSelected,
       isTargetSelected      = this._getIsSelected( params.target ),
       // Search for next target in the same direction
       afterTarget           = this._getItems( params, direction, target ),
