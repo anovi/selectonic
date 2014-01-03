@@ -8,45 +8,26 @@
   */
   var bindEventsA = function() {
     var _this = this;
-
-    // Handler for mouse events
-    this._mouseEvent = function(e) {
-      if ( _this._isEnable ) { _this._mouseHandler.call(_this, e); }
-      return e;
-    };
-    // Handler for keyboard events
-    this._keyboardEvent = function(e) {
-      if( _this.options.keyboard && _this._isEnable ) { _this._keyHandler.call(_this, e); }
-    };
-    // Handler for selection start
-    this._selectstartEvent = function() {
-      if ( !_this.options.textSelection ) { return false; }
-    };
     // Handler for mousemove
     this._mousemoveEvent = function(e) {
       if( _this._isEnable && _this.options.hoverFocus ) { _this._mousemoveHandler.call(_this, e); }
     };
+    $document.on(
+      'mousemove_selectonic',
+      this._mousemoveEvent
+    );
+  };
 
-    $document.on(
-      'click' + '.' + this._name + ' ' + 'mousedown' + '.' + this._name,
-      this._mouseEvent
-    );
-    $document.on(
-      'keydown' + '.' + this._name + ' ' + 'keyup' + '.' + this._name,
-      this._keyboardEvent
-    );
-    this.$el.on(
-      'selectstart' + '.' + this._name,
-      this._selectstartEvent
-    );
-    $document.on(
-      'mousemove' + '.' + this._name,
+  var unbindEventsA = function() {
+    $document.off(
+      'mousemove_selectonic',
       this._mousemoveEvent
     );
   };
 
   var prepareA = function() {
     _selectonic.prototype._bindEvents = bindEventsA;
+    _selectonic.prototype._unbindEvents = unbindEventsA;
     $mainList.selectonic( options );
   };
 
@@ -58,39 +39,20 @@
   */
   var bindEventsB = function() {
     var _this = this;
-
-    // Handler for mouse events
-    this._mouseEvent = function(e) {
-      if ( _this._isEnable ) { _this._mouseHandler.call(_this, e); }
-      return e;
-    };
-    // Handler for keyboard events
-    this._keyboardEvent = function(e) {
-      if( _this.options.keyboard && _this._isEnable ) { _this._keyHandler.call(_this, e); }
-    };
-    // Handler for selection start
-    this._selectstartEvent = function() {
-      if ( !_this.options.textSelection ) { return false; }
-    };
     // Handler for mousemove
     this._mousemoveEvent = function(e) {
       if( _this._isEnable && _this.options.hoverFocus ) { _this._mousemoveHandler.call(_this, e); }
     };
 
-    $document.on(
-      'click' + '.' + this._name + ' ' + 'mousedown' + '.' + this._name,
-      this._mouseEvent
-    );
-    $document.on(
-      'keydown' + '.' + this._name + ' ' + 'keyup' + '.' + this._name,
-      this._keyboardEvent
-    );
     this.$el.on(
-      'selectstart' + '.' + this._name,
-      this._selectstartEvent
+      'mousemove_selectonic',
+      this._mousemoveEvent
     );
+  };
+
+  var unbindEventsB = function() {
     this.$el.on(
-      'mousemove' + '.' + this._name,
+      'mousemove_selectonic',
       this._mousemoveEvent
     );
   };
@@ -105,8 +67,8 @@
       if ( target !== this.ui.focus ) {
         params.target = target;
         this._controller( e, params );
-        this._mouseOut();
       }
+      this._mouseOut();
     } else {
       this._controller( e, params );
     }
@@ -142,13 +104,14 @@
   var prepareB = function() {
     _selectonic.lastMousePos = { x:0, y:0 };
     $document.on(
-      'mousemove.selectonic',
+      'mousemove_selectonic',
       function(e) {
         _selectonic.lastMousePos.x = e.pageX;
         _selectonic.lastMousePos.y = e.pageY;
       }
     );
     _selectonic.prototype._bindEvents = bindEventsB;
+    _selectonic.prototype._unbindEventsB = unbindEventsB;
     _selectonic.prototype._mousemoveHandler = mousemoveHandlerB;
     _selectonic.prototype._checkMouseOut = checkMouseOutB;
     _selectonic.prototype._mouseOut = mouseOutB;
@@ -194,7 +157,8 @@
   * Define helpers
   *
   */
-  var
+  var beforeCalled,
+  $results = $("#results"),
   $mainList = $("#list #sublist"),
   $elem     = $('li:eq(0) .text'),
   $deepDiv  = $('#deepDiv'),
@@ -215,6 +179,9 @@
     focusBlur:      true,
     selectionBlur:  false,
     keyboard:       false,
+    before:         function() {
+      beforeCalled += 1;
+    },
     focusLost:      function() {
       done();
       // console.log('focusLost')
@@ -223,7 +190,7 @@
   
   // Helpers
   moveOnElem = function( target, catcher ) {
-    var e = $.Event( "mousemove" );
+    var e = $.Event( 'mousemove_selectonic' );
     e.pageX = elemX;
     e.pageY = elemY;
     e.target = target;
@@ -231,21 +198,58 @@
   },
 
   moveOnBody = function( target, catcher ) {
-    var e = $.Event( "mousemove" );
+    var e = $.Event( 'mousemove_selectonic' );
     e.pageX = 2;
     e.pageY = 2;
     e.target = target;
     catcher.trigger( e );
+  },
+
+  say = function( text ) {
+    var row = $('<div>');
+    row.html( text );
+    $results.append( row );
+  },
+
+  watch = function( benchmark) {
+    var box = $('<div id=' + benchmark.id + '>'), cycles;
+
+    box.html( '<h2>' + benchmark.name + '</h2>' );
+    box.append('<div class=\"cycles\"></div>');
+    cycles = box.find('.cycles');
+    $results.append( box );
+
+    benchmark.on( 'start', function( ) {
+      box.append( '<div>Starting...</div>' );
+    });
+
+    benchmark.on( 'complete', function( event ) {
+      box.append( String(event.target) );
+      box.append( '<div>Complete!</div>' );
+    });
+    
+    benchmark.on( 'cycle', function() {
+      // cycles.html( 'Cycles ran: ' +  this.cycle );
+    });
+
+    benchmark.setFastest = function() {
+      box.find('h2').append('<span class=fastest>Fastest</span>');
+    };
   };
 
   // prepareA();
+  // beforeCalled = 0;
   // moveOnElem( elem, $document );
   // moveOnBody( deepDiv, $document );
+  // console.log( beforeCalled );
 
   // prepareB();
+  // beforeCalled = 0;
   // moveOnElem( elem, $mainList );
   // moveOnBody( deepDiv, $document );
-
+  // console.log( beforeCalled );
+  
+  console.log( Benchmark.platform );
 
 
   /*
@@ -256,11 +260,10 @@
   var suite = new Benchmark.Suite();
 
   suite
-  .on('cycle', function(event) {
-    console.log(String(event.target));
-  })
   .on('complete', function() {
-    console.log('Fastest is ' + this.filter('fastest').pluck('name'));
+    this.filter('fastest').forEach( function( testCase ) {
+      testCase.setFastest();
+    });
   });
 
 
@@ -270,7 +273,7 @@
   * Test with global per instance mousemove handler
   *
   */
-  suite.add('GlobalPerInstanceMousemove#test', {
+ suite.add('Document Mousemove per ins.', {
     'defer': true,
     'fn': function( deferred ) {
       done = function() { deferred.resolve(); };
@@ -278,7 +281,6 @@
       moveOnBody( deepDiv, $document );
     },
     onStart: function() {
-      console.log('Starting - ' + this.name );
       prepareA();
     },
     onComplete: function() {
@@ -287,22 +289,20 @@
   });
 
 
-
   /*
   *
   * Test with list's element per instance mousemove handler
   * and one global mousemove handler
   *
   */
-  suite.add('LocalPerInstanceMousemove#test', {
+  suite.add('List Mousemove per ins.', {
     'defer': true,
     'fn': function( deferred ) {
       done = function() { deferred.resolve(); };
       moveOnElem( elem, $mainList );
-      moveOnBody( deepDiv, $document );
+      // moveOnBody( deepDiv, $document );
     },
     onStart: function() {
-      console.log('Starting - ' + this.name );
       prepareB();
     },
     onComplete: function() {
@@ -311,10 +311,12 @@
   });
 
 
-
+  suite.forEach( function( testCase ) {
+    watch( testCase );
+  });
   // run
-  // suite.run({ 'async': true });
-  suite.run();
+  suite.run({ 'async': true });
+  // suite.run();
 
 
 

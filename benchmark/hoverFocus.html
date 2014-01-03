@@ -20,6 +20,10 @@
             }
             #list {
                 margin: 50px;
+                position: absolute;
+                top: -10000px;
+                left: -10000px;
+                width: 1000px;
             }
             #list ul {
                 list-style-type: none;
@@ -48,15 +52,22 @@
                 height: 300px;
                 overflow: auto;
             }
+            .fastest {
+                background: #1fbb6c;
+                font-size: 16px;
+                padding: 0.1em 0.5em;
+                margin-left: 0.4em;
+                color: #fff;
+            }
         </style>
 </head>
 <body>
 
 <div id="list"></div>
+<div id="results"></div>
 
 <script src="../bower_components/jquery-1.10.2/jquery.js"></script>
 <script src="../bower_components/benchmark/benchmark.js"></script>
-<script src="../bower_components/syn/dist/syn.js"></script>
 <script src="../src/selectonic.js"></script>
 <script src="hoverFocus.js"></script>
 
