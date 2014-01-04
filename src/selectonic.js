@@ -1,7 +1,7 @@
 (function($, window, undefined) {
   'use strict';
 
-  // For IE
+  // For IE compatibility
   if (typeof Array.prototype.indexOf === 'undefined') {
     Array.prototype.indexOf = function (searchElement, fromIndex) {
       if (!this) { throw new TypeError(); }
@@ -19,11 +19,8 @@
     };
   }
 
-  // Returns a function, that, when invoked, will only be triggered at most once
-  // during a given window of time. Normally, the throttled function will run
-  // as much as it can, without ever going more than once per `wait` duration;
-  // but if you'd like to disable the execution on the leading edge, pass
-  // `{leading: false}`. To disable execution on the trailing edge, ditto.
+
+  // From Underscore library – http://underscorejs.org/#throttle
   var _throttle = function(func, wait, options) {
     var context, args, result;
     var timeout = null;
@@ -128,7 +125,7 @@
   Plugin.prototype._init = function() {
     this.$el.addClass( this.options.listClass );           // Add class to box
     this._bindEvents();                                    // Attach handlers6
-    this.$el.data( 'plugin_' + Plugin.pluginName, this );  // Save plugin's object instance
+    this.$el.data( 'plugin_' + Plugin.pluginName, this );  // Save plugin's instance
     this._callEvent('create');                             // Callback
   };
 
@@ -242,22 +239,20 @@
   Plugin.prototype._cancel = function( e, params ) {
     if ( params.wasCancelled ) { return; }
     params.isCancellation = this._isPrevented = true;
+    var _this = this;
 
-    // Restore items states
+    // Restores items states for each changed item
     $.each(
-      // for each changed item
       $(params.changedItems),
-      $.proxy(
-        function( index, item ) {
-          // there is boolean value in array prevItemsState
-          // with same index that item have in _changedItems
-          if ( params.prevItemsState[ index ] ) {
-            this._select( e, params, $(item), true );
-          } else {
-            this._unselect( e, params, $(item), true );
-          }
-        }, this
-      )
+      function( index, item ) {
+        // there is boolean value in array prevItemsStates
+        // with same index that item has in _changedItems
+        if ( params.prevItemsStates[ index ] ) {
+          _this._select( e, params, $(item), true );
+        } else {
+          _this._unselect( e, params, $(item), true );
+        }
+      }
     );
     // Restore old focus
     if ( params.prevFocus ) { this._setFocus( params.prevFocus ); }
@@ -511,13 +506,13 @@
   };
 
 
-  // Control the state of a list
-  // this method calls from _keyHandler and _mouseHandler or API
-  // and do changes depending from passed params
+  // Control the state of a list.
+  // It can be called from _keyHandler, _mouseHandler or API
+  // and does list's changes depending from reseived params.
   Plugin.prototype._controller = function( e, params ) {
     var method;
     params.changedItems = [];
-    params.prevItemsState = [];
+    params.prevItemsStates = [];
     delete this._isPrevented;
     this._callEvent('before', e, params);
 
@@ -613,8 +608,8 @@
       this._unselect( e, params, items );
       this._select( e, params, params.items );
     
-    // Existing Solid selection and target not selected
-    // And initial selection elem is in current range
+    // Existing Solid selection and target is not selected
+    // and initial selection's elem is in current range
     } else if (
       this._solidInitialElem &&
       !params.isTargetWasSelected &&
@@ -685,7 +680,7 @@
         // it is not cancellation
         if( !params.isCancellation ) {
           changedItems.push( item );
-          params.prevItemsState.push( isSelected );
+          params.prevItemsStates.push( isSelected );
         }
         self._selected += delta;
       }
@@ -1012,8 +1007,7 @@
 
   /*
   Used by _keyHandler
-  when UP or DOWN keys was pressed — find next item or first/last of the list
-  direction – next|prev
+  when UP, DOWN, PageUp, PageDown keys has pressed — find target or first/last element of the list
   */
   Plugin.prototype._findNextTarget = function( direction, params ) {
     var edge = ( direction === 'next' || direction === "pagedown" ) ? 'first' : 'last', // extreme item of the list
