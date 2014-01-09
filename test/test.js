@@ -418,11 +418,11 @@
     Syn.click( {}, elem );
     selected = box
       .selectonic( 'option', 'focusBlur', true )
-      .selectonic( 'getFocused' );
+      .selectonic( 'focus' );
     ok( $(selected).is( elem ) , 'Items match' );
 
     $('body').trigger('mousedown');
-    selected = box.selectonic( 'getFocused' );
+    selected = box.selectonic( 'focus' );
     ok( selected === null, 'No focus' );
   });
 
@@ -453,7 +453,7 @@
     elem.remove();
     box.selectonic('refresh');
     assert.selectedCount( 0 );
-    ok( !box.selectonic('getFocused'), 'Focus cleared.' );
+    ok( !box.selectonic('focus'), 'Focus cleared.' );
 
     box.selectonic('blur');
     ok( check, 'There was no unselectAll callback!' );
@@ -481,7 +481,7 @@
     // Cancel in before callback
     box.selectonic( 'option', 'stop', null );
     Syn.click( {}, elem );
-    focus = box.selectonic('getFocused');
+    focus = box.selectonic('focus');
     box.selectonic( 'option', {
       before: function() {
         this.selectonic('cancel');
