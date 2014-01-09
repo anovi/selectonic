@@ -1115,13 +1115,15 @@
     var params = {}, target;
 
     target = this._getTarget( e );
-    if (target) {
+    if ( target ) {
       delete this._solidInitialElem;
+      this._isHovered = true;
       if ( target !== this.ui.focus ) {
         params.target = target;
         this._controller( e, params );
       }
-    } else {
+    } else if ( this._isHovered ) {
+      this._isHovered = false;
       this._controller( e, params );
     }
   };
@@ -1285,6 +1287,7 @@
 
   Plugin.prototype.disable = function() {
     this._isEnable = false;
+    this._isHovered = false;
     this.$el.addClass( this.options.disabledClass );
     return this.$el;
   };
