@@ -803,6 +803,31 @@
     if( this._isPrevented ) { this._cancel( e, params ); }
   };
 
+
+  Plugin.prototype._checkIfElem = function( selector ) {
+    var res;
+    if ( selector && (selector.jquery || selector.nodeType) ) {
+      // Filter received elements through cached selecter
+      selector = selector.jquery ? selector : $( selector );
+      res = selector.filter( this.options.parentSelector );
+      return res.length > 0 ? res : null;
+    
+    } else { return false; }
+  };
+
+
+  Plugin.prototype._checkIfSelector = function( selector ) {
+    var res;
+    // Test for selector
+    if ( selector && typeof selector === 'string') {
+      res = this.$el
+        .find( selector ) // Try to find
+        .filter( this.options.parentSelector ); // Filter found resents
+      return ( res.jquery && res.length > 0 ) ? res : null;
+    
+    } else { return false; }
+  };
+
   
 
   /* ==============================================================================
@@ -1219,23 +1244,11 @@
   Plugin.prototype.select = function( selector ) {
     var $elem;
 
-    // If received DOM $element
-    if ( selector && (selector.jquery || selector.nodeType) ) {
-      // Filter received elements through cached selecter
-      selector = selector.jquery ? selector : $( selector );
-      $elem = selector.filter( this.options.parentSelector );
-      $elem = $elem.length > 0 ? $elem : null;
-    
-    } else if (typeof selector === 'string') {
-      // Test for selector
-      $elem = this.$el
-        .find( selector ) // Try to find
-        .filter( this.options.parentSelector ); // Filter found $elements
-      $elem = ( $elem.jquery && $elem.length > 0 ) ? $elem : null;
-    } else {
+    $elem = this._checkIfElem( selector );
+    if ( $elem === false) { $elem = this._checkIfSelector( selector ); }
+    if ( $elem === false) {
       throw new Error( 'You shold pass DOM element or selector to \"select\" method.' );
     }
-
     if ( $elem ) {
       delete this._solidInitialElem;
       this._controller( null, {
@@ -1264,7 +1277,20 @@
   };
 
 
-  Plugin.prototype.getFocused = function() {
+  Plugin.prototype.focus = function( selector ) {
+    var $elem;
+
+    if ( arguments.length > 0 ) {
+      $elem = ($elem = this._checkIfElem( selector )) === false ? this._checkIfSelector( selector ) : $elem;
+      if ( $elem && $elem.jquery ) {
+        this._setFocus( $elem[0] );
+
+      } else if ( $elem === false) {
+        throw new Error( 'You shold pass DOM element or CSS selector to set focus or nothing to get it.' );
+      }
+      return this.$el;
+    }
+
     if (this.ui.focus) { return this.ui.focus; } else { return null; }
   };
 
