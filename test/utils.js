@@ -55,16 +55,33 @@
 
   // jQuery
   $.fn.shiftMousedown = function() {
-    var e = $.Event( "mousedown" );
-    e.shiftKey = true;
-    this.trigger( e );
+    this.triggerMousedown('shift');
     return this;
   };
 
   $.fn.metaMousedown = function() {
+    this.triggerMousedown('meta');
+    return this;
+  };
+
+  $.fn.triggerMousedown = function(mode) {
     var e = $.Event( "mousedown" );
-    e.metaKey = true;
+    if (mode === 'meta' || mode === 'ctrl') { e.metaKey = true; } else if (mode === 'shift') { e.shiftKey = true; }
     this.trigger( e );
+    return this;
+  };
+
+  $.fn.triggerMouseup = function(mode) {
+    var e = $.Event( "mouseup" );
+    if (mode === 'meta' || mode === 'ctrl') { e.metaKey = true; } else if (mode === 'shift') { e.shiftKey = true; }
+    this.trigger( e );
+    return this;
+  };
+
+  jQuery.fn.triggerClick = function() {
+    this.trigger('mousedown');
+    this.trigger('mouseup');
+    this.trigger('click');
     return this;
   };
 

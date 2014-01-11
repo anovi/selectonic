@@ -19,8 +19,7 @@
     disabledClass:  ( 'disabled' ),
 
     filter:        '> *',
-    mouseMode:     'select',
-    event:         'mousedown',
+    mouseMode:     'standard',
     handle:        null,
     textSelection: false,
 
@@ -234,7 +233,7 @@
       .selected( el(1) )
       .selectedCount(2);
 
-    Syn.click( {}, el(6) );
+    el(6).triggerClick();
     el(3).metaMousedown();
     Syn.type( '[shift][home]', box );
     Syn.type( '[shift-up]', box );
@@ -242,7 +241,7 @@
       .selectedFocus( el(0) )
       .selectedCount( 4 );
 
-    Syn.click( {}, el(6) );
+    el(6).triggerClick();
     el(6).metaMousedown();
     Syn.type( '[shift][end]', box );
     Syn.type( '[shift-up]', box );
@@ -283,7 +282,7 @@
     box = getBox(),
     el = elems();
     
-    Syn.click( {}, el(0));
+    el(0).triggerClick();
     el(2).metaMousedown();
     el(10).metaMousedown();
     el(4).metaMousedown();
@@ -300,7 +299,7 @@
     box = getBox(),
     el = elems();
     
-    Syn.click( {}, el(5));
+    el(5).triggerClick();
     Syn.type( '[shift][up]', box );
     Syn.type( '[up]', box );
     Syn.type( '[up]', box );
@@ -323,7 +322,7 @@
       .selectedFocus( el(5) )
       .selectedCount( 1 );
     
-    Syn.click( {}, el(5));
+    el(5).triggerClick();
     el(4).metaMousedown().metaMousedown();
     Syn.type( '[shift][page-up]', box );
     Syn.type( '[page-up]', box );

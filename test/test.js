@@ -1,4 +1,4 @@
-(function( $, Syn ) {
+(function( $ ) {
   
   /*
     TODO: more apppropriate test for mouseMode option
@@ -18,16 +18,16 @@
   getBox           = _Utils.getBox,
   getSelectionText = _Utils.getSelectionText,
   clearSelection   = _Utils.clearSelection,
+  elems            = _Utils.elems,
 
   initOptions = {
-    listClass:   ( 'selectable' ),
+    listClass:      ( 'selectable' ),
     focusClass:     ( 'focused' ),
     selectedClass:  ( 'selected' ),
     disabledClass:  ( 'disabled' ),
 
     filter:        '> *',
-    mouseMode:     'select',
-    event:         'mousedown',
+    mouseMode:     'standard',
     handle:        null,
     textSelection: true,
 
@@ -60,11 +60,11 @@
       case 'cancel':
         $.extend( advanced, { focusBlur: true, selectionBlur: true });
         break;
-      case 'Toggle mousedown':
+      case 'Toggle mouseMode':
         $.extend( advanced, { mouseMode: 'toggle' });
         break;
-      case 'Hybrid mouse':
-        $.extend( advanced, { event: 'hybrid' });
+      case 'Mouseup mouseMode':
+        $.extend( advanced, { mouseMode: 'mouseup' });
         break;
       case 'Filter odd mousedown':
       case 'Filter odd up/down':
@@ -119,14 +119,15 @@
   */
   module("Mouse");
 
-  test( 'Select mousedown', 4, function() {
+  test( 'Select click', 4, function() {
     var elem = getBox().find('li:eq(3)'),
     secElem = getBox().find('li:eq(10)');
     
-    elem.trigger('mousedown');
+    elem.triggerClick();
     assert.selectedFocus( elem );
     
-    secElem.trigger('mousedown');
+    secElem.triggerClick();
+    secElem.triggerClick();
     assert
       .selectedFocus( secElem )
       .notSelected( elem )
@@ -141,7 +142,7 @@
     e         = $.Event( "mousedown" );
     e.metaKey = true;
     
-    elem.trigger('mousedown');
+    elem.triggerClick();
     ok( elem.hasClass('selected'), "Selected" );
     ok( elem.hasClass('focused'), "Focused" );
 
@@ -150,7 +151,7 @@
       .selected( elem )
       .selectedFocus( secElem );
 
-    elem.trigger('mousedown');
+    elem.triggerClick();
     e = $.Event( "mousedown" );
     e.metaKey = true;
     elem.trigger( e );
@@ -168,7 +169,7 @@
     e          = $.Event( "mousedown" );
     e.shiftKey = true;
     
-    elem.trigger('mousedown');
+    elem.triggerClick();
     assert.selectedFocus( elem );
 
     secElem.trigger( e );
@@ -177,7 +178,7 @@
       .selected( midElem )
       .selectedFocus( secElem );
 
-    midElem.trigger('mousedown');
+    midElem.triggerClick();
     assert
       .selectedFocus( midElem )
       .selectedCount(1);
@@ -186,76 +187,57 @@
   test( 'Blurable mousedown', 3, function() {
     var elem = getBox().find('li:eq(3)');
     
-    elem.trigger('mousedown');
+    elem.triggerClick();
     assert.selectedFocus( elem );
 
-    $('body').trigger('mousedown');
+    $('body').triggerClick();
     assert.notSelected( elem );
     assert.notFocused( elem );
   });
 
-  test( 'Toggle mousedown', 4, function() {
+  test( 'Standard mouseMode', 2, function() {
+    var el = elems();
+    
+    el(3).triggerClick();
+    el(5).shiftMousedown();
+    el(4).trigger('mousedown');
+    assert.selectedFocus( el(5) );
+    assert.selectedCount(3);
+  });
+
+  test( 'Mouseup mouseMode', 6, function() {
+    var el = elems();
+    el(3).trigger('mouseup');
+    el(5).trigger('mousedown');
+    assert.selectedFocus( el(3) );
+    
+    el(5).triggerMouseup('shift');
+    assert
+      .selectedFocus( el(5) )
+      .selectedCount(3);
+
+    el(4).triggerMousedown();
+    assert.selectedCount(3);
+
+    el(4).triggerMouseup();
+    assert
+      .selectedFocus( el(4) )
+      .selectedCount(1);
+  });
+
+  test( 'Toggle mouseMode', 4, function() {
     var el = _Utils.elems();
     
-    el(3).trigger('mousedown');
-    el(5).trigger('mousedown');
+    el(3).triggerClick();
+    el(5).triggerClick();
     assert
       .selected( el(3) )
       .selectedFocus( el(5) );
     
-    el(3).trigger('mousedown');
+    el(3).triggerClick();
     assert
       .notSelected( el(3) )
       .focused( el(3) );
-    // el(5).trigger('mousedown');
-
-    // box.selectonic('option', 'multi', false);
-    // el(6).trigger('mousedown');
-    // el(6).trigger('mousedown');
-    // assert
-    //   .notSelected( el(6) )
-    //   .focused( el(6) );
-  });
-
-  asyncTest( 'Hybrid mouse', 3, function() {
-    var
-    box        = getBox(),
-    elem       = box.find('li:eq(3)'),
-    midElem    = box.find('li:eq(4)'),
-    secElem    = box.find('li:eq(5)'),
-    e          = $.Event( "mousedown" );
-    e.shiftKey = true;
-    
-    elem.trigger('mousedown');
-    assert.selectedFocus( elem );
-
-    secElem.trigger( e );
-    
-    Syn.click( {}, midElem, function () {
-      assert
-        .selectedFocus( midElem )
-        .selectedCount(1);
-      start();
-    });
-    
-    // setTimeout(function() {
-    //   console.log('is focused?');
-    //   ok( !midElem.hasClass('focused'), "Not focused" );
-    // }, 500);
-
-    // var pos = midElem.offset();
-
-    // Syn.drag( {
-    //   from:     {pageX: pos.x+1, pageY: pos.y+1},
-    //   to:       {pageX: pos.x+10, pageY: pos.y+1},
-    // }, midElem, function () {
-    //   console.log('is selected?');
-    //   ok( midElem.hasClass('selected'), "Selected" );
-    //   ok( midElem.hasClass('focused'), "Focused" );
-    //   selected = box.find('.selected');
-    //   equal( selected.length, 1, "1 selected" );
-    //   start();
-    // });
   });
 
   test( 'Filter odd mousedown', 4, function() {
@@ -267,24 +249,24 @@
     e          = $.Event( "mousedown" );
     e.shiftKey = true;
     
-    elem.trigger('mousedown');
+    elem.triggerClick();
     secElem.trigger( e );
     assert
       .selected( elem )
       .selectedFocus( secElem )
       .notSelected( midElem );
     
-    midElem.trigger('mousedown');
+    midElem.triggerClick();
     assert.selectedCount(0);
   });
 
   test( 'Handled items mousedown', 2, function() {
     var elem = getBox().find('li:eq(3)');
     
-    elem.trigger('mousedown');
+    elem.triggerClick();
     assert.selectedCount(0);
 
-    elem.find('.handle').trigger('mousedown');
+    elem.find('.handle').triggerClick();
     assert.selected( elem );
   });
 
@@ -296,11 +278,8 @@
 
     clearSelection();
 
-    Syn.click( {}, elem );
-    Syn.type('[shift]', box);
-    Syn.click( {}, secElem );
-    Syn.type('[shift-up]', box);
-
+    elem.triggerClick();
+    secElem.shiftMousedown();
     ok( getSelectionText() === '', 'There are no text selection.' );
   });
 
@@ -325,7 +304,7 @@
       .selectonic('isEnabled');
     ok( !isEnabled, 'Is diabled!' );
     
-    secElem.trigger('mousedown');
+    secElem.triggerClick();
     assert
       .selectedFocus( elem )
       .selectedCount( 1 );
@@ -365,10 +344,8 @@
     secElem = box.find('li:eq(5)'),
     selected;
     
-    Syn.click( {}, elem );
-    Syn.type('[shift]', box);
-    Syn.click( {}, secElem );
-    Syn.type('[shift-up]', box);
+    elem.triggerClick();
+    secElem.shiftMousedown();
 
     assert
       .selectedFocus( secElem )
@@ -377,12 +354,12 @@
     selected = box
       .selectonic('option', 'selectionBlur', true)
       .selectonic('getSelected');
-    equal( selected.length, 3, "3 selected" );
+    assert.selectedCount( 3 );
 
-    $('body').trigger('mousedown');
+    $('body').triggerClick();
 
     selected = box.selectonic('getSelected');
-    equal( selected.length, 0, "0 selected" );
+    assert.selectedCount( 0 );
   });
 
   test( 'getSelectedId', 5, function() {
@@ -392,10 +369,8 @@
     secElem = box.find('li:eq(5)'),
     selected;
     
-    Syn.click( {}, elem );
-    Syn.type('[shift]', box);
-    Syn.click( {}, secElem );
-    Syn.type('[shift-up]', box);
+    elem.triggerClick();
+    secElem.shiftMousedown();
 
     assert
       .selectedFocus( secElem )
@@ -415,13 +390,13 @@
     elem    = box.find('li:eq(3)'),
     selected;
     
-    Syn.click( {}, elem );
+    elem.triggerClick();
     selected = box
       .selectonic( 'option', 'focusBlur', true )
       .selectonic( 'focus' );
     ok( $(selected).is( elem ) , 'Items match' );
 
-    $('body').trigger('mousedown');
+    $('body').triggerClick();
     selected = box.selectonic( 'focus' );
     ok( selected === null, 'No focus' );
   });
@@ -480,7 +455,7 @@
 
     // Cancel in before callback
     box.selectonic( 'option', 'stop', null );
-    Syn.click( {}, elem );
+    elem.triggerClick();
     focus = box.selectonic('focus');
     box.selectonic( 'option', {
       before: function() {
@@ -513,7 +488,7 @@
     // Only in stop
     box.selectonic( 'option', 'select', null );
     // Try click outside
-    Syn.click( {}, $('body') );
+    $('body').triggerClick();
     assert.selectedCount( 1 );
     assert.selectedFocus( elem );
   });
@@ -560,7 +535,7 @@
       options.event         === 'hybrid' &&
       options.handle        === '.handle' &&
       options.multi         === false &&
-      options.autoScroll  === false &&
+      options.autoScroll    === false &&
       options.preventInputs === false &&
       options.focusBlur     === true &&
       options.selectionBlur === true &&
@@ -569,7 +544,7 @@
     'Options assigned!');
 
     // Click
-    Syn.click( {}, elem.find('.handle') );
+    elem.find('.handle').triggerClick();
     ok((
       res[0] === 'before' &&
       res[1] === 'select' &&
@@ -578,7 +553,7 @@
 
     // Click outside list
     res = [];
-    Syn.click( {}, $('body') );
+    $('body').triggerClick();
     ok((
       res[0] === 'before' &&
       res[1] === 'unselect' &&
@@ -589,14 +564,14 @@
 
     // Click outside sec
     res = [];
-    Syn.click( {}, $('body') );
+    $('body').triggerClick();
     ok((res[0] === 'before' && res[1] === 'stop'), 'Click outside second');
 
     // Select item
-    Syn.click( {}, elem.find('.handle') );
+    elem.find('.handle').triggerClick();
     res = [];
     // Select another item
-    Syn.click( {}, sec.find('.handle') );
+    sec.find('.handle').triggerClick();
     ok((
       res[0] === 'before' &&
       res[1] === 'unselect' &&
@@ -607,7 +582,7 @@
     // Disable handle
     box.selectonic('option', 'handle', null);
     // Select item
-    Syn.click( {}, elem );
+    elem.triggerClick();
     ok((
       res[0] === 'before' &&
       res[1] === 'unselect' &&
@@ -659,7 +634,7 @@
     });
     
     // Click
-    Syn.click( {}, elem );
+    elem.triggerClick();
 
     // Select another item
     box.selectonic( 'option', {
@@ -671,7 +646,7 @@
         ok( !ui.items, 'items' );
       }
     });
-    Syn.click( {}, sec.find('.handle') );
+    sec.find('.handle').triggerClick();
 
     // Click outside list
     box.selectonic( 'option', {
@@ -683,7 +658,7 @@
         ok( !ui.items, 'No items' );
       }
     });
-    Syn.click( {}, $('body') );
+    $('body').triggerClick();
 
     // Click outside second time
     box.selectonic( 'option', {
@@ -695,7 +670,7 @@
         ok( !ui.items, 'No items' );
       }
     });
-    Syn.click( {}, $('body') );
+    $('body').triggerClick();
     box.selectonic( 'option', 'before', null );
   });
 
@@ -723,7 +698,7 @@
     });
     
     // Click
-    Syn.click( {}, elem );
+    elem.triggerClick();
 
     // Multi selection
     box.selectonic( 'option', {
@@ -741,7 +716,7 @@
     sec.trigger( e );
 
     // Click outside list
-    Syn.click( {}, $('body') );
+    $('body').triggerClick();
   });
 
 
@@ -769,10 +744,10 @@
     });
     
     // Multi selection
-    Syn.click( {}, elem );
+    elem.triggerClick();
     sec.shiftMousedown();
     // Select one
-    Syn.click( {}, elem );
+    elem.triggerClick();
 
     // Click outside list
     sec.shiftMousedown();
@@ -786,8 +761,8 @@
         ok( ui.items.length === 3, '3 items' );
       }
     });
-    Syn.click( {}, $('body') );
-    Syn.click( {}, $('body') );
+    $('body').triggerClick();
+    $('body').triggerClick();
   });
 
 
@@ -814,7 +789,7 @@
       }
     });
     // Unselect all items without focuss loss
-    Syn.click( {}, elem );
+    elem.triggerClick();
     sec.shiftMousedown();
     elem.shiftMousedown();
 
@@ -830,8 +805,8 @@
         ok( ui.items.length === 3, '3 items' );
       }
     });
-    Syn.click( {}, $('body') );
-    Syn.click( {}, $('body') );
+    $('body').triggerClick();
+    $('body').triggerClick();
 
     // Unselect one item without focuss loss
     box.selectonic( 'option', {
@@ -844,7 +819,7 @@
         ok( ui.items.length === 1, '1 items' );
       }
     });
-    Syn.click( {}, elem );
+    elem.triggerClick();
     elem.metaMousedown();
   });
 
@@ -880,11 +855,11 @@
     });
     
     // Click
-    Syn.click( {}, elem );
+    elem.triggerClick();
 
     // Click outside list
-    Syn.click( {}, $('body') );
-    Syn.click( {}, $('body') );
+    $('body').triggerClick();
+    $('body').triggerClick();
   });
 
 
@@ -916,7 +891,7 @@
     });
     
     // Click
-    Syn.click( {}, elem );
+    elem.triggerClick();
 
     // Range
     box.selectonic( 'option', 'stop', function( e, ui ) {
@@ -938,7 +913,7 @@
       ok( ui.items, 'items' );
       ok( ui.items.length === 4, '4 items' );
     });
-    Syn.click( {}, third );
+    third.triggerClick();
 
     // Select and call `cancel` method
     box.selectonic( 'option', {
@@ -970,7 +945,7 @@
       ok( ui.items, 'items' );
       ok( ui.items.length === 1, '1 item' );
     });
-    Syn.click( {}, $('body') );
+    $('body').triggerClick();
   });
 
 
@@ -1019,6 +994,4 @@
   });
 
 
-
-
-}(jQuery, Syn));
+}(jQuery));

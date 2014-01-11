@@ -2,7 +2,7 @@
 
 # Mouse modes
 - `standard` – click to select/unselect, mousedown in multi/range mode.
-- `careful` - mouseup based.
+- `mouseup` - mouseup based.
 - `toggle` – multi mode be default, like group of checkboxes. Click based.
 
 ## Usage
@@ -39,7 +39,7 @@
         <td>mouseup</td>
         <td>mouseup</td>
         <td>mouseup</td>
-        <td>careful</td>
+        <td>mouseup</td>
     </tr>
 
     <tr>

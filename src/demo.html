@@ -134,8 +134,7 @@
     mainList = $("#list ul").selectonic({
         // filter:         '> *',
         // filter:         'li:odd',
-        mouseMode:      'select',
-        event:          'mousedown',
+        mouseMode:      'mouseup',
         autoScroll:     '#list',
         // autoScroll:   null,
         multi:          true,
@@ -146,10 +145,13 @@
         preventInputs:  true,
         loop:           false,
         handle:         null,
-        // hoverFocus:     true,
+        // focusOnHover:   true,
         // listClass: 'my-super',
 
         create: function() {
+            this.mouseup(function(event) {
+                // console.log('mouseup');
+            });
         },
         before: function( event, ui ) {
             say('before');
