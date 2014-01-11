@@ -27,7 +27,7 @@ Use it like any jQuery plugin:
 ```javascript
 $(".itemsList").selectonic({
 	multi: true,
-    mouseMode: "select",
+    mouseMode: "standard",
     keyboard: true,
     select: function(event, ui) {
         // do something cool, for expample enable actions buttons
@@ -49,26 +49,183 @@ Do not forget some css-styling:
 
 ## Options
 
-Option | Description | Type | Default
---- | --- | --- | ---
-**multi** | User can select many items in a list. | Boolean | true
-**filter** | Matches child elements, that can be selected. | String | "* >"
-**focusBlur** | List loses focus when user clicks outside of the list. | Boolean | false
-**selectionBlur** | List clears selection when user clicks outside of the list. | Boolean | false
-**mouseMode** | `select` – mouse click selects target item and clear other selection in a list; to add/remove item to selection user needs holds **ctrl** key (file manager style);<br>`toggle` – mouse click to select/unselect items (like group of checkboxes); | String | "select"
-**event** | `mousedown` – item will be selected when user push on left mouse button. <br>`click` – item will be selected when user click (press and release) on left mouse button. <br>`hybrid` – unselected items will react on mousedown, but selected items will react on click (press and release). It can be usefull when there is another plugin, for example to dragging selected items. | String | "mousedown"
-**handle** | Matches child elemets, that will be served as clickable area inside each item to select/unselect these items. I do not reccomend to use `<input type="checkbox">` for that purpose. If you need a checkbox - make a custom one with html/css. | String | null
-**textSelection** | Allow text selection in a list's element. It could be annoying when you selecting items with `shift`+`click`. | Boolean | false
-**keyboard** | Possibility to use keys **Up**, **Down** and **Home**, **End**, **PageUp**, **PageDown** to move cursor (focus), select range of items by holding **shift** and select all items by pressing **ctrl+A**. | Boolean | false
-**keyboardMode** | `select` – pressing keys up/down selects target item and clear other selection in a list; to add/remove item to selection user needs holds **shift** key (file manager style);<br>`toggle` – pressing keys up/down only moves focus on items, to select/unselect items user needs press **space**; | String | "select"
-**autoScroll** | Scrollable element. When user moves cursor by keys **Up**, **Down**, **Home**, **End** – plugin calculates elements's scroll position in a way that focused item is always visible. Accepts values: <br>`true` – list's element is scrollable; <br>`false` – no scrollable element; <br>`selector (String)` – custom element that is not list's element. | Boolean or String | true
-**loop** | If `keyboard: true` and focused element is last in a list, pressing key **Down** set focus to first element of the list; oppositely with **Up** key, when focus on a first element. | Boolean | false
-**preventInputs** | Prevent any reactions on keyboard input when focus is on a text input or textarea.  | Boolean | true |
-**listClass** | HTML class for selectable list. | String | "j-selectable"
-**focusClass** | HTML class for focused element. | String | "j-focused"
-**selectedClass** | HTML class for selected element. | String | "j-selected"
-**disabledClass** | HTML class for selectable list which is disabled. | String | "j-disabled"
-**before**, **select**, **unselect**, **unselectAll**, **focusLost**, **stop**, **create**, **destroy** | Callback functions, that described in the next section. | Function | null
+<table>
+	
+	<thead>
+		<tr>
+			<th>Option</th>
+			<th>Description</th>
+			<th>Type</th>
+			<th>Default</th>
+		</tr>
+	</thead>
+
+	<tbody>
+		<tr>
+			<td><strong>multi</strong></td>
+			<td>User can select many items in a list.</td>
+			<td>Boolean</td>
+			<td>true</td>
+		</tr>
+		<tr>
+			<td><strong>filter</strong></td>
+			<td>Matches descendant elements, that can be selected.</td>
+			<td>String</td>
+			<td>"* &gt;"</td>
+		</tr>
+		<tr>
+			<th colspan="4">MOUSE</th>
+		</tr>
+		<tr>
+			<td><strong>mouseMode</strong></td>
+			<td>
+				<table>
+					<tr>
+						<td><code>standard</code></td>
+						<td>Mouse click selects targeted item and clears other selection in a list; to add/remove item to selection user needs holds <strong>ctrl</strong> and <strong>shift</strong> to select range of items (file manager style);</td>
+					</tr>
+					<tr>
+						<td><code>mouseup</code></td>
+						<td>Selects item which is under mouse cursor when user releases mouse button. It doesn't matter where mouse button was pressed. It nicely combines with <code>focusOnhover: true</code> option and single selection.</td>
+					</tr>
+					<tr>
+						<td><code>toggle</code></td>
+						<td>Click selects or unselects items, depends from their states (like group of checkboxes);</td>
+					</tr>
+				</table>
+			</td>
+			<td>String</td>
+			<td>"standard"</td>
+		</tr>
+		<tr>
+			<td><strong>focusBlur</strong></td>
+			<td>List clears focus when user clicks outside of the list.</td>
+			<td>Boolean</td>
+			<td>false</td>
+		</tr>
+		<tr>
+			<td><strong>selectionBlur</strong></td>
+			<td>List clears selection when user clicks outside of the list.</td>
+			<td>Boolean</td>
+			<td>false</td>
+		</tr>
+		<tr>
+			<td><strong>focusOnHover</strong></td>
+			<td>Focus always under cursor when mouse moves through the list. If cursor go out of the list and option <code>focusBlur: true</code> then focus clears.</td>
+			<td>Boolean</td>
+			<td>true</td>
+		</tr>
+		<tr>
+			<td><strong>handle</strong></td>
+			<td>Matches descendant elements, that serves as clickable areas inside each item to select/unselect these items. I do not recommend to use <code>&lt;input type="checkbox"&gt;</code> for that purpose. If you need something looks like checkbox - make a custom one with html/css.</td>
+			<td>String</td>
+			<td>null</td>
+		</tr>
+		<tr>
+			<td><strong>textSelection</strong></td>
+			<td>Allows text selection in the list. It could be annoying when you selecting items with <strong>shift+click</strong>.</td>
+			<td>Boolean</td>
+			<td>false</td>
+		</tr>
+		<tr>
+			<th colspan="4">KEYBOARD</th>
+		</tr>
+		<tr>
+			<td><strong>keyboard</strong></td>
+			<td>Possibility to use keys <strong>Up</strong>, <strong>Down</strong> and <strong>Home</strong>, <strong>End</strong>, <strong>PageUp</strong>, <strong>PageDown</strong> to move list's focus, select range of items by holding <strong>shift</strong> and select all items by pressing <strong>ctrl+A</strong>.</td>
+			<td>Boolean</td>
+			<td>false</td>
+		</tr>
+		<tr>
+			<td><strong>keyboardMode</strong></td>
+			<td>
+				<table>
+					<tr>
+						<td><code>select</code></td>
+						<td>pressing keys up/down selects targeted item and clears other selection in a list; to add/remove item to selection user needs holds <strong>shift</strong> key (file manager style);</td>
+					</tr>
+					<tr>
+						<td><code>toggle</code></td>
+						<td>pressing keys up/down and other only moves list's focus, to select/unselect items user needs press <strong>space</strong>;</td>
+					</tr>
+				</table>
+			</td>
+			<td>String</td>
+			<td>"select"</td>
+		</tr>
+		<tr>
+			<td><strong>autoScroll</strong></td>
+			<td>Scrollable element. When user moves list's focus by keyboard – plugin calculates elements's scroll position in a way that focused item is always visible. Accepts values: <br>
+				<table>
+					<tr>
+						<td><code>true</code></td>
+						<td>list's element is scrollable;</td>
+					</tr>
+					<tr>
+						<td><code>false</code></td>
+						<td>no scrollable element except the window;</td>
+					</tr>
+					<tr>
+						<td><code>selector (String)</code></td>
+						<td>another element that is not list's element.</td>
+					</tr>
+				</table>
+			</td>
+			<td>Boolean or String</td>
+			<td>true</td>
+		</tr>
+		<tr>
+			<td><strong>loop</strong></td>
+			<td>If <code>keyboard: true</code> and focused element is last in a list, pressing key <strong>Down</strong> set focus to first element of the list; oppositely with <strong>Up</strong> key, when focus on first element.</td>
+			<td>Boolean</td>
+			<td>false</td>
+		</tr>
+		<tr>
+			<td><strong>preventInputs</strong></td>
+			<td>Prevents any reactions to keyboard events when they triggers from a text input or textarea.</td>
+			<td>Boolean</td>
+			<td>true</td>
+		</tr>
+		<tr>
+			<th colspan="4">HTML CLASSES</th>
+		</tr>
+		<tr>
+			<td><strong>listClass</strong></td>
+			<td>HTML class for selectable list.</td>
+			<td>String</td>
+			<td>"j-selectable"</td>
+		</tr>
+		<tr>
+			<td><strong>focusClass</strong></td>
+			<td>HTML class for focused element.</td>
+			<td>String</td>
+			<td>"j-focused"</td>
+		</tr>
+		<tr>
+			<td><strong>selectedClass</strong></td>
+			<td>HTML class for selected element.</td>
+			<td>String</td>
+			<td>"j-selected"</td>
+		</tr>
+		<tr>
+			<td><strong>disabledClass</strong></td>
+			<td>HTML class for selectable list which is disabled.</td>
+			<td>String</td>
+			<td>"j-disabled"</td>
+		</tr>
+		<tr>
+			<th colspan="4">CALLBACKS</th>
+		</tr>
+		<tr>
+			<td>
+				<strong>before</strong>, <strong>select</strong>, <strong>unselect</strong>, <strong>unselectAll</strong>, <strong>focusLost</strong>, <strong>stop</strong>, <strong>create</strong>, <strong>destroy</strong>
+			</td>
+			<td>Callback functions, that described in the next section.</td>
+			<td>Function</td>
+			<td>null</td>
+		</tr>
+	</tbody>
+</table>
 
 
 ## Callbacks (Events)
@@ -111,21 +268,21 @@ Callback functions in order which they are called and with arguments which they 
 		</tr>
 		<tr>
 			<td>
-				<strong>select</strong> — when one or more elements has been selected.
-			</td>
-			<td>YES</td>
-			<td>YES</td>
-			<td>if exists</td>
-			<td>jquery collection of selected elements</td>
-		</tr>
-		<tr>
-			<td>
 				<strong>unselect</strong> — one or more elements has been unselected.
 			</td>
 			<td>YES</td>
 			<td>if exists</td>
 			<td>if exists</td>
 			<td>jquery collection of unselected elements</td>
+		</tr>
+		<tr>
+			<td>
+				<strong>select</strong> — when one or more elements has been selected.
+			</td>
+			<td>YES</td>
+			<td>YES</td>
+			<td>if exists</td>
+			<td>jquery collection of selected elements</td>
 		</tr>
 		<tr>
 			<td>
@@ -142,7 +299,7 @@ Callback functions in order which they are called and with arguments which they 
 			</td>
 			<td>YES</td>
 			<td>—</td>
-			<td>YES. Link will be removed after this callback.</td>
+			<td>YES. Focus will be removed after this callback.</td>
 			<td>—</td>
 		</tr>
 		<tr>
@@ -151,7 +308,7 @@ Callback functions in order which they are called and with arguments which they 
 			</td>
 			<td>YES</td>
 			<td>if exists</td>
-			<td>if exists – but it will already be new focus.</td>
+			<td>if exists – but it will already be a new focus.</td>
 			<td>all changed items (if they were)</td>
 		</tr>
 		<tr>
@@ -167,7 +324,7 @@ Callback functions in order which they are called and with arguments which they 
 </table>
 
 
-Link `this` inside callbacks refer to list's initial element wrapped in jQuery, so you may call any method inside callbacks functions like `this.selectonic("disable");`.
+Link `this` inside callbacks refers to list's initial element wrapped in jQuery, so you may call any method inside callbacks functions like `this.selectonic("disable");`.
 
 
 ## Methods
@@ -191,44 +348,44 @@ $(elem).selectonic("getSelected");
 	</tr>
 	<tr>
 		<td valign="top"><strong>getSelected</strong></td>
-		<td valign="top">Get jQuery collection of selected elements.</td>
+		<td valign="top">Gets a jQuery collection of selected elements.</td>
 	</tr>
 	<tr>
 		<td valign="top"><strong>getSelectedId</strong></td>
-		<td valign="top">Get array of id's of selected elements.</td>
+		<td valign="top">Gets an array of id's of selected elements.</td>
 	</tr>
 	<tr>
-		<td valign="top"><strong>getFocused</strong></td>
-		<td valign="top">Get focused element or <code>null</code> if there is no one.</td>
+		<td valign="top"><strong>scroll</strong></td>
+		<td valign="top">If list has focused element and list is scrollable, it will recalculate list's scroll position in a way that focused element will be in viewport.</td>
 	</tr>
 	<tr>
 		<td valign="top"><strong>disable</strong></td>
-		<td valign="top">Disable selectable list, but keep data and save it state.</td>
+		<td valign="top">Disables selectable list, but keeps data and saves it state.</td>
 	</tr>
 	<tr>
 		<td valign="top"><strong>enable</strong></td>
-		<td valign="top">Turn on disabled plugin.</td>
+		<td valign="top">Turns on disabled plugin.</td>
 	</tr>
 	<tr>
 		<td valign="top"><strong>refresh</strong></td>
-		<td valign="top">Refresh plugin data. That is necessary when some items in a list has been removed.</td>
+		<td valign="top">Refreshs plugin data. That is necessary when some items in a list has been removed.</td>
 	</tr>
 	<tr>
 		<td valign="top"><strong>destroy</strong></td>
-		<td valign="top">Detach handlers, clear data and remove plugin's classes.</td>
+		<td valign="top">Detaches handlers, clears data and removes HTML-classes.</td>
 	</tr>
 </table>
 
 ### option
-Get or set one or more options.
+Gets or sets one or more options.
 
 **Getter**:
 ```javascript
-$(elem).selectonic("option", "mouseMode");
+var mouseMode = $(elem).selectonic("option", "mouseMode");
 ```
 …or you can get whole options object:
 ```javascript
-$(elem).selectonic("option");
+var options = $(elem).selectonic("option");
 ```
 **Setter**:
 ```javascript
@@ -238,7 +395,7 @@ or
 ```javascript
 $(elem).selectonic("option", {
     loop: true,
-    mouseMode: "select"
+    mouseMode: "mouseup"
 });
 ```
 
@@ -254,6 +411,17 @@ elem.selectonic({
 });
 ```
 
+### focus
+Gets focused element or `null` of sets new focused element.
+
+**Getter:**
+```javascript
+$(elem).selectonic("focus"); //returns focus or null if there is no one
+```
+**Setter:**
+```javascript
+$(elem).selectonic("focus", elem); //if elem is a list's item it will be focused
+```
 
 ### select
 If in any scenario you need auto-select items (select first item at the beginning) then you need pass element to `select` method:
