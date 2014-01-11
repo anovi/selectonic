@@ -1,0 +1,90 @@
+
+/*.b-select {}*/
+.b-select .select-group {
+	margin: 0;
+	padding: 5px;
+	min-width: 100%;
+	background-color: #FFF;
+	border-radius: 2px;
+	border: 1px solid #ddd;
+	/*box-shadow: 0 5px 10px rgba(0,0,0,0.2);*/
+	list-style-type: none;
+	max-height: 19em;
+	overflow: auto;
+}
+.b-select .select-option {
+	list-style: none;
+	padding: 0 1em 0 1.8em;
+	margin: 0;
+	line-height: 1.9;
+	border-radius: 4px;
+}
+	.b-select .select-option.j-focused {
+		position: relative;
+	}
+		.b-select .select-option.j-focused:after {
+			content: "";
+			display: block;
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			z-index: 2;
+			border: 1px solid #bfdbeb;
+			border-radius: 4px;
+		}
+	.b-select .select-option.j-selected {
+		background-color: #f3f3f2;
+		background-color: #E4F6FA;
+		position: relative;
+	}
+	.b-select .select-option.j-selected+.select-option.j-selected:before {
+		content: "";
+		display: block;
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: -3px;
+		z-index: 1;
+		background-color: #E4F6FA;
+		height: 6px;
+	}
+	.b-select .select-option.j-selected.animate,
+	.b-select .select-option.j-selected.animate+.select-option.j-selected.animate:before {
+		background-color: #fee20a;
+		background-color: #C3E8FA;
+	}
+
+.b-select .actionbar {
+	background: #f9f9f9;	
+	padding: 0 1em;
+}
+	.b-select .actionbar button {
+		margin: 0;
+		padding: 0.5em 1em;
+		border: none;
+		background: none;
+		border-radius: 0;
+		font-size: 14px;
+		line-height: 1.9;
+		cursor: pointer;
+	}
+	.b-select .actionbar button:hover {
+		background: #eee;
+	}
+	.b-select .actionbar button:active {
+		background: #e0e0e0;
+	}
+	.b-select .actionbar button:focus {
+		/*outline: none;*/
+	}
+	.b-select .actionbar.disabled button,
+	.b-select .actionbar.disabled button:hover,
+	.b-select .actionbar.disabled button:active {
+		color: #bbb;
+		background: none;
+		cursor: default;
+	}
+
+

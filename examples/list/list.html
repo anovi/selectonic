@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js ie7 lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js ie8 lt-ie9"> <![endif]-->
+<!--[if IE 9]>         <html class="no-js ie9"> <![endif]-->
+<!--[if gt IE 9]><!--> <html class="no-js"> <!--<![endif]-->
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Selectonic — jQuery plugin</title>
+        <meta name="description" content="Selectonic — jQuery plugin for making selectable lists by mouse and keyboard, configurable with options, methods and callbacks | Author: Alexey Novichkov">
+        <meta name="viewport" content="width=device-width">
+
+        <link rel="stylesheet" href="list.css">
+        <style>
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: Helvetica, Arial, sans-serif;
+                line-height: 1.4;
+            }
+            * {
+                box-sizing: border-box;
+            }
+            .example p {
+                margin: 1em;
+            }
+        </style>
+</head>
+<body>
+
+<div class="example">
+    <p><strong>Items list with actions.</strong><br>
+        <ul>
+            <li>Multi-selection list.</li>
+            <li>Full keyboard support – use <code>up</code>, <code>down</code>, <code>PageUp</code>, <code>PageDown</code> and <code>HOME</code>, <code>END</code>.</li>
+            <li>Hold <code>ctrl</code> when clicking to add/remove items to selection.</li>
+            <li>Hold <code>shift</code> when clicking to select a range of items.</li>
+        </ul>
+    </p>
+    <div class="b-select">
+        <ul class="select-group">
+            <li class="select-option">Item 1</li>
+            <li class="select-option">Item 2</li>
+            <li class="select-option">Item 3</li>
+            <li class="select-option">Item 4</li>
+            <li class="select-option">Item 5</li>
+            <li class="select-option">Item 6</li>
+            <li class="select-option">Item 7</li>
+            <li class="select-option">Item 8</li>
+            <li class="select-option">Item 9</li>
+            <li class="select-option">Item 10</li>
+            <li class="select-option">Item 11</li>
+            <li class="select-option">Item 12</li>
+            <li class="select-option">Item 13</li>
+            <li class="select-option">Item 14</li>
+            <li class="select-option">Item 15</li>
+            <li class="select-option">Item 16</li>
+            <li class="select-option">Item 17</li>
+            <li class="select-option">Item 18</li>
+            <li class="select-option">Item 19</li>
+            <li class="select-option">Item 20</li>
+        </ul>
+        <div class="actionbar">
+            <button >Action1</button>
+            <button >Action2</button>
+        </div>
+    </div>
+</div>
+
+<script src="../../bower_components/jquery-1.10.2/jquery.js"></script>
+<script src="../../src/selectonic.js"></script>
+<script src="list.js"></script>
+</body>
+</html>
