@@ -50,7 +50,7 @@
       multi: false,
       keyboard: true,
       keyboardMode: 'toggle',
-      mouseMode: 'careful',
+      mouseMode: 'mouseup',
       focusOnHover: true,
       selectionBlur: false,
       focusBlur: true,
