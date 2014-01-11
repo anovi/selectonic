@@ -39,7 +39,8 @@
     "Gruntfile.js",
     "package.json",
     "test",
-    "tests"
+    "tests",
+    "requirements"
   ],
   "dependencies": {
     "jquery": ">= 1.7"
