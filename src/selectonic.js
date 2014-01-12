@@ -317,15 +317,10 @@
       $elem = $(elem);
       // Set context, because old (< 1.10.0) versions of jQuery gives wrong result.
       $elem.context = window.document;
-
       // If item matches to selector
-      if( $elem.is(this._itemsSelector) ) {
-        target = elem;
-      }
+      if( $elem.is(this._itemsSelector) ) { target = elem; }
       // If handle option is ON and that elem match to handle's selector
-      if( handle && $elem.is( handle ) ) {
-        handleElem = elem;
-      }
+      if( handle && $elem.is(handle) ) { handleElem = elem; }
       // Get parent element
       elem = elem.parentNode;
     }
@@ -341,26 +336,6 @@
     }
     // has not clicked any selectable items of a list
     return null; 
-  };
-
-
-  Plugin.prototype._getSelected = function( getIds ) {
-    var arr, res, items;
-
-    if( getIds ) {
-      arr = [];
-      items = this.$el.children( '.' + this.options.selectedClass );
-
-      // Iterate through collection and return id or null
-      $.each( items, function(index, elem) {
-        arr.push( $(elem).attr('id') || null );
-      });
-      res = arr.length > 0 ? arr : null;
-
-    } else {
-      res = this.$el.children( '.' + this.options.selectedClass );
-    }
-    return res;
   };
 
 
@@ -385,68 +360,7 @@
 
     case 'pageup':
     case 'pagedown':
-    /*
-    * There are two versions of algorithm for searching target depending from page height.
-    * Page's height is window's or _scrolledElem's height ( which is smaller ).
-    * Both algorithms runs loop until total item's height reaches maximum possible value,
-    * but lower than page height. But first version gets from DOM one next element every cycle,
-    * and second version gets all items at the beginning and then iterates through them.
-    * And it set allItems and rangeStart and rangeEnd for params. So second version used only 
-    * for Shift+pageUp/Down cases for performance and can be enabled by flag params.isShiftPageRange.
-    */ 
-      var
-        _isOptimized  = params.isShiftPageRange, 
-        box           = this._scrolledElem || this.el,
-        boxViewHeight = box.clientHeight,
-        winViewHeight = $( window ).outerHeight(),
-        $current      = $( elem ),
-        isBoxBigger   = boxViewHeight > winViewHeight,
-        pageHeight    = isBoxBigger ? winViewHeight : boxViewHeight,
-        itemHeight    = $current.outerHeight(),
-        currentHeight = itemHeight,
-        itemsHeight   = itemHeight,
-        direction     = (target === 'pageup') ? 'prev' : 'next',
-        $candidate, candHeight, currentIndex, allItems, cand;
-
-        if ( _isOptimized ) {
-          direction = (target === 'pageup') ? -1 : 1;
-          allItems = this._getItems( params );
-          params.rangeStart = currentIndex = allItems.index( elem );
-        }
-
-      while( true ) {
-        if ( _isOptimized ) {
-          currentIndex = currentIndex + direction;
-          cand = currentIndex >= 0 ? allItems.eq( currentIndex ) : null;
-          $candidate = cand && cand.length > 0 ? cand : null;
-        } else {
-          $candidate = this._getItems( params, direction, $current );  
-        }
-        
-        if ( !$candidate && $current.is( elem ) ) {
-          break;
-        } else if ( !$candidate  ) {
-          if ( _isOptimized ) { params.rangeEnd = currentIndex - direction; }
-          return $current;
-        }
-        
-        candHeight = $candidate.outerHeight();
-        itemsHeight = itemsHeight + candHeight;
-        
-        if ( itemsHeight > pageHeight ) {
-          // If two items bigger than page than it just will give next item
-          if ( currentHeight + candHeight > pageHeight ) {
-            if ( _isOptimized ) { params.rangeEnd = currentIndex; }
-            return $candidate;
-          }
-          
-          if ( _isOptimized ) { params.rangeEnd = currentIndex - direction; }
-          return $current;
-        }
-        currentHeight = candHeight;
-        $current = $candidate;
-      }
-      return null;
+      return this._getNextPageElem( params, target, elem);
 
     case 'first':
       items = params.allItems ? params.allItems : this.$el.find( this.options.filter );
@@ -463,6 +377,72 @@
       params.allItems = items;
       return items;
     }
+  };
+
+
+  Plugin.prototype._getNextPageElem = function( params, target, elem ) {
+    /*
+    * There are two versions of algorithm for searching target depending from page height.
+    * Page's height is window's or _scrolledElem's height ( which is smaller ).
+    * Both algorithms runs loop until total item's height reaches maximum possible value,
+    * but lower than page height. But first version gets from DOM one next element every cycle,
+    * and second version gets all items at the beginning and then iterates through them.
+    * And it set allItems and rangeStart and rangeEnd for params. So second version used only 
+    * for Shift+pageUp/Down cases for performance and can be enabled by flag params.isShiftPageRange.
+    */ 
+    var
+      _isOptimized  = params.isShiftPageRange, 
+      box           = this._scrolledElem || this.el,
+      boxViewHeight = box.clientHeight,
+      winViewHeight = $( window ).outerHeight(),
+      $current      = $( elem ),
+      isBoxBigger   = boxViewHeight > winViewHeight,
+      pageHeight    = isBoxBigger ? winViewHeight : boxViewHeight,
+      itemHeight    = $current.outerHeight(),
+      currentHeight = itemHeight,
+      itemsHeight   = itemHeight,
+      direction     = (target === 'pageup') ? 'prev' : 'next',
+      $candidate, candHeight, currentIndex, allItems, cand;
+
+      if ( _isOptimized ) {
+        direction = (target === 'pageup') ? -1 : 1;
+        allItems = this._getItems( params );
+        params.rangeStart = currentIndex = allItems.index( elem );
+      }
+
+    while( true ) {
+      if ( _isOptimized ) {
+        currentIndex = currentIndex + direction;
+        cand = currentIndex >= 0 ? allItems.eq( currentIndex ) : null;
+        $candidate = cand && cand.length > 0 ? cand : null;
+      } else {
+        $candidate = this._getItems( params, direction, $current );  
+      }
+      
+      if ( !$candidate && $current.is( elem ) ) {
+        break;
+      } else if ( !$candidate  ) {
+        if ( _isOptimized ) { params.rangeEnd = currentIndex - direction; }
+        return $current;
+      }
+      
+      candHeight = $candidate.outerHeight();
+      itemsHeight = itemsHeight + candHeight;
+      
+      if ( itemsHeight > pageHeight ) {
+        // If two items bigger than page than it just will give next item
+        if ( currentHeight + candHeight > pageHeight ) {
+          if ( _isOptimized ) { params.rangeEnd = currentIndex; }
+          return $candidate;
+        }
+        
+        if ( _isOptimized ) { params.rangeEnd = currentIndex - direction; }
+        return $current;
+      }
+      currentHeight = candHeight;
+      $current = $candidate;
+    }
+    return null;
   };
 
 
@@ -651,12 +631,7 @@
         and is not 'multi' or 'range' select mode
         — do nothing because state of selected target should not change
         – it is just unselecting other items  */
-      if (
-        isSelectedTarget &&
-        !aboveZero &&
-        !params.isMultiSelect &&
-        !params.isRangeSelect
-      ) { return; }
+      if (isSelectedTarget && !aboveZero && !params.isMultiSelect && !params.isRangeSelect ) { return; }
 
       if( selectedCondition ) {
         // it is not cancellation
@@ -892,12 +867,7 @@
         delete this.ui.solidInitialElem;
 
       // SHIFT mode
-      } else if (
-        this.ui.focus && 
-        this.options.multi && 
-        e.shiftKey && 
-        !isAllSelect
-      ) {
+      } else if ( this.ui.focus && this.options.multi && e.shiftKey && !isAllSelect ) {
         // Call multiVariator or rangeVariator – 
         // it set all needed params depends from arguments
         if (
@@ -922,10 +892,8 @@
       } else {
         delete this.ui.solidInitialElem;
       }
-
       // There are all necessary attributes now
       this._controller( e, params );
-
       // Recalculate plugin's box and window's scrolls
       this.scroll();
     }
@@ -1270,13 +1238,21 @@
   };
 
 
-  Plugin.prototype.getSelected = function() {
-    return this._getSelected();
+  Plugin.prototype.getSelected = function( getIds ) {
+    var arr,
+    items = this._getItems({}).filter( '.' + this.options.selectedClass );
+
+    if( getIds ) {
+      arr = [];
+      for (var i = 0; i < items.length; i++) { arr.push(items[i].id || null); }
+      return (arr && arr.length > 0) ? arr : null;
+    }
+    return items;
   };
 
 
   Plugin.prototype.getSelectedId = function() {
-    return this._getSelected( true );
+    return this.getSelected( true );
   };
 
 
