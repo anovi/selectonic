@@ -1,10 +1,10 @@
-/*! Selectonic - v0.3.1 - 2014-01-02
+/*! Selectonic - v0.4.0 - 2014-01-12
 * https://github.com/anovi/selectonic
 * Copyright (c) 2014 Alexey Novichkov; Licensed MIT */
 (function($, window, undefined) {
   'use strict';
 
-  // For IE
+  // For IE compatibility
   if (typeof Array.prototype.indexOf === 'undefined') {
     Array.prototype.indexOf = function (searchElement, fromIndex) {
       if (!this) { throw new TypeError(); }
@@ -22,11 +22,8 @@
     };
   }
 
-  // Returns a function, that, when invoked, will only be triggered at most once
-  // during a given window of time. Normally, the throttled function will run
-  // as much as it can, without ever going more than once per `wait` duration;
-  // but if you'd like to disable the execution on the leading edge, pass
-  // `{leading: false}`. To disable execution on the trailing edge, ditto.
+
+  // From Underscore library – http://underscorejs.org/#throttle
   var _throttle = function(func, wait, options) {
     var context, args, result;
     var timeout = null;
@@ -81,23 +78,22 @@
   Plugin.pluginName     = 'selectonic';
   Plugin.keyCode        = { DOWN:40, UP:38, SHIFT:16, END:35, HOME:36, PAGE_DOWN:34, PAGE_UP:33, A:65, SPACE:32, ENTER:13 };
   Plugin.optionsEvents  = ['create','before','focusLost','select','unselect','unselectAll','stop','destroy'];
-  Plugin.optionsStrings = ['filter','mouseMode','event','keyboardMode','listClass','focusClass','selectedClass','disabledClass','handle'];
+  Plugin.optionsStrings = ['filter','mouseMode','keyboardMode','listClass','focusClass','selectedClass','disabledClass','handle'];
   Plugin.defaults       = {
     // Base
     filter:         '> *',
     multi:          true,
     // Mouse
-    mouseMode:      ['select','toggle'],
-    event:          ['mousedown','click','hybrid'],
+    mouseMode:      ['standard','mouseup','toggle'],
     focusBlur:      false,
     selectionBlur:  false,
-    handle:         null, /* String | null */
+    handle:         null,
     textSelection:  false,
-    hoverFocus:     false,
+    focusOnHover:   false,
     // Keyboard
     keyboard:       false,
     keyboardMode:   ['select','toggle'],
-    autoScroll:     true, /* String | false | true */
+    autoScroll:     true,
     loop:           false,
     preventInputs:  true,
     // Classes
@@ -131,13 +127,13 @@
   Plugin.prototype._init = function() {
     this.$el.addClass( this.options.listClass );           // Add class to box
     this._bindEvents();                                    // Attach handlers6
-    this.$el.data( 'plugin_' + Plugin.pluginName, this );  // Save plugin's object instance
+    this.$el.data( 'plugin_' + Plugin.pluginName, this );  // Save plugin's instance
     this._callEvent('create');                             // Callback
   };
 
 
   Plugin.prototype._setOptions = function() {
-    var option, newOptions, isFunction, options = {}, self = this;
+    var option, newOptions, isFunction, options = {}, _this = this;
     
     if ( arguments.length === 2 ) {
       // First arg is name of option and a second is a value
@@ -172,7 +168,7 @@
           options[ name ] = $.trim( String(option) );
         }
         // If it's working list and is attempt to change classes
-        if ( self.options.parentSelector &&
+        if ( _this._itemsSelector &&
           (name === 'listClass' ||
            name === 'focusClass' ||
            name === 'selectedClass' ||
@@ -194,7 +190,7 @@
     newOptions = $.extend( {}, this.options, options );
     // Cache items selector to compare it with clicked elements
     // Plugin's class name + Item selector
-    newOptions.parentSelector = '.' + newOptions.listClass + ' ' + newOptions.filter;
+    this._itemsSelector = '.' + newOptions.listClass + ' ' + newOptions.filter;
 
     // Set scrollable containter
     if ( options.autoScroll !== void 0 ) { this._setScrolledElem( options.autoScroll ); }
@@ -218,7 +214,7 @@
     this.$el.removeClass( this.options.disabledClass );
     this.$el.removeClass( this.options.listClass );
     delete this._scrolledElem;
-    delete this._solidInitialElem;
+    delete this.ui.solidInitialElem;
   };
 
 
@@ -245,22 +241,20 @@
   Plugin.prototype._cancel = function( e, params ) {
     if ( params.wasCancelled ) { return; }
     params.isCancellation = this._isPrevented = true;
+    var _this = this;
 
-    // Restore items states
+    // Restores items states for each changed item
     $.each(
-      // for each changed item
       $(params.changedItems),
-      $.proxy(
-        function( index, item ) {
-          // there is boolean value in array prevItemsState
-          // with same index that item have in _changedItems
-          if ( params.prevItemsState[ index ] ) {
-            this._select( e, params, $(item), true );
-          } else {
-            this._unselect( e, params, $(item), true );
-          }
-        }, this
-      )
+      function( index, item ) {
+        // there is boolean value in array prevItemsStates
+        // with same index that item has in _changedItems
+        if ( params.prevItemsStates[ index ] ) {
+          _this._select( e, params, $(item), true );
+        } else {
+          _this._unselect( e, params, $(item), true );
+        }
+      }
     );
     // Restore old focus
     if ( params.prevFocus ) { this._setFocus( params.prevFocus ); }
@@ -271,7 +265,7 @@
   
   // Attath handlers
   Plugin.prototype._bindEvents = function() {
-    var _this = this;
+    var _this = this, name = this._name;
 
     // Handler for mouse events
     this._mouseEvent = function(e) {
@@ -288,46 +282,29 @@
     };
     // Handler for mousemove
     this._mousemoveEvent = _throttle( function(e) {
-      if( _this._isEnable && _this.options.hoverFocus ) { _this._mousemoveHandler.call(_this, e); }
+      if( _this._isEnable && _this.options.focusOnHover ) { _this._mousemoveHandler.call(_this, e); }
     }, 20);
 
-    $document.on(
-      'click' + '.' + this._name + ' ' + 'mousedown' + '.' + this._name,
-      this._mouseEvent
-    );
-    $document.on(
-      'keydown' + '.' + this._name + ' ' + 'keyup' + '.' + this._name,
-      this._keyboardEvent
-    );
-    this.$el.on(
-      'selectstart' + '.' + this._name,
-      this._selectstartEvent
-    );
-    $document.on(
-      'mousemove' + '.' + this._name,
-      this._mousemoveEvent
-    );
+    $document.on( 'keydown.'+name       ,this._keyboardEvent    );
+    $document.on( 'keyup.'+name         ,this._keyboardEvent    );
+    $document.on( 'mousemove.'+name     ,this._mousemoveEvent   );
+    $document.on( 'click.'+name         ,this._mouseEvent       );
+    $document.on( 'mousedown.'+name     ,this._mouseEvent       );
+    this.$el.on(  'mouseup.'+name       ,this._mouseEvent       );
+    this.$el.on(  'selectstart.'+name   ,this._selectstartEvent );
   };
 
   
   // Detach handlers
   Plugin.prototype._unbindEvents = function() {
-    $document.off(
-      'click' + '.' + this._name + ' ' + 'mousedown' + '.' + this._name,
-      this._mouseEvent
-    );
-    $document.off(
-      'keydown' + '.' + this._name + ' ' + 'keyup' + '.' + this._name,
-      this._keyboardEvent
-    );
-    this.$el.off(
-      'selectstart' + '.' + this._name,
-      this._selectstartEvent
-    );
-    $document.off(
-      'mousemove' + '.' + this._name,
-      this._mousemoveEvent
-    );
+    var name = this._name;
+    $document.off( 'keydown.'+name       ,this._keyboardEvent    );
+    $document.off( 'keyup.'+name         ,this._keyboardEvent    );
+    $document.off( 'mousemove.'+name     ,this._mousemoveEvent   );
+    $document.off( 'click.'+name         ,this._mouseEvent       );
+    $document.off( 'mousedown.'+name     ,this._mouseEvent       );
+    this.$el.off(  'mouseup.'+name       ,this._mouseEvent       );
+    this.$el.off(  'selectstart.'+name   ,this._selectstartEvent );
   };
 
 
@@ -343,15 +320,10 @@
       $elem = $(elem);
       // Set context, because old (< 1.10.0) versions of jQuery gives wrong result.
       $elem.context = window.document;
-
       // If item matches to selector
-      if( $elem.is(this.options.parentSelector) ) {
-        target = elem;
-      }
+      if( $elem.is(this._itemsSelector) ) { target = elem; }
       // If handle option is ON and that elem match to handle's selector
-      if( handle && $elem.is( handle ) ) {
-        handleElem = elem;
-      }
+      if( handle && $elem.is(handle) ) { handleElem = elem; }
       // Get parent element
       elem = elem.parentNode;
     }
@@ -370,26 +342,6 @@
   };
 
 
-  Plugin.prototype._getSelected = function( getIds ) {
-    var arr, res, items;
-
-    if( getIds ) {
-      arr = [];
-      items = this.$el.children( '.' + this.options.selectedClass );
-
-      // Iterate through collection and return id or null
-      $.each( items, function(index, elem) {
-        arr.push( $(elem).attr('id') || null );
-      });
-      res = arr.length > 0 ? arr : null;
-
-    } else {
-      res = this.$el.children( '.' + this.options.selectedClass );
-    }
-    return res;
-  };
-
-
   Plugin.prototype._getItems = function( params, target, elem ) {
     var items;
 
@@ -405,41 +357,13 @@
         if ( item.length === 0 ) { break; }
         // Set context, because old (< 1.10.0) versions of jQuery gives wrong result.
         item.context = window.document;
-        if ( item.is(this.options.parentSelector) ) { return item; }
+        if ( item.is(this._itemsSelector) ) { return item; }
       }
       return null;
-    
+
     case 'pageup':
     case 'pagedown':
-      var
-        box           = this._scrolledElem || this.el,
-        boxViewHeight = box.clientHeight,
-        winViewHeight = $( window ).outerHeight(),
-        $current      = $( elem ),
-        isBoxBigger   = boxViewHeight > winViewHeight,
-        pageHeight    = isBoxBigger ? winViewHeight : boxViewHeight,
-        itemHeight    = $current.outerHeight(),
-        currentHeight = itemHeight,
-        itemsHeight   = itemHeight,
-        direction     = (target === 'pageup') ? 'prev' : 'next',
-        $candidate, candHeight;
-
-      while( true ) {
-        $candidate = this._getItems( params, direction, $current );
-        if ( !$candidate && $current.is( elem ) ) { break; } else if ( !$candidate ) { return $current; }
-        
-        candHeight = $candidate.outerHeight();
-        itemsHeight = itemsHeight + candHeight;
-        
-        if ( itemsHeight > pageHeight ) {
-          // If two items bigger than page than it just will give next item
-          if ( currentHeight + candHeight > pageHeight ) { return $candidate; }
-          return $current;
-        }
-        currentHeight = candHeight;
-        $current = $candidate;
-      }
-      return null;
+      return this._getNextPageElem( params, target, elem);
 
     case 'first':
       items = params.allItems ? params.allItems : this.$el.find( this.options.filter );
@@ -456,6 +380,72 @@
       params.allItems = items;
       return items;
     }
+  };
+
+
+  Plugin.prototype._getNextPageElem = function( params, target, elem ) {
+    /*
+    * There are two versions of algorithm for searching target depending from page height.
+    * Page's height is window's or _scrolledElem's height ( which is smaller ).
+    * Both algorithms runs loop until total item's height reaches maximum possible value,
+    * but lower than page height. But first version gets from DOM one next element every cycle,
+    * and second version gets all items at the beginning and then iterates through them.
+    * And it set allItems and rangeStart and rangeEnd for params. So second version used only 
+    * for Shift+pageUp/Down cases for performance and can be enabled by flag params.isShiftPageRange.
+    */ 
+    var
+      _isOptimized  = params.isShiftPageRange, 
+      box           = this._scrolledElem || this.el,
+      boxViewHeight = box.clientHeight,
+      winViewHeight = $( window ).outerHeight(),
+      $current      = $( elem ),
+      isBoxBigger   = boxViewHeight > winViewHeight,
+      pageHeight    = isBoxBigger ? winViewHeight : boxViewHeight,
+      itemHeight    = $current.outerHeight(),
+      currentHeight = itemHeight,
+      itemsHeight   = itemHeight,
+      direction     = (target === 'pageup') ? 'prev' : 'next',
+      $candidate, candHeight, currentIndex, allItems, cand;
+
+      if ( _isOptimized ) {
+        direction = (target === 'pageup') ? -1 : 1;
+        allItems = this._getItems( params );
+        params.rangeStart = currentIndex = allItems.index( elem );
+      }
+
+    while( true ) {
+      if ( _isOptimized ) {
+        currentIndex = currentIndex + direction;
+        cand = currentIndex >= 0 ? allItems.eq( currentIndex ) : null;
+        $candidate = cand && cand.length > 0 ? cand : null;
+      } else {
+        $candidate = this._getItems( params, direction, $current );  
+      }
+      
+      if ( !$candidate && $current.is( elem ) ) {
+        break;
+      } else if ( !$candidate  ) {
+        if ( _isOptimized ) { params.rangeEnd = currentIndex - direction; }
+        return $current;
+      }
+      
+      candHeight = $candidate.outerHeight();
+      itemsHeight = itemsHeight + candHeight;
+      
+      if ( itemsHeight > pageHeight ) {
+        // If two items bigger than page than it just will give next item
+        if ( currentHeight + candHeight > pageHeight ) {
+          if ( _isOptimized ) { params.rangeEnd = currentIndex; }
+          return $candidate;
+        }
+        
+        if ( _isOptimized ) { params.rangeEnd = currentIndex - direction; }
+        return $current;
+      }
+      currentHeight = candHeight;
+      $current = $candidate;
+    }
+    return null;
   };
 
 
@@ -481,13 +471,13 @@
   };
 
 
-  // Control the state of a list
-  // this method calls from _keyHandler and _mouseHandler or API
-  // and do changes depending from passed params
+  // Control the state of a list.
+  // It can be called from _keyHandler, _mouseHandler or API
+  // and does list's changes depending from reseived params.
   Plugin.prototype._controller = function( e, params ) {
     var method;
     params.changedItems = [];
-    params.prevItemsState = [];
+    params.prevItemsStates = [];
     delete this._isPrevented;
     this._callEvent('before', e, params);
 
@@ -583,12 +573,12 @@
       this._unselect( e, params, items );
       this._select( e, params, params.items );
     
-    // Existing Solid selection and target not selected
-    // And initial selection elem is in current range
+    // Existing Solid selection and target is not selected
+    // and initial selection's elem is in current range
     } else if (
-      this._solidInitialElem &&
+      this.ui.solidInitialElem &&
       !params.isTargetWasSelected &&
-      (initial = params.items.index( this._solidInitialElem )) >= 0
+      (initial = params.items.index( this.ui.solidInitialElem )) >= 0
     ) {
       // Need to unselect items from start to initial elem and select from initial elem to the end
       initial     = ( endAfterStart ) ? params.rangeStart + initial : params.rangeEnd + initial;
@@ -628,13 +618,13 @@
     var
       aboveZero = delta > 0,
       changedItems = [],
-      self = this;
+      _this = this;
 
     // For each of items calls function in scope plugin's object instance
     $( items ).each( function( index, item ) {
 
       var
-        isSelected = self._getIsSelected( item ),
+        isSelected = _this._getIsSelected( item ),
         // Condition - if item is not selected (_select) or items is selected (_unselect)
         selectedCondition = ( aboveZero ) ? !isSelected : isSelected,
         // if the item is target and is selected
@@ -644,24 +634,19 @@
         and is not 'multi' or 'range' select mode
         — do nothing because state of selected target should not change
         – it is just unselecting other items  */
-      if (
-        isSelectedTarget &&
-        !aboveZero &&
-        !params.isMultiSelect &&
-        !params.isRangeSelect
-      ) { return; }
+      if (isSelectedTarget && !aboveZero && !params.isMultiSelect && !params.isRangeSelect ) { return; }
 
       if( selectedCondition ) {
         // it is not cancellation
         if( !params.isCancellation ) {
           changedItems.push( item );
-          params.prevItemsState.push( isSelected );
+          params.prevItemsStates.push( isSelected );
         }
-        self._selected += delta;
+        _this._selected += delta;
       }
 
       // Finally add/remove class to item
-      $( item ).toggleClass( self.options.selectedClass, aboveZero );
+      $( item ).toggleClass( _this.options.selectedClass, aboveZero );
 
     });
 
@@ -715,7 +700,7 @@
     if( params.target === this.ui.focus ) { return $( params.target ); }
 
     // Detect position of target and focus in the list
-    var arr = this._getItems( params ),
+    var arr = params.allItems ? params.allItems : this._getItems( params ),
       x = arr.index( params.target ),
       y = arr.index( this.ui.focus ),
 
@@ -723,6 +708,7 @@
     subArr =     ( x < y ) ? arr.slice( x, y ) : arr.slice( y, x );
     subArr.push( ( x < y ) ? arr[ y ]          : arr[ x ] );
 
+    params.allItems = arr;
     params.rangeStart = y;
     params.rangeEnd = x;
     return subArr;
@@ -777,6 +763,31 @@
     if( this._isPrevented ) { this._cancel( e, params ); }
   };
 
+
+  Plugin.prototype._checkIfElem = function( selector ) {
+    var res;
+    if ( selector && (selector.jquery || selector.nodeType) ) {
+      // Filter received elements through cached selecter
+      selector = selector.jquery ? selector : $( selector );
+      res = selector.filter( this._itemsSelector );
+      return res.length > 0 ? res : null;
+    
+    } else { return false; }
+  };
+
+
+  Plugin.prototype._checkIfSelector = function( selector ) {
+    var res;
+    // Test for selector
+    if ( selector && typeof selector === 'string') {
+      res = this.$el
+        .find( selector ) // Try to find
+        .filter( this._itemsSelector ); // Filter found resents
+      return ( res.jquery && res.length > 0 ) ? res : null;
+    
+    } else { return false; }
+  };
+
   
 
   /* ==============================================================================
@@ -788,12 +799,7 @@
 
     if ( !this.options.keyboard ) { return; }
     if ( this.options.preventInputs && e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') { return; }
-
-    var key = e.which, // pressed key
-      params = {},
-      target,          // sibling element
-      isAllSelect,     // flag that is all items is selected
-      direction;       // next or previous (depends from pressed arrow up|down)
+    var key = e.which, params = {}, target, isAllSelect, direction, page;
 
     // Key is released
     if (e.type === 'keyup') {
@@ -804,21 +810,13 @@
       return;
     }
     // If CTRL+A or CMD+A pressed and multi option is true
-    if ( key === Plugin.keyCode.A && (e.metaKey || e.ctrlKey) && this.options.multi ) {
+    if ( key === Plugin.keyCode.A && this._isMulti(e) && this.options.multi ) {
       target = this._getItems( params );
-      isAllSelect = true;
+      isAllSelect = true; // flag that is all items is selected
 
     } else {
       // Choose direction and try to find targeted item
       switch ( key ) {
-      case Plugin.keyCode.HOME:
-        direction = 'prev';
-        target = this._getItems( params, 'first');
-        break;
-      case Plugin.keyCode.END:
-        direction = 'next';
-        target = this._getItems( params, 'last');
-        break;
       case Plugin.keyCode.DOWN:
         direction = 'next';
         target = this._findNextTarget( 'next', params );
@@ -827,13 +825,21 @@
         direction = 'prev';
         target = this._findNextTarget( 'prev', params );
         break;
-      case Plugin.keyCode.PAGE_DOWN:
-        direction = 'next';
-        target = this._findNextTarget( 'pagedown', params );
-        break;
-      case Plugin.keyCode.PAGE_UP:
+      case Plugin.keyCode.HOME:
         direction = 'prev';
-        target = this._findNextTarget( 'pageup', params );
+        target = this._getItems( params, 'first');
+        break;
+      case Plugin.keyCode.END:
+        direction = 'next';
+        target = this._getItems( params, 'last');
+        break;
+      case Plugin.keyCode.PAGE_DOWN:
+      case Plugin.keyCode.PAGE_UP:
+        var isDown = key === Plugin.keyCode.PAGE_DOWN;
+        direction  = isDown ? 'next' : 'prev';
+        page       = isDown ? 'pagedown' : 'pageup';
+        params.isShiftPageRange = this.options.multi && e.shiftKey && !isAllSelect;
+        target = this._findNextTarget( page, params );
         break;
       case Plugin.keyCode.SPACE:
         target = $( this.ui.focus );
@@ -861,15 +867,10 @@
           delete params.items;
         }
         if ( this.options.multi ) { params.isMultiSelect = true; }
-        delete this._solidInitialElem;
+        delete this.ui.solidInitialElem;
 
       // SHIFT mode
-      } else if (
-        this.ui.focus && 
-        this.options.multi && 
-        e.shiftKey && 
-        !isAllSelect
-      ) {
+      } else if ( this.ui.focus && this.options.multi && e.shiftKey && !isAllSelect ) {
         // Call multiVariator or rangeVariator – 
         // it set all needed params depends from arguments
         if (
@@ -882,8 +883,8 @@
         }
 
         // Set solid selection
-        if ( !this._solidInitialElem && params.target !== this.ui.focus ) {
-          this._solidInitialElem = this.ui.focus;
+        if ( !this.ui.solidInitialElem && params.target !== this.ui.focus ) {
+          this.ui.solidInitialElem = this.ui.focus;
           params.isNewSolidSelection = true;
         }
 
@@ -892,12 +893,10 @@
         if ( !this._keyModes.shift  ) { this._keyModes.shift  = key;      }
 
       } else {
-        delete this._solidInitialElem;
+        delete this.ui.solidInitialElem;
       }
-
       // There are all necessary attributes now
       this._controller( e, params );
-
       // Recalculate plugin's box and window's scrolls
       this.scroll();
     }
@@ -907,7 +906,7 @@
 
   Plugin.prototype._rangeVariator = function( params ) {
     var
-      isFocusSelected = this._getIsSelected( this.ui.focus ),
+      isFocusSelected = void 0 === params.isFocusSelected ? this._getIsSelected( this.ui.focus ) : params.isFocusSelected,
       isTargetSelected = params.isTargetWasSelected = this._getIsSelected( params.target );
 
     if ( !isFocusSelected && !isTargetSelected ) {
@@ -934,7 +933,7 @@
   Plugin.prototype._multiVariator = function( params, key, direction, target ) {
     var
       // Check if focus or target is selected
-      isFocusSelected       = this._getIsSelected( this.ui.focus ),
+      isFocusSelected       = void 0 === params.isFocusSelected ? this._getIsSelected( this.ui.focus ) : params.isFocusSelected,
       isTargetSelected      = this._getIsSelected( params.target ),
       // Search for next target in the same direction
       afterTarget           = this._getItems( params, direction, target ),
@@ -986,8 +985,7 @@
 
   /*
   Used by _keyHandler
-  when UP or DOWN keys was pressed — find next item or first/last of the list
-  direction – next|prev
+  when UP, DOWN, PageUp, PageDown keys has pressed — find target or first/last element of the list
   */
   Plugin.prototype._findNextTarget = function( direction, params ) {
     var edge = ( direction === 'next' || direction === "pagedown" ) ? 'first' : 'last', // extreme item of the list
@@ -1032,6 +1030,16 @@
   };
 
 
+  Plugin.prototype._isRange = function( e ) {
+    return e.shiftKey || (e.shiftKey && e.ctrlKey) || (e.shiftKey && e.metaKey);
+  };
+
+
+  Plugin.prototype._isMulti = function( e ) {
+    return e.ctrlKey || e.metaKey;
+  };
+
+
 
   /* ==============================================================================
 
@@ -1040,68 +1048,81 @@
   */
   // Mouse events handler - set necessary paramaters and calls _controller
   Plugin.prototype._mouseHandler = function( e ) {
-    var options = this.options,
-    params = {};
+    var
+    options = this.options,
+    type    = e.type,
+    isMulti = this._isMulti(e),
+    isRange = this._isRange(e),
+    params  = {},
+    target;
 
-    // If hybrid mode
-    if ( options.event === 'hybrid' ) {
+    /* Find target: */
+    // mouseup mode
+    if (options.mouseMode === 'mouseup') {
+      if (type === 'mouseup') {
+        target = this._getTarget(e);
 
-      // It is click and mouse was not pressed on item
-      if ( e.type === 'click' && !this._mouseDownMode ) { return; }
+      // if mousedown event was at the item then do nothing
+      } else if ( type === 'mousedown' || (target = this._getTarget(e)) ) {
+        return;
 
-      params.target = this._getTarget(e);
+      } else { return; }
 
-      if ( params.target && e.type === 'mousedown' ) {
-
-        params.isTargetWasSelected = this._getIsSelected( params.target );
-        if ( params.isTargetWasSelected ) {
-          this._mouseDownMode = true;
-          return;
-        }
-      }
-
-      // If mouse down mode
-      if ( this._mouseDownMode ) { delete this._mouseDownMode; }
-
-    // if type of event do not match
-    } else if ( e.type !== options.event ) {
+    // because this click may be after mousedown in multi/range mode
+    } else if (type === 'click' && !this._mousedownOnItem) {
       return;
 
-    // Get target
-    } else { params.target = this._getTarget(e); }
+    // mousedown and click only
+    } else if (type === 'mousedown' || type === 'click') {
+      target = this._getTarget(e);
+      // Mousedown on item 
+      // Except cases mathes all conditions:
+      // - in multi/range modes 
+      // - with multi:true
+      // - with mouseMode:'standard'
+      if (type === 'mousedown' && target && !( options.multi && (isMulti||isRange) && options.mouseMode === 'standard' )) {
+        this._mousedownOnItem = target;
+        return;
+      }
+      delete this._mousedownOnItem;
+    } else { return; }
+
+    params.target = target;
 
     // If multi options is true and target exists
     if( options.multi && params.target ) {
 
       // Range select
-      if ( (e.shiftKey || e.shiftKey && e.ctrlKey) && this.ui.focus ) {
+      if ( isRange && this.ui.focus ) {
         params.items = this._rangeSelect( params );
 
       // Add/subtract to selection
-      } else if( e.ctrlKey || e.metaKey || options.mouseMode === 'toggle' ) {
+      } else if ( isMulti || options.mouseMode === 'toggle' ) {
         params.items = this._multiSelect( params );
       }
     }
 
     if ( params.target && !params.items ) { params.items = $( params.target ); }
-    delete this._solidInitialElem;
+    delete this.ui.solidInitialElem;
     this._controller( e, params );
   };
 
 
   // Tries to find target under cursor when mouse moves
   Plugin.prototype._mousemoveHandler = function( e ) {
-    if ( this._isHoverFocusPrevented ) { return; }
+    if ( this._isFocusOnHoverPrevented ) { return; }
     var params = {}, target;
 
     target = this._getTarget( e );
-    if (target) {
-      delete this._solidInitialElem;
+    if ( target ) {
+      delete this.ui.solidInitialElem;
+      this._isHovered = true;
       if ( target !== this.ui.focus ) {
         params.target = target;
         this._controller( e, params );
       }
-    } else {
+    } else if ( this._isHovered ) {
+      this._isHovered = false;
       this._controller( e, params );
     }
   };
@@ -1111,7 +1132,7 @@
   // and list's element changes scroll position
   Plugin.prototype._preventMouseMove = function() {
     var _this = this;
-    this._isHoverFocusPrevented = true;
+    this._isFocusOnHoverPrevented = true;
     
     if ( this._focusHoverTimeout ) {
       clearTimeout( this._focusHoverTimeout );
@@ -1119,7 +1140,7 @@
     }
 
     this._focusHoverTimeout = setTimeout( function() {
-      delete _this._isHoverFocusPrevented;
+      delete _this._isFocusOnHoverPrevented;
       delete _this._focusHoverTimeout;
     }, 250);
   };
@@ -1195,59 +1216,63 @@
 
 
   Plugin.prototype.select = function( selector ) {
-    var $elem, params = {};
+    var $elem;
 
-    // If received DOM $element
-    if ( selector && (selector.jquery || selector.nodeType) ) {
-      // Filter received elements through cached selecter
-      selector = selector.jquery ? selector : $( selector );
-      $elem = selector.filter( this.options.parentSelector );
-      $elem = $elem.length > 0 ? $elem : null;
-    
-    } else if (typeof selector === 'string') {
-      // Test for selector
-      $elem = this.$el
-        .find( selector ) // Try to find
-        .filter( this.options.parentSelector ); // Filter found $elements
-      $elem = ( $elem.jquery && $elem.length > 0 ) ? $elem : null;
-    } else {
+    $elem = this._checkIfElem( selector );
+    if ( $elem === false) { $elem = this._checkIfSelector( selector ); }
+    if ( $elem === false) {
       throw new Error( 'You shold pass DOM element or selector to \"select\" method.' );
     }
-
     if ( $elem ) {
-      // Set params for _controller method:
-      params.items = ( $elem.addClass ) ? $elem : $( $elem );
-      params.target = $elem[0] || $elem;
-
-      // Call _controller with null instead of event object
-      delete this._solidInitialElem;
-      this._controller( null, params );
+      delete this.ui.solidInitialElem;
+      this._controller( null, {
+        items:  ( $elem.addClass ) ? $elem : $( $elem ),
+        target: $elem[0] || $elem
+      });
     }
     return this.$el;
   };
 
 
   Plugin.prototype.blur = function() {
-    var params = {};
-    // If target is not exist, _blur will be called
-    params.target = null;
     // Call _controller with null instead of event object
-    this._controller( null, params );
+    this._controller( null, { target: null } );
     return this.$el;
   };
 
 
-  Plugin.prototype.getSelected = function() {
-    return this._getSelected();
+  Plugin.prototype.getSelected = function( getIds ) {
+    var arr,
+    items = this._getItems({}).filter( '.' + this.options.selectedClass );
+
+    if( getIds ) {
+      arr = [];
+      for (var i = 0; i < items.length; i++) { arr.push(items[i].id || null); }
+      return (arr && arr.length > 0) ? arr : null;
+    }
+    return items;
   };
 
 
   Plugin.prototype.getSelectedId = function() {
-    return this._getSelected( true );
+    return this.getSelected( true );
   };
 
 
-  Plugin.prototype.getFocused = function() {
+  Plugin.prototype.focus = function( selector ) {
+    var $elem;
+
+    if ( arguments.length > 0 ) {
+      $elem = ($elem = this._checkIfElem( selector )) === false ? this._checkIfSelector( selector ) : $elem;
+      if ( $elem && $elem.jquery ) {
+        this._setFocus( $elem[0] );
+
+      } else if ( $elem === false) {
+        throw new Error( 'You shold pass DOM element or CSS selector to set focus or nothing to get it.' );
+      }
+      return this.$el;
+    }
+
     if (this.ui.focus) { return this.ui.focus; } else { return null; }
   };
 
@@ -1270,6 +1295,7 @@
 
   Plugin.prototype.disable = function() {
     this._isEnable = false;
+    this._isHovered = false;
     this.$el.addClass( this.options.disabledClass );
     return this.$el;
   };
