@@ -135,20 +135,19 @@
     if ( arguments.length === 2 ) {
       // First arg is name of option and a second is a value
       options[arguments[ 0 ]] = arguments[1];
+    
+    // options hash
+    } else if ( $.isPlainObject(options) ) {
+      options = arguments[0];
     } else {
-      // options hash
-      if ( $.isPlainObject(options) ) {
-        options = arguments[0];
-      } else {
-        throw new Error('Format of \"option\" could be: \"option\" or \"option\",\"name\" or \"option\",\"name\",val or \"option\",{}');
-      }
+      throw new Error('Format of \"option\" could be: \"option\" or \"option\",\"name\" or \"option\",\"name\",val or \"option\",{}');
     }
 
     // Ensure that actions are strings
     $.each( Plugin.optionsStrings, function(index, name) {
       option = options[ name ];
       if( option ) {
-        var pos = ['mouseMode','event','keyboardMode'].indexOf( name );
+        var pos = ['mouseMode','keyboardMode'].indexOf( name );
         
         // default option
         if ( $.isArray( option ) && pos >= 0 && option === Plugin.defaults[name] ) {
