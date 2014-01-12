@@ -113,7 +113,7 @@ Do not forget some css-styling:
 			<td><strong>focusOnHover</strong></td>
 			<td>Focus always under cursor when mouse moves through the list. If cursor go out of the list and option <code>focusBlur: true</code> then focus clears.</td>
 			<td>Boolean</td>
-			<td>true</td>
+			<td>false</td>
 		</tr>
 		<tr>
 			<td><strong>handle</strong></td>
@@ -236,7 +236,7 @@ Callback functions except `create` and `destroy` may get arguments:
 	* `focus` — link to an element that has been a target previously;
 	* `items` — jquery collection of changed items – it could differ from event to event. Look at a table below.
 
-Callback functions in order which they are called and with arguments which they are receives:
+Callback functions in order which they are called and with arguments which they receives:
 <table>
 	<thead>
 		<tr>
@@ -344,7 +344,7 @@ $(elem).selectonic("getSelected");
 	</tr>
 	<tr>
 		<td valign="top"><strong>blur</strong></td>
-		<td valign="top">Clears selection and focus in a list.</td>
+		<td valign="top">Clears focus and selection of the list, if it's permitted by list's options.</td>
 	</tr>
 	<tr>
 		<td valign="top"><strong>getSelected</strong></td>
@@ -356,7 +356,7 @@ $(elem).selectonic("getSelected");
 	</tr>
 	<tr>
 		<td valign="top"><strong>scroll</strong></td>
-		<td valign="top">If list has focused element and list is scrollable, it will recalculate list's scroll position in a way that focused element will be in viewport.</td>
+		<td valign="top">If a list has focused element and list is scrollable, it will recalculate list's scroll position in a way that focused element will be in a viewport.</td>
 	</tr>
 	<tr>
 		<td valign="top"><strong>disable</strong></td>
@@ -368,7 +368,7 @@ $(elem).selectonic("getSelected");
 	</tr>
 	<tr>
 		<td valign="top"><strong>refresh</strong></td>
-		<td valign="top">Refreshs plugin data. That is necessary when some items in a list has been removed.</td>
+		<td valign="top">Refreshes plugin data. That is necessary when some items in a list has been removed.</td>
 	</tr>
 	<tr>
 		<td valign="top"><strong>destroy</strong></td>
@@ -400,7 +400,7 @@ $(elem).selectonic("option", {
 ```
 
 ### cancel
-Cancel current changes in a list or prevent it, if called in *before* callback. Method can be called only inside callback functions:
+Cancel current changes in a list or prevent it, if called in `before` callback. Method can be called only inside callback function:
 ```javascript
 elem.selectonic({
     stop: function(event, ui) {
@@ -412,7 +412,7 @@ elem.selectonic({
 ```
 
 ### focus
-Gets focused element or `null` of sets new focused element.
+Gets focused element or `null` or sets new focused element.
 
 **Getter:**
 ```javascript
