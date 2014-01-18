@@ -1,0 +1,40 @@
+/* ======================================== 
+
+    Layout
+
+*/
+
+/*.l-wrapper {}*/
+
+    /*.l-docs {*/
+        /*margin-left: 330px;*/
+        /*max-width: 45em;*/
+    /*}*/
+    .l-docs .docs-wrapper {
+        height: 100%;
+    }
+
+    .l-sidebar {
+        width: 260px;
+        background: #efebe7;
+    }
+    .l-plugin {
+        display: none;
+    }
+    
+    .l-section {
+        margin-left: 330px;
+        max-width: 45em;
+    }
+
+
+    .l-example-section {
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;;
+        margin: 2em 0;
+    }
+        .l-example-section pre {
+            margin: 0;
+            border-left: 1px solid #ddd;
+        }
+    

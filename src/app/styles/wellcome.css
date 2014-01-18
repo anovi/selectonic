@@ -1,0 +1,70 @@
+/* ======================================== 
+
+    Wellcome block
+
+*/
+.b-wellcome {
+    /*position: relative;*/
+    /*z-index: 110;*/
+    padding-bottom: 21px;
+    padding-top: 3em;
+
+    line-height: 1.5;
+    color: #d8a888;
+
+    text-shadow: 0 1px 0 black;
+
+    background-image: -webkit-linear-gradient(bottom, #f9f6f6, #d8d7d7 20px);
+    background-image: -moz-linear-gradient(bottom, #f9f6f6, #d8d7d7 20px);
+    background-image: -o-linear-gradient(bottom, #f9f6f6, #d8d7d7 20px);
+    background-image: linear-gradient(bottom, #f9f6f6, #d8d7d7 20px);
+}
+    .b-wellcome .wellcome-wrapper {
+        padding: 2em 1em 2em 330px;
+        background: #2e2e2e;
+    }
+    .b-wellcome h1.wellcome-title {
+        margin: 0 0 0.3em 0;
+        font-size: 2.3em;
+        line-height: 1em;
+        font-weight: bold;
+        color: #f2dfdd;
+    }
+    .b-wellcome p.wellcome-title {
+        margin: 0 0 0.4em 0;
+        font-size: 1.5em;
+        max-width: 33em;
+    }
+    .b-wellcome p {
+        margin: 0;
+        font-size: 1.2em;
+    }
+    .b-wellcome .download,
+    .b-wellcome .download:visited {
+        color: #B7E7DA;
+        text-decoration: none;
+        border: none;
+        font-size: 0.9em;
+    }
+        .b-wellcome .download:hover {
+            color: white;
+        }
+        .b-wellcome .download .icon-github {
+            font-size: 1.3em;
+            vertical-align: middle;
+        }
+        .b-wellcome .download .title {
+            vertical-align: middle;
+            /*border-bottom: 1px solid #4D5E59;*/
+        }
+            .b-wellcome .download:hover .title {
+                /*border-bottom-color: #669999 ;*/
+            }
+
+
+
+
+
+
+
+

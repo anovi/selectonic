@@ -1,0 +1,62 @@
+/* ======================================== 
+
+    Event Log
+
+*/
+.b-event-log {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 200px;
+    padding: 0;
+
+    overflow: hidden;
+    font-size: 0.8em;
+
+    background: white;
+    -webkit-box-shadow: 0 0 1px rgba( 0, 0, 40, 0.2 );
+    -moz-box-shadow: 0 0 1px rgba( 0, 0, 40, 0.2 );
+    box-shadow: 0 0 1px rgba( 0, 0, 40, 0.2 );
+}
+    .b-event-log .g-panel .panel-body {
+        display: block;
+    }
+
+    .b-event-log .event-log-wrapper {
+        padding-top: 0.7em;
+    }
+        .b-event-log .event-log-wrapper > div {
+            margin: 0 1em;
+        }
+    .b-event-log .event-log-wrapper .hr {
+        display: block;
+        height: 1px;
+        margin: 0 -1em;
+        background: #efefef;
+    }
+
+    .j-minimized .b-event-log {
+        height: 32px;
+        opacity: 0.5;
+    }
+        .j-minimized .b-event-log:hover {
+            cursor: pointer;
+            opacity: 0.9;
+        }
+    .j-minimized .b-event-log .panel-body {
+        height: 0;
+        overflow: hidden;
+    }
+    .j-minimized .b-event-log .b-but-pipka:before {
+        border-width: 0 6px 7px 6px;
+        border-color: transparent transparent #bbc transparent;
+        margin: 0 0 1px 0;
+    }
+    .log-number {
+        color: #ddd;
+    }
+
+
+
+

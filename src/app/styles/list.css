@@ -1,0 +1,112 @@
+/* ======================================== 
+
+    List
+
+*/
+.b-list {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 238px;
+    overflow: hidden;
+    padding-bottom: 5px;
+    margin: 0;
+
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+
+    -webkit-box-shadow: 0 0 1px rgba( 0, 0, 40, 0.2 );
+    -moz-box-shadow: 0 0 1px rgba( 0, 0, 40, 0.2 );
+    box-shadow: 0 0 1px rgba( 0, 0, 40, 0.2 );
+    background: white;
+}
+    .b-list .list-wrapper {
+        /*position: absolute;*/
+        /*top: 2em;*/
+        /*left: 0;*/
+        /*right: 0;*/
+        /*bottom: 0;*/
+
+        margin: 0 0 0 0;
+        padding: 0;
+        height: 100%;
+
+        overflow: auto;
+        list-style-type: none;
+    }
+        .b-list .list-wrapper > li {
+            padding: 0 0 0 1em;
+            border-top: 1px solid #efefef;
+            line-height: 2em;
+
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+            .b-list .list-wrapper > li:first-child {
+                border: 0;
+            }
+
+    .b-list .list-wrapper .j-selected {
+        background: #cceeff;
+        border-color: #adf;
+    }
+        .b-list .list-wrapper .j-selected+li {
+            border-color: #adf;       
+        }
+
+    .b-list .j-focused {
+        outline: 1px solid #66aaff;
+        outline-offset: -1px;
+    }
+        .b-list .list-wrapper .j-focused+li {
+            border-color: transparent;
+        }
+
+    /* Disabled state*/
+    .j-disabled {
+        color: #999999;
+    }
+        .b-list .j-disabled .j-focused {
+            outline: 1px solid #ccc;
+            outline-offset: -1px;
+        }
+            .b-list .list-wrapper.j-disabled .j-focused+li {
+                border-color: transparent;
+            }
+        .b-list .j-disabled .j-selected {
+            background: #f9f9f9;
+            border-color: #dddddd;
+        }
+            .b-list .j-disabled .j-selected+li {
+                border-color: #dddddd;
+            }
+
+    /* Handle */
+    .b-list .list-item-handle {
+        display: none;
+        float: right;
+        padding: 0 0.4em;
+        font-size: 12px;
+
+        border: #efefef solid;
+        border-width: 0 0 0 1px;
+        color: #bbaa99;
+        background: #fffff5;
+    }
+        .b-list .j-selected .list-item-handle {
+            background: transparent;
+            color: #99aadd;
+            border-color: #aaddee;
+        }
+        .b-list .handle .list-item-handle {
+            display: inline;
+        }
+
+    /* Minimized */
+    .j-minimized .b-list {
+        bottom: 70px;
+    }
+    

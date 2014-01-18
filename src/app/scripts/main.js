@@ -256,8 +256,23 @@ var demo = demo || {};
 (function($) {
   'use strict';
   $('.b-select').mySelect();
+  var $window = $(window);
 
   var example1 = $('#example1');
-  example1.find('.b-example').scrollSpy({ box: document.getElementById('example1') });
+  var sandbox  = $('#sandbox');
+  var navHeight = $('.b-navbar').first().height();
+
+  example1.find('.b-example').scrollSpy({
+    box: document.getElementById('example1'),
+    offset: navHeight
+  });
+
+  sandbox.find('.b-example')
+    .css( 'height', $window.outerHeight() )
+    .scrollSpy({
+      box: document.getElementById('sandbox'),
+      offset: navHeight
+    });
 
 })(jQuery, window);
+

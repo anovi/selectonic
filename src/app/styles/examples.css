@@ -1,0 +1,40 @@
+
+
+/* ======================================== 
+
+    Examples
+
+*/
+.b-example {
+    width: 25em;
+    min-height: 10em;
+    padding: 10px 0 20px;
+    
+    float: left;
+    position: relative;
+    border-radius: 5px;
+}
+.example-explain:after {
+    content: '';
+    display: table;
+    width: 100%;
+    clear: both;
+}
+.example-description {
+    margin: 1em;
+}
+.example-example {
+    margin: 1em;
+}
+.example-explain {
+    margin-left: 25em;
+}
+
+.keyName {
+    display: inline-block;
+    background: #F7F7F7;
+    padding: 0 0.2em;
+    border-radius: 2px;
+    box-shadow: 0 0 1px rgba(0,0,0,0.5);
+    font-family: monospace;
+}

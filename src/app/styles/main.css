@@ -4,10 +4,15 @@
     Basic
 
 */
+* {
+    box-sizing: border-box;
+}
 html, body {
     /*background: #f0efef;*/
     background: #fdfdfc;
     line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+    font-smoothing: antialiased;
 }
 
 body {
@@ -145,12 +150,12 @@ table {
     -moz-box-shadow: 0 0 5px 0 #ddd;
     box-shadow: 0 0 5px 0 #ddd;
 }*/
-pre {
+/*pre {*/
     /*background-color: #FFF;*/
     /*white-space: nowrap;*/
     /*overflow: auto;*/
     /*max-height: 30em;*/
-}
+/*}*/
 
 /* Button */
 button {
@@ -236,67 +241,6 @@ button {
 
 
 
-/* ======================================== 
-
-    Layout
-
-*/
-
-/*.l-wrapper {}*/
-
-    .l-docs {
-        /*margin-left: 330px;*/
-        /*max-width: 45em;*/
-    }
-    .l-docs .docs-wrapper {
-        height: 100%;
-    }
-
-    .l-sidebar {
-        width: 260px;
-        background: #efebe7;
-    }
-    .l-plugin {
-        display: none;
-    }
-    
-    .l-section {
-        margin-left: 330px;
-        max-width: 45em;
-    }
-
-
-    .l-example-section {
-        border-top: 1px solid #ddd;
-        border-bottom: 1px solid #ddd;;
-        margin: 2em 0;
-    }
-        .l-example-section pre {
-            margin: 0;
-            border-left: 1px solid #ddd;
-        }
-    
-    .b-example {
-        max-width: 25em;
-        float: left;
-    }
-    .example-description {
-        margin: 1em;
-    }
-    .example-example {
-        margin: 1em;
-    }
-
-    .keyName {
-        display: inline-block;
-        background: #F7F7F7;
-        padding: 0 0.2em;
-        border-radius: 2px;
-        box-shadow: 0 0 1px rgba(0,0,0,0.5);
-        font-family: monospace;
-    }
-
-
 
 /* ======================================== 
 
@@ -308,6 +252,7 @@ button {
     width: 100%;
     height: 100%;
     vertical-align: top;
+    overflow: hidden;
 }
     /*.g-panel .panel-head,*/
     /*.g-panel .panel-body {*/
@@ -339,189 +284,6 @@ button {
         }
 
 
-
-/* ======================================== 
-
-    List
-
-*/
-.b-list {
-    position: fixed;
-    top: 30px;
-    left: 30px;
-    bottom: 238px;
-    width: 250px;
-    overflow: hidden;
-    padding-bottom: 5px;
-
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-
-    border-radius: 5px;
-    -webkit-box-shadow: 0 0 3px rgba( 0, 0, 40, 0.3 );
-    -moz-box-shadow: 0 0 3px rgba( 0, 0, 40, 0.3 );
-    box-shadow: 0 0 3px rgba( 0, 0, 40, 0.3 );
-    background: white;
-}
-    .b-list .list-wrapper {
-        position: absolute;
-        top: 2em;
-        left: 0;
-        right: 0;
-        bottom: 0;
-
-        margin: 0 0 0 0;
-        padding: 0;
-        /*height: 100%;*/
-
-        overflow: auto;
-        list-style-type: none;
-    }
-        .b-list .list-wrapper > li {
-            padding: 0 0 0 1em;
-            border-top: 1px solid #eee;
-            line-height: 2em;
-
-            -webkit-box-sizing: border-box;
-            -moz-box-sizing: border-box;
-            box-sizing: border-box;
-        }
-            .b-list .list-wrapper > li:first-child {
-                border: 0;
-            }
-
-    .b-list .list-wrapper .j-selected {
-        background: #cceeff;
-        border-color: #adf;
-    }
-        .b-list .list-wrapper .j-selected+li {
-            border-color: #adf;       
-        }
-
-    .b-list .j-focused {
-        outline: 1px solid #66aaff;
-        outline-offset: -1px;
-    }
-        .b-list .list-wrapper .j-focused+li {
-            border-color: transparent;
-        }
-
-    /* Disabled state*/
-    .j-disabled {
-        color: #999999;
-    }
-        .b-list .j-disabled .j-focused {
-            outline: 1px solid #ccc;
-            outline-offset: -1px;
-        }
-            .b-list .list-wrapper.j-disabled .j-focused+li {
-                border-color: transparent;
-            }
-        .b-list .j-disabled .j-selected {
-            background: #f9f9f9;
-            border-color: #dddddd;
-        }
-            .b-list .j-disabled .j-selected+li {
-                border-color: #dddddd;
-            }
-
-    /* Handle */
-    .b-list .list-item-handle {
-        display: none;
-        float: right;
-        padding: 0 0.4em;
-        font-size: 12px;
-
-        border: #efefef solid;
-        border-width: 0 0 0 1px;
-        color: #bbaa99;
-        background: #fffff5;
-    }
-        .b-list .j-selected .list-item-handle {
-            background: transparent;
-            color: #99aadd;
-            border-color: #aaddee;
-        }
-        .b-list .handle .list-item-handle {
-            display: inline;
-        }
-
-    /* Minimized */
-    .j-minimized .b-list {
-        bottom: 70px;
-    }
-
-
-/* ======================================== 
-
-    Options
-
-*/
-
-.b-options {
-    /*margin: 1em;*/
-    line-height: 1.4;
-    display: none;
-}
-    .b-options .options-wrapper {
-        list-style-type: none;
-        padding: 0;
-        margin: 0 0 1em 0;
-    }
-        .b-options .options-wrapper > li {
-            padding: 0.3em 0;
-        }
-
-    .b-options .options-description {
-        /*color: #908786;*/
-        /*color: #696363;*/
-        color: #555;
-    }
-
-    .b-options p {
-        margin: 0.1em 0 0.3em;
-    }
-
-    .options-table {
-        border: none;
-        font-size: 1em;
-        background: transparent;
-        border-radius: 0;
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
-        box-shadow: none;
-    }
-        .options-table td {
-            border: none;
-            padding: 0.6em 0.8em 0.6em 0;
-        }
-        .options-table td:first-child {
-            white-space: nowrap;
-        }
-        .row-group td {
-            border-top: 1px solid #ccc;
-            box-shadow: inset 0 1px 0 white
-        }
-
-        .options-table .options-radio td {
-            padding-top: 0.4em;
-            padding-bottom: 0.4em;
-        }
-        .options-table .options-radio.end td {
-            padding-bottom: 0.6em;
-        }
-        .options-table input {
-            margin-right: 0.5em;
-        }
-
-        /* IE */
-        .ie9 .options-table,
-        .lt-ie9 .options-table {
-            border: none;
-        }
-    
-
 /* ======================================== 
 
     About
@@ -537,171 +299,12 @@ button {
     Methods
 
 */
-.b-methods {
-    display: none;
-}
+/*.b-methods {*/
+    /*display: none;*/
+/*}*/
 .b-methods h3 button {
     font-size: 1em;
     font-weight: bold;
     margin-left: -0.4em;
 }
-
-
-
-
-/* ======================================== 
-
-    Event Log
-
-*/
-.b-event-log {
-    position: fixed;
-    left: 30px;
-    bottom: 30px;
-
-    width: 250px;
-    height: 200px;
-    padding: 0;
-
-    overflow: hidden;
-    font-size: 0.8em;
-
-    -webkit-border-radius:  5px;
-    -moz-border-radius:  5px;
-    border-radius:  5px;
-
-    background: white;
-    -webkit-box-shadow: 0 0 3px rgba( 0, 0, 40, 0.3 );
-    -moz-box-shadow: 0 0 3px rgba( 0, 0, 40, 0.3 );
-    box-shadow: 0 0 3px rgba( 0, 0, 40, 0.3 );
-}
-    .b-event-log .g-panel .panel-body {
-        display: block;
-    }
-
-    .b-event-log .event-log-wrapper {
-        padding-top: 0.7em;
-    }
-        .b-event-log .event-log-wrapper > div {
-            margin: 0 1em;
-        }
-    .b-event-log .event-log-wrapper .hr {
-        display: block;
-        height: 1px;
-        margin: 0 -1em;
-        background: #efefef;
-    }
-
-    .j-minimized .b-event-log {
-        height: 32px;
-        opacity: 0.5;
-    }
-        .j-minimized .b-event-log:hover {
-            cursor: pointer;
-            opacity: 0.9;
-        }
-    .j-minimized .b-event-log .panel-body {
-        height: 0;
-        overflow: hidden;
-    }
-    .j-minimized .b-event-log .b-but-pipka:before {
-        border-width: 0 6px 7px 6px;
-        border-color: transparent transparent #bbc transparent;
-        margin: 0 0 1px 0;
-    }
-    .log-number {
-        color: #ddd;
-    }
-
-
-
-
-/* ======================================== 
-
-    Wellcome block
-
-*/
-.b-wellcome {
-    padding-bottom: 21px;
-
-    line-height: 1.5;
-    color: #d8a888;
-
-    text-shadow: 0 1px 0 black;
-    -webkit-font-smoothing: antialiased;
-    font-smoothing: antialiased;
-
-    background-image: -webkit-linear-gradient(bottom, #f9f6f6, #d8d7d7 20px);
-    background-image: -moz-linear-gradient(bottom, #f9f6f6, #d8d7d7 20px);
-    background-image: -o-linear-gradient(bottom, #f9f6f6, #d8d7d7 20px);
-    background-image: linear-gradient(bottom, #f9f6f6, #d8d7d7 20px);
-}
-    .b-wellcome .wellcome-wrapper {
-        padding: 2em 1em 2em 330px;
-        -webkit-box-shadow: 0 1px 0 0 white;
-        -moz-box-shadow: 0 1px 0 0 white;
-        box-shadow: 0 1px 0 0 white;
-        background: #2e2e2e;
-    }
-    .b-wellcome h1.wellcome-title {
-        margin: 0 0 0.3em 0;
-        font-size: 2.3em;
-        line-height: 1em;
-        font-weight: bold;
-        color: #f2dfdd;
-    }
-    .b-wellcome p.wellcome-title {
-        margin: 0 0 0.4em 0;
-        font-size: 1.5em;
-        max-width: 33em;
-    }
-    .b-wellcome p {
-        margin: 0;
-        font-size: 1.2em;
-    }
-    .b-wellcome .download,
-    .b-wellcome .download:visited {
-        color: #B7E7DA;
-        text-decoration: none;
-        border: none;
-        font-size: 0.9em;
-    }
-        .b-wellcome .download:hover {
-            color: white;
-        }
-        .b-wellcome .download .icon-github {
-            font-size: 1.3em;
-            vertical-align: middle;
-        }
-        .b-wellcome .download .title {
-            vertical-align: middle;
-            /*border-bottom: 1px solid #4D5E59;*/
-        }
-            .b-wellcome .download:hover .title {
-                /*border-bottom-color: #669999 ;*/
-            }
-
-
-
-/* ======================================== 
-
-    Examples
-
-*/
-.b-example {
-    border-radius: 5px;
-    padding: 10px 0 20px;
-    min-height: 10em;
-    position: relative;
-    z-index: 10;
-}
-
-
-
-
-
-
-
-
-
 
