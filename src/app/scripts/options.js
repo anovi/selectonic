@@ -22,7 +22,10 @@
   };
 
   Options.prototype.set = function( obj, isNew ) {
-    var schema = this._schema, newOptions = {}, defaults = {}, option, callback;
+    var schema = this._schema,
+    newOptions = {},
+    defaults = {},
+    option, callback;
     obj = obj || {};
 
     // Check options
@@ -49,7 +52,7 @@
     }
     // Create new options object
     for ( option in schema ) {
-      if ( schema[option].default ) { defaults[option] = schema[option].default; }
+      if ( schema[option].default !== void 0 ) { defaults[option] = schema[option].default; }
     }
     newOptions = isNew ? Options.extend( newOptions, defaults, obj ) : Options.extend( newOptions, obj );
     // Callbacks

@@ -2,7 +2,8 @@
   'use strict';
 
   var defaults = {
-    box: { type: 'object' }
+    box: { type: 'object' },
+    offset: { default:0, type: 'number' }
   },
   $window = $( window );
 
@@ -10,6 +11,10 @@
     this.options = new Options( defaults, options );
     this.$el = $el;
     this.box = this.options.get('box');
+    this._initState = {
+      position: this.$el.css('position'),
+      top: this.$el.css('top'),
+    };
     this.$el.data( 'scrollSpy', this );
     this._bindEvents();
   };
@@ -27,6 +32,7 @@
   */
   Plugin.prototype._refreshBoxScroll = function( box ) {
     var
+      offset        = this.options.get('offset'),
       $box          = $( box ),
       isWindow      = box === window,
       boxViewHeight = isWindow ? $box.outerHeight() : box.clientHeight,
@@ -40,14 +46,16 @@
       itemHeight = item.outerHeight();
       // itemInBoxY = isWindow ? item.offset().top : ( item.offset().top - boxWindowY + boxScrollTop );
 
-    if ( boxWindowY > windowScrollTop) {
+    if ( boxWindowY > windowScrollTop + offset) {
       item.css({
-        position:'static',
+        position: this._initState.position,
+        top: this._initState.top,
       });
       this._cutClone();
     
-    } else if ( windowScrollTop > boxViewHeight + boxWindowY - itemHeight ) {
+    } else if ( windowScrollTop > boxViewHeight + boxWindowY - itemHeight - offset ) {
       // set item to bottom box edge
+      this._setClone();
       item.css({
         position:'absolute',
         top: boxViewHeight + boxWindowY - itemHeight
@@ -57,7 +65,7 @@
       this._setClone();
       item.css({
         position:'fixed',
-        top: 0
+        top: 0 + this.options.get('offset')
       });
     }
   };
