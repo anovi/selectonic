@@ -190,6 +190,7 @@ var demo = demo || {};
 // Attach plugin
 (function($) {
   'use strict';
+  if( true ){return;}
   var couter = -1,
   number = function() {
     return '<span class=\"log-number\">' + (++couter) + '.</span> ';
@@ -246,5 +247,17 @@ var demo = demo || {};
     var value = mainList.selectonic( 'option', item );
     $('input[name=' + item + '][data-option=' + value + ']').prop( 'checked', true );
   });
+
+})(jQuery, window);
+
+
+
+// Examples
+(function($) {
+  'use strict';
+  $('.b-select').mySelect();
+
+  var example1 = $('#example1');
+  example1.find('.b-example').scrollSpy({ box: document.getElementById('example1') });
 
 })(jQuery, window);

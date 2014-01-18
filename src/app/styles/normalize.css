@@ -195,8 +195,11 @@ mark {
  * Addresses margins set differently in IE 6/7.
  */
 
-p,
+/*p,
 pre {
+    margin: 1em 0;
+}*/
+p {
     margin: 1em 0;
 }
 
@@ -204,9 +207,9 @@ pre {
  * Corrects font family set oddly in IE 6, Safari 4/5, and Chrome.
  */
 
-code,
+/*code,*/
 kbd,
-pre,
+/*pre,*/
 samp {
     font-family: monospace, serif;
     _font-family: 'courier new', monospace;
@@ -217,11 +220,11 @@ samp {
  * Improves readability of pre-formatted text in all browsers.
  */
 
-pre {
+/*pre {
     white-space: pre;
     white-space: pre-wrap;
     word-wrap: break-word;
-}
+}*/
 
 /*
  * Addresses CSS quotes not supported in IE 6/7.

@@ -1,0 +1,62 @@
+
+.b-select {
+	display: inline-block;
+}
+.b-select .select-trigger {
+	width: 250px;
+	text-align: left;
+	background: #efefef url(arrow.svg) 230px 1.2em no-repeat;
+	border-radius: 5px;
+	border: none;
+	line-height: 1.9;
+	padding: 0.5em 2.3em 0.5em 1em;
+}
+	.b-select .select-title {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+.b-select .select-group {
+	position: absolute;
+	display: none;
+	margin: 0;
+	padding: 0;
+	min-width: 100%;
+	background-color: #FFF;
+	border-radius: 5px;
+	box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+	list-style-type: none;
+	max-height: 19em;
+	overflow: auto;
+}
+.b-select .select-option {
+	list-style: none;
+	padding: 0 1em 0 1.8em;
+	margin: 0;
+	max-width: 30em;
+	line-height: 1.9;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+	.b-select .select-option.j-focused {
+		background-color: #f3f3f2;
+	}
+	.b-select .select-option.j-selected {
+		background-image: url( check.svg );
+		background-position: 0.45em 50%;
+		background-repeat: no-repeat;
+		font-weight: bold;
+	}
+
+/* Opend */
+.b-select.opend {
+	position: relative;
+}
+.b-select.opend .select-trigger {
+	background-color: #efefed;
+}
+.b-select.opend .select-group {
+	display: block;
+}

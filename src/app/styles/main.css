@@ -146,7 +146,10 @@ table {
     box-shadow: 0 0 5px 0 #ddd;
 }*/
 pre {
-    background-color: #FFF;
+    /*background-color: #FFF;*/
+    /*white-space: nowrap;*/
+    /*overflow: auto;*/
+    /*max-height: 30em;*/
 }
 
 /* Button */
@@ -242,8 +245,8 @@ button {
 /*.l-wrapper {}*/
 
     .l-docs {
-        margin-left: 330px;
-        max-width: 45em;
+        /*margin-left: 330px;*/
+        /*max-width: 45em;*/
     }
     .l-docs .docs-wrapper {
         height: 100%;
@@ -252,7 +255,46 @@ button {
     .l-sidebar {
         width: 260px;
         background: #efebe7;
-    }    
+    }
+    .l-plugin {
+        display: none;
+    }
+    
+    .l-section {
+        margin-left: 330px;
+        max-width: 45em;
+    }
+
+
+    .l-example-section {
+        border-top: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;;
+        margin: 2em 0;
+    }
+        .l-example-section pre {
+            margin: 0;
+            border-left: 1px solid #ddd;
+        }
+    
+    .b-example {
+        max-width: 25em;
+        float: left;
+    }
+    .example-description {
+        margin: 1em;
+    }
+    .example-example {
+        margin: 1em;
+    }
+
+    .keyName {
+        display: inline-block;
+        background: #F7F7F7;
+        padding: 0 0.2em;
+        border-radius: 2px;
+        box-shadow: 0 0 1px rgba(0,0,0,0.5);
+        font-family: monospace;
+    }
 
 
 
@@ -420,6 +462,7 @@ button {
 .b-options {
     /*margin: 1em;*/
     line-height: 1.4;
+    display: none;
 }
     .b-options .options-wrapper {
         list-style-type: none;
@@ -494,6 +537,9 @@ button {
     Methods
 
 */
+.b-methods {
+    display: none;
+}
 .b-methods h3 button {
     font-size: 1em;
     font-weight: bold;
@@ -634,6 +680,27 @@ button {
             .b-wellcome .download:hover .title {
                 /*border-bottom-color: #669999 ;*/
             }
+
+
+
+/* ======================================== 
+
+    Examples
+
+*/
+.b-example {
+    border-radius: 5px;
+    padding: 10px 0 20px;
+    min-height: 10em;
+    position: relative;
+    z-index: 10;
+}
+
+
+
+
+
+
 
 
 

@@ -19,6 +19,7 @@
         <!-- endbuild -->
         <!-- build:css(.tmp) styles/main.css -->
         <link rel="stylesheet" href="styles/main.css">
+        <link rel="stylesheet" href="select/select.css">
         <!-- endbuild -->
     </head>
     <body>
@@ -91,9 +92,203 @@
         </div>
     </div>
 
-
     <div class="l-docs">
         <div class="docs-wrapper">
+
+
+            <div class="l-section">
+                <h2>
+                <a name="begin" class="anchor" href="#begin"><span class="octicon octicon-link"></span></a>Begin</h2>
+                <p>jQuery based plugin for making any list of items selectable by mouse and keyboard. It could be usefull in webapp where are different widgets like menus, dropdowns with keyboard input, lists with multiple selection and so on. It maybe too bold for just a simple menu in one place.</p>
+                <h2><a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h2>
+                <p>Selectonic help to inplement widgets with albility to select items. It could be usefull in webapp where are different widgets like menus, dropdowns with keyboard input, lists of items with actions and more. Lets see som examples!</p>
+            </div>
+
+            <div class="l-example-section" id="example1">
+                
+                <div class="b-example">
+                    <div class="example-description">
+                        <h3><a name="select" class="anchor" href="#select"><span class="octicon octicon-link"></span></a>Select</h3>
+                        <p>There are many implementations of select control, but almost all with the same flaw – lack of keyboard's support. See example.</p><p>It has full keyboard support: Arrows, <span class="keyName">PageUp</span>, <span class="keyName">PageDown</span> and <span class="keyName">HOME</span>, <span class="keyName">END</span>. <br>You could focus it by <span class="keyName">TAB</span>, press arrow and choose item.</p>
+                    </div>
+                    
+                    <div class="example-example">
+                        <div class="b-select">
+                        <button class="select-trigger"><div class="select-title">Choose something…</div></button>
+                        <ul class="select-group">
+                            <li class="select-option">Item 1</li>
+                            <li class="select-option">Item 2</li>
+                            <li class="select-option">Item 3</li>
+                            <li class="select-option">Item 4</li>
+                            <li class="select-option">Item 5</li>
+                            <li class="select-option">Item 6</li>
+                            <li class="select-option">Item 7</li>
+                            <li class="select-option">Item 8</li>
+                            <li class="select-option">Item 9</li>
+                            <li class="select-option">Item 10</li>
+                            <li class="select-option">Item 11</li>
+                            <li class="select-option">Item 12</li>
+                            <li class="select-option">Item 13</li>
+                            <li class="select-option">Item 14</li>
+                            <li class="select-option">Item 15</li>
+                            <li class="select-option">Item 16</li>
+                            <li class="select-option">Item 17</li>
+                            <li class="select-option">Item 18</li>
+                            <li class="select-option">Item 19</li>
+                            <li class="select-option">Item 20</li>
+                        </ul>
+                        </div>
+                    </div>
+                </div>
+            
+            <pre data-line="49-77,101,106,108,117" >
+<code class="language-javascript">(function( $, window ) {
+  'use strict';
+
+  var keyCode = { UP:38, DOWN:40, ESCAPE:27, ENTER:13 },
+  $document = $( window.document ),
+
+  Select = function( elem ) {
+    this.$el     = $( elem );
+    this.button  = this.$el.find('.select-trigger');
+    this.title   = this.button.find('.select-title');
+    this.list    = this.$el.find('.select-group');
+    this.isOpend = false;
+    this.init();
+  };
+
+
+  Select.prototype.init = function() {
+    var _this = this;
+    
+    this.button.on('blur', function( e ) {
+      _this.close.call( _this, e );
+    });
+
+    this.$el
+      .on('keydown', function( e ) {
+        _this.keyHandler.call( _this, e );
+      })
+      .on('mousedown', function(e) {
+        var isOnButton = _this.button[0] === e.target ||
+          _this.title[0] === e.target;
+        
+        if ( isOnButton ) {
+          if (!_this.isOpend) {
+            e.stopPropagation();
+            _this.open.call( _this );
+          } else {
+            _this.close.call( _this );
+          }
+          return;
+        }
+        e.preventDefault();
+      })
+      .on('mouseup', function(e) {
+        e.stopPropagation();
+      });
+    
+    $document.on('mouseup', function() { _this.close(); });
+    
+    // attach selectionc with options
+    this.list.selectonic({
+      multi: false,
+      keyboard: true,
+      keyboardMode: 'toggle',
+      mouseMode: 'mouseup',
+      focusOnHover: true,
+      selectionBlur: false,
+      focusBlur: true,
+      
+      // After plugin's initialisation
+      create: function() {
+        // we don't want for any list's 
+        // reaction on keyboard in closed state
+        this.selectonic('disable');
+      },
+      // When item of list has been selected
+      select: function( e, ui ) {
+        e.preventDefault();
+        _this.selected = ui.target;
+        _this.setValue( ui.items.html() );
+        _this.close();
+      },
+      // After each works cycle
+      stop: function( e ) {
+        if ( e.which === keyCode.ENTER && _this.isOpend ) {
+          _this.close();
+        }
+      }
+    });
+  };
+
+
+  Select.prototype.keyHandler = function( e ) {
+    var key = e.which;
+    if ( !this.isOpend &&
+      (key === keyCode.UP || key === keyCode.DOWN )
+    ) {
+      e.stopPropagation();
+      e.preventDefault();
+      this.open();
+    }
+    if ( this.isOpend && key === keyCode.ESCAPE ) {
+      this.close();
+      e.stopPropagation();
+    }
+  };
+
+
+  Select.prototype.open = function() {
+    this.$el.addClass('opend');
+    // Enable selectionic on the list
+    this.list.selectonic('enable');
+
+    if ( this.selected ) {
+      this.list
+        // Set focus on selected element
+        .selectonic('focus', this.selected)
+        // and scroll to it
+        .selectonic('scroll');
+    }
+    this.isOpend = true;
+  };
+
+
+  Select.prototype.close = function() {
+    this.$el.removeClass('opend');
+    // Disable plugin on the list
+    this.list.selectonic('disable');
+    this.isOpend = false;
+  };
+
+
+  Select.prototype.setValue = function( val ) {
+    this.title.html( val );
+  };
+
+
+  $.fn.mySelect = function() {
+    if (!this.length) { return this; }
+    this.each(function() { new Select(this); });
+    return $(this);
+  };
+
+})( jQuery, window );</code>
+</pre>
+            </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
             <div class="b-options">
                 <h2>Options</h2>
@@ -418,7 +613,7 @@
             </div> -->          
 
 
-            <div class="b-about">
+            <div class="l-section b-about">
                 <h2>About</h2>
                 <p>Compatibility: Requires jQuery 1.7+<br>Tested in Firefox, Chrome, Safari, Opera, IE8+</p>
                 <p>Author: Alexey Novichkov</p>
@@ -442,6 +637,9 @@
 
 
         <!-- build:js scripts/main.js -->
+        <script src="select/select.js"></script>
+        <script src="scripts/options.js"></script>
+        <script src="scripts/scrollspy.js"></script>
         <script src="scripts/main.js"></script>
         <!-- endbuild -->
 </body>

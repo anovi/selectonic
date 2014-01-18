@@ -3,7 +3,7 @@
   "private": true,
   "dependencies": {
     "jquery": "~1.10.2",
-    "selectonic": "~0.3.0"
+    "selectonic": "~0.4.0"
   },
   "devDependencies": {}
 }
