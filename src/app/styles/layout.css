@@ -5,11 +5,8 @@
 */
 
 /*.l-wrapper {}*/
-
-    /*.l-docs {*/
-        /*margin-left: 330px;*/
-        /*max-width: 45em;*/
-    /*}*/
+    /*.l-docs {}*/
+    
     .l-docs .docs-wrapper {
         height: 100%;
     }
@@ -23,7 +20,6 @@
     }
     
     .l-section {
-        /*margin-left: 330px;*/
         max-width: 45em;
         margin: 0 auto;
     }

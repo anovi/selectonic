@@ -7,9 +7,14 @@
 */
 .example-intro {
     max-width: 45em;
-    /*margin: 2em auto 2em;*/
     font-size: 1.5em;
-    margin: 2em 2em 2em;
+    margin: 0 2em 2em;
+    padding-top: 2em;
+}
+.example-intro h1,
+.example-intro h2,
+.example-intro h3 {
+    margin-top: 0;
 }
 .example-body {
     border-top: 1px solid #F1F1F1;

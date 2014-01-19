@@ -330,7 +330,6 @@
             <!-- START: Options for sandbox -->
             <div class="b-options">
                 <h2>Options</h2>
-                <h4>See all options in the <a href="https://github.com/anovi/selectonic#options">docs on GitHub</a>.</h4>
                 
                 <table class="options-table">
                     <tr>
@@ -387,31 +386,25 @@
                         </td>
                     </tr>
                 </table>
+                <p>See all options in the <a target="_blank" href="https://github.com/anovi/selectonic#options">docs on GitHub</a>.</p>
             </div>
             <!-- END: Options for sandbox -->
 
             <!-- START: Methods for sandbox -->
             <div class="b-methods">
                 <h2>Methods</h2>
-                <h4>See all methods in the <a href="https://github.com/anovi/selectonic#methods" target="_blank">docs on GitHub</a>.</h4>
 
-                <h3><button data-action="destroy">destroy</button></h3>
-                <p>Detach handlers, clear data and remove plugin's classes</p>
+                <p><button data-action="destroy">destroy</button> – Detach handlers, clear data and remove plugin's classes</p>
 
-                <h3><button data-action="blur">blur</button></h3>
-                <p>Clear selection in a list.</p>
+                <p><button data-action="blur">blur</button> – Clear selection in a list.</p>
 
-                <h3><button data-action="getSelected">getSelected</button></h3>
-                <p>Get array of selected elements.</p>
+                <p><button data-action="getSelected">getSelected</button> – Get array of selected elements.</p>
 
-                <h3><button data-action="getSelectedId">getSelectedId</button></h3>
-                <p>Get array of id's of selected elements.</p>
+                <p><button data-action="getSelectedId">getSelectedId</button> – Get array of id's of selected elements.</p>
 
-                <h3><button data-action="disable">disable</button></h3>
-                <p>Disable plugin, but keep data and save it state.</p>
+                <p><button data-action="disable">disable</button> – Disable plugin, but keep data and save it state.</p>
 
-                <h3><button data-action="enable">enable</button></h3>
-                <p>Turn on disabled plugin.</p>
+                <p><button data-action="enable">enable</button> – Turn on disabled plugin.</p>
 
     <!--             <h3>refresh</h3>
                 <p>Refresh plugin data. That is necessary when some items in list was removed.</p>
@@ -446,12 +439,14 @@
         </code>
     </pre> -->
 
-                <h3>Select method</h3>
+                <h3>select</h3>
                 <p>You can select items by plugin interface. Plugin accept selector or element:</p>
                 <p><pre><code class="language-javascript">elem.selectonic('select', someElements);</code></pre></p>
                 <p><pre><code class="language-javascript">elem.selectonic('select', &quot;:even&quot;);</code></pre>
-                <button id="chooseEven">Choose</button></p>
-                <p><pre><code class="language-javascript">elem.selectonic('select', &quot;li:eq(3)&quot;);</code></pre><button id="chooseThird">Choose</button></p>
+                <button id="chooseEven">Select</button></p>
+                <p><pre><code class="language-javascript">elem.selectonic('select', &quot;li:eq(3)&quot;);</code></pre><button id="chooseThird">Select</button></p>
+
+                <p>See all methods in the <a href="https://github.com/anovi/selectonic#methods" target="_blank">docs on GitHub</a>.</p>
             </div>
             <!-- END: Methodds for sandbox -->
         </div>

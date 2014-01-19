@@ -34,7 +34,7 @@ h1,h2,h3,h5,h6 {
         color: #666666;
     }
 
-p {
+h1+p, h2+p, h3+p {
     margin-top: 0.5em;
 }
 
@@ -101,7 +101,7 @@ a:visited {
 
 /* Table */
 table {
-    margin: 1em 0 2em;
+    margin: 1em 0 1em;
     font-size: 0.9em;
     border-radius: 2px;
 
@@ -292,6 +292,13 @@ button {
     font-family: monospace;
 }
 
+h2 .seeAll {
+    font-size: 0.6em;
+    border: none;
+    font-weight: normal;
+    float: right;
+}
+
 
 /* ======================================== 
 
@@ -310,6 +317,9 @@ button {
 */
 .b-methods {
     margin: 0 3em;
+}
+.b-methods h2 {
+    margin-bottom: 0.8em;
 }
 .b-methods h3 button {
     font-size: 1em;

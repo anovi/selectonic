@@ -46,8 +46,9 @@
             white-space: nowrap;
         }
         .row-group td {
-            border-top: 1px solid #ccc;
-            box-shadow: inset 0 1px 0 white
+            /*border-top: 1px solid #ccc;*/
+            box-shadow: inset 0 1px 0 white;
+            padding-top: 1em;
         }
 
         .options-table .options-radio td {
@@ -74,7 +75,7 @@
 }
 .b-options li {
     margin: 0;
-    padding: 0;
+    padding: 0.3em 0;
 }
 
 
