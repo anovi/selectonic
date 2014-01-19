@@ -7,7 +7,7 @@ var demo = demo || {};
   // Handler
   function checkboxHandle (e) {
     var target = $(e.target),
-      mainList = $('.b-list .list-wrapper'),
+      mainList = $('#selectable-list'),
       attr, value;
 
     switch ( target[0].type ) {
@@ -88,9 +88,9 @@ var demo = demo || {};
 (function($) {
   'use strict';
 
-  var delay = 3000,
-    panel = $('#sandbox .example-example'),
-    log = $('.b-event-log'),
+  var delay     = 3000,
+    panel       = $('#sandbox .example-example'),
+    log         = $('.b-event-log'),
     togglePanel = panel.find('.b-but-pipka');
 
   log.click( function (e) {
@@ -153,7 +153,8 @@ var demo = demo || {};
     return '<span class=\"log-number\">' + (++couter) + '.</span> ';
   },
   logContainer = $('.b-event-log .event-log-wrapper'),
-  mainList = $('.b-list .list-wrapper').selectonic({
+  mainList = $('#selectable-list').selectonic({
+    
     autoScroll: '#scrollable-list',
 
     create: function() {
@@ -192,7 +193,7 @@ var demo = demo || {};
     'multi',
     'focusBlur',
     'selectionBlur',
-    'keyboardInput',
+    'keyboard',
     'loop',
     'focusOnHover'
   ]).each(function( index, item ) {
@@ -230,7 +231,11 @@ var demo = demo || {};
     .css( 'height', $window.outerHeight() - navHeight )
     .scrollSpy({
       box: sandbox.find('.example-body')[0],
-      offset: navHeight
+      offset: navHeight,
+      clone: function(clone) {
+        clone.find( '#scrollable-list' ).attr( 'id', null );
+        clone.find( '#selectable-list' ).attr( 'id', null );
+      }
     });
 
 })(jQuery, window);

@@ -3,7 +3,8 @@
 
   var defaults = {
     box: { type: 'object' },
-    offset: { default:0, type: 'number' }
+    offset: { default:0, type: 'number' },
+    clone: { default: null, type:'function', isNullable:true }
   },
   $window = $( window );
 
@@ -77,7 +78,10 @@
     this._clone = this.$el
       .clone()
       .css({ opacity: 0 })
-      .insertBefore( this.$el );
+      .attr('id', null);
+
+    this._callEvent('clone');
+    this._clone.insertBefore( this.$el );
   };
 
 
@@ -87,6 +91,15 @@
       delete this._clone;
       this.$el.removeClass('scrollspy-cloned');
     }
+  };
+
+
+  Plugin.prototype._callEvent = function( name ) {
+    var cb = this.options.get( name ), args = [];
+    if ( !cb || !$.isFunction(cb) ) { return; }
+
+    if ( name === 'clone' ) { args.push( this._clone ); }
+    cb.apply( this, args );
   };
 
 
