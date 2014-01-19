@@ -187,8 +187,6 @@ var demo = demo || {};
   });
 
   mainList.selectonic( $('li').first() );
-  console.log( mainList.selectonic('option', 'autoScroll') );
-
 
   $([
     'multi',
@@ -221,7 +219,7 @@ var demo = demo || {};
 
   var example1 = $('#example1');
   var sandbox  = $('#sandbox');
-  var navHeight = $('.b-navbar').first().height();
+  var navHeight = $('#navbar').height();
 
   example1.find('.b-example').scrollSpy({
     box: document.getElementById('example1'),
@@ -234,6 +232,24 @@ var demo = demo || {};
       box: document.getElementById('sandbox'),
       offset: navHeight
     });
+
+})(jQuery, window);
+
+
+
+// Navbar Anchors #
+(function($) {
+  'use strict';
+  var navbar = $('#navbar'),
+  offset = -navbar.height();
+  
+  navbar.on('click', 'a', function(event) {
+    event.preventDefault();
+    var id = $(event.target).attr('href'),
+    target = $( id ),
+    top = target.offset().top;
+    $('body').scrollTop( top + offset );
+  });
 
 })(jQuery, window);
 
