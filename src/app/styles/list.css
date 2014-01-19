@@ -119,3 +119,11 @@
 #sandbox .g-panel {
     overflow: auto;
 }
+
+#sandbox .example-example {
+    margin: 0;
+}
+
+#sandbox .b-example {
+    padding-top: 0;
+}

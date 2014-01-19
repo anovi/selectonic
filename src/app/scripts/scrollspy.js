@@ -77,7 +77,7 @@
     this._clone = this.$el
       .clone()
       .css({ opacity: 0 })
-      .insertAfter( this.$el );
+      .insertBefore( this.$el );
   };
 
 

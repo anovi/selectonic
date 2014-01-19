@@ -150,12 +150,11 @@ table {
     -moz-box-shadow: 0 0 5px 0 #ddd;
     box-shadow: 0 0 5px 0 #ddd;
 }*/
-/*pre {*/
-    /*background-color: #FFF;*/
-    /*white-space: nowrap;*/
+pre {
+    font-size: 0.9em;
     /*overflow: auto;*/
     /*max-height: 30em;*/
-/*}*/
+}
 
 /* Button */
 button {

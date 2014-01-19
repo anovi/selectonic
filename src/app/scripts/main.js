@@ -154,7 +154,7 @@ var demo = demo || {};
   },
   logContainer = $('.b-event-log .event-log-wrapper'),
   mainList = $('.b-list .list-wrapper').selectonic({
-    scroll: '#scrollable-list',
+    autoScroll: '#scrollable-list',
 
     create: function() {
       demo.log( 'create', logContainer );
@@ -187,6 +187,8 @@ var demo = demo || {};
   });
 
   mainList.selectonic( $('li').first() );
+  console.log( mainList.selectonic('option', 'autoScroll') );
+
 
   $([
     'multi',
