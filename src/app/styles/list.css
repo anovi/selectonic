@@ -8,10 +8,11 @@
     top: 0;
     left: 0;
     right: 0;
-    bottom: 238px;
+    bottom: 201px;
     overflow: hidden;
-    padding-bottom: 5px;
+    /*padding-bottom: 5px;*/
     margin: 0;
+    z-index: 1;
 
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -107,6 +108,14 @@
 
     /* Minimized */
     .j-minimized .b-list {
-        bottom: 70px;
+        bottom: 33px;
     }
     
+/*.scrollspy-cloned .b-list {*/
+    /*z-index: 100;*/
+/*}*/
+
+
+#sandbox .g-panel {
+    overflow: auto;
+}

@@ -299,9 +299,9 @@ button {
     Methods
 
 */
-/*.b-methods {*/
-    /*display: none;*/
-/*}*/
+.b-methods {
+    margin: 0 3em;
+}
 .b-methods h3 button {
     font-size: 1em;
     font-weight: bold;

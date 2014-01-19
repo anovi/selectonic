@@ -73,6 +73,7 @@
 
   Plugin.prototype._setClone = function() {
     if ( this._clone ) { return; }
+    this.$el.addClass('scrollspy-cloned');
     this._clone = this.$el
       .clone()
       .css({ opacity: 0 })
@@ -84,6 +85,7 @@
     if (this._clone) {
       this._clone.remove();
       delete this._clone;
+      this.$el.removeClass('scrollspy-cloned');
     }
   };
 

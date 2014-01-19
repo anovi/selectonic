@@ -4,48 +4,6 @@ var demo = demo || {};
 (function($) {
   'use strict';
 
-  // var handler = $('.')
-  demo.options = {
-    event:         ['mousedown','click'],
-    multi:         'boolean',
-    mouseMode:     ['select','toggle'],
-    focusBlur:     'boolean',
-    selectionBlur: 'boolean',
-    keyboard:      'boolean',
-    keyboardMode:   ['select','toggle'],
-    loop:          'boolean'
-    // autoScroll:     true, /* String | false | true */
-  };
-  // filter:         '> *',
-  // multi:          true,
-  // // Mouse
-  // mouseMode:      ['select','toggle'],
-  // event:          ['mousedown','click','hybrid'],
-  // focusBlur:      false,
-  // selectionBlur:  false,
-  // handle:         null, /* String | null */
-  // textSelection:  false,
-  // // Keyboard
-  // keyboard:       false,
-  // keyboardMode:   ['select','toggle'],
-  // autoScroll:     true, /* String | false | true */
-  // loop:           false,
-  // preventInputs:  true,
-  // // Classes
-  // listClass:      'j-selectable',
-  // focusClass:     'j-focused',
-  // selectedClass:  'j-selected',
-  // disabledClass:  'j-disabled',
-  // // Callbacks
-  // create:         null,
-  // before:         null,
-  // focusLost:      null,
-  // select:         null,
-  // unselect:       null,
-  // unselectAll:    null,
-  // stop:           null,
-  // destroy:        null
-
   // Handler
   function checkboxHandle (e) {
     var target = $(e.target),
@@ -131,7 +89,7 @@ var demo = demo || {};
   'use strict';
 
   var delay = 3000,
-    panel = $('.l-plugin'),
+    panel = $('#sandbox .example-example'),
     log = $('.b-event-log'),
     togglePanel = panel.find('.b-but-pipka');
 
@@ -173,10 +131,10 @@ var demo = demo || {};
 
   demo.scenarios = {
     chooseEven: function() {
-      mainList.selectonic(':even');
+      mainList.selectonic('select',':even');
     },
     chooseThird: function() {
-      mainList.selectonic('li:eq(3)');
+      mainList.selectonic('select','li:eq(3)');
     }
   };
 
@@ -190,13 +148,14 @@ var demo = demo || {};
 // Attach plugin
 (function($) {
   'use strict';
-  if( true ){return;}
   var couter = -1,
   number = function() {
     return '<span class=\"log-number\">' + (++couter) + '.</span> ';
   },
   logContainer = $('.b-event-log .event-log-wrapper'),
   mainList = $('.b-list .list-wrapper').selectonic({
+    scroll: '#scrollable-list',
+
     create: function() {
       demo.log( 'create', logContainer );
     },
@@ -234,14 +193,14 @@ var demo = demo || {};
     'focusBlur',
     'selectionBlur',
     'keyboardInput',
-    'loop'
+    'loop',
+    'focusOnHover'
   ]).each(function( index, item ) {
     $( '#' + item ).prop( 'checked', mainList.selectonic( 'option', item ) );
   });
 
   $([
     'mouseMode',
-    'event',
     'keyboardMode'
   ]).each(function( index, item ) {
     var value = mainList.selectonic( 'option', item );
@@ -268,7 +227,7 @@ var demo = demo || {};
   });
 
   sandbox.find('.b-example')
-    .css( 'height', $window.outerHeight() )
+    .css( 'height', $window.outerHeight() - navHeight )
     .scrollSpy({
       box: document.getElementById('sandbox'),
       offset: navHeight
