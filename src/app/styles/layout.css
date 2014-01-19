@@ -13,8 +13,10 @@
     
     .l-section {
         max-width: 45em;
-        margin: 0 auto;
+        margin: 0 2em 3em 4em;
+        font-size: 1.5em;
     }
+
 
     .l-example-section {
         border-top: 1px solid #ddd;
@@ -30,6 +32,5 @@
         }
         .l-example-section pre {
             margin: 0;
-            border-left: 1px solid #ddd;
         }
     

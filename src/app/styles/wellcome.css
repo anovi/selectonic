@@ -4,31 +4,31 @@
 
 */
 .b-wellcome {
-    padding-top: 3em;
+    padding-top: 1.7em;
     line-height: 1.5;
     color: #d8a888;
     text-shadow: 0 1px 0 black;
     background: #2e2e2e;
+    font-size: 1.5em;
 }
     .b-wellcome .wellcome-wrapper {
-        padding: 4em 0 3em 0;
+        padding: 3em 0 3em 0;
         max-width: 45em;
-        margin: 0 auto;
+        margin: 0 2em 0 4em;
     }
     .b-wellcome h1.wellcome-title {
         margin: 0 0 0.3em 0;
-        font-size: 3em;
+        font-size: 2em;
         line-height: 1em;
         font-weight: bold;
         color: #f2dfdd;
     }
     .b-wellcome p.wellcome-title {
         margin: 0 0 0.4em 0;
-        font-size: 2em;
+        font-size: 1em;
         max-width: 33em;
     }
     .b-wellcome p {
-        font-size: 1.5em;
         margin: 0.5em 0;
     }
     .b-wellcome .download,

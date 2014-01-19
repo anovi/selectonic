@@ -16,10 +16,6 @@
 .example-intro h3 {
     margin-top: 0;
 }
-.example-body {
-    border-top: 1px solid #F1F1F1;
-}
-
 .b-example {
     width: 25em;
     min-height: 10em;
@@ -29,6 +25,9 @@
     position: relative;
     border-radius: 5px;
 }
+.example-explain {
+    border-left: 1px solid #ddd;
+}
 .example-explain:after {
     content: '';
     display: table;
@@ -37,6 +36,7 @@
 }
 .example-description {
     margin: 1em;
+    font-size: 1.3em;
 }
 .example-example {
     margin: 1em;
