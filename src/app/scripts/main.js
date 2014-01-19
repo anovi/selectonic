@@ -222,14 +222,14 @@ var demo = demo || {};
   var navHeight = $('#navbar').height();
 
   example1.find('.b-example').scrollSpy({
-    box: document.getElementById('example1'),
+    box: example1.find('.example-body')[0],
     offset: navHeight
   });
 
   sandbox.find('.b-example')
     .css( 'height', $window.outerHeight() - navHeight )
     .scrollSpy({
-      box: document.getElementById('sandbox'),
+      box: sandbox.find('.example-body')[0],
       offset: navHeight
     });
 

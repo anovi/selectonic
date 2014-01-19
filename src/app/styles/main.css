@@ -16,7 +16,7 @@ html, body {
 }
 
 body {
-    padding-bottom: 60px;
+    padding-bottom: 0;
 }
 
 h1,h2,h3,h5,h6 {
@@ -151,7 +151,7 @@ table {
     box-shadow: 0 0 5px 0 #ddd;
 }*/
 pre {
-    font-size: 0.9em;
+    font-size: 14px;
     /*overflow: auto;*/
     /*max-height: 30em;*/
 }
@@ -282,6 +282,16 @@ button {
             padding: 0;
         }
 
+/* Helpers */
+.keyName {
+    display: inline-block;
+    background: #F7F7F7;
+    padding: 0 0.2em;
+    border-radius: 2px;
+    box-shadow: 0 0 1px rgba(0,0,0,0.5);
+    font-family: monospace;
+}
+
 
 /* ======================================== 
 
@@ -306,4 +316,5 @@ button {
     font-weight: bold;
     margin-left: -0.4em;
 }
+
 

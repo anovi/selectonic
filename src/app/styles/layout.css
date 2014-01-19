@@ -23,16 +23,24 @@
     }
     
     .l-section {
-        margin-left: 330px;
+        /*margin-left: 330px;*/
         max-width: 45em;
+        margin: 0 auto;
     }
 
 
     .l-example-section {
         border-top: 1px solid #ddd;
-        border-bottom: 1px solid #ddd;;
+        border-bottom: 1px solid #ddd;
         margin: 2em 0;
     }
+        .l-example-section+.l-example-section {
+            margin-top: -2em;
+            border-top: none;
+        }
+        .l-example-section:last-of-type {
+            margin-bottom: 0;
+        }
         .l-example-section pre {
             margin: 0;
             border-left: 1px solid #ddd;

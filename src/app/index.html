@@ -69,16 +69,23 @@
                 <h2>
                 <a name="begin" class="anchor" href="#begin"><span class="octicon octicon-link"></span></a>Begin</h2>
                 <p>jQuery based plugin for making any list of items selectable by mouse and keyboard. It could be usefull in webapp where are different widgets like menus, dropdowns with keyboard input, lists with multiple selection and so on. It maybe too bold for just a simple menu in one place.</p>
-                <h2><a name="examples" class="anchor" href="#examples"><span class="octicon octicon-link"></span></a>Examples</h2>
                 <p>Selectonic help to inplement widgets with albility to select items. It could be usefull in webapp where are different widgets like menus, dropdowns with keyboard input, lists of items with actions and more. Lets see som examples!</p>
             </div>
-
+            
+            
             <div class="l-example-section" id="example1">
-                
+            
+                <div class="example-intro">
+                    <h2>Select input</h2>
+                    <p>There are many implementations of select input, but almost all with the same flaw – lack of keyboard support. Selectonic has all nessasary logic for it. This simplified example of select input demonstrates that.</p>
+                </div>
+
+                <div class="example-body">
                 <div class="b-example">
                     <div class="example-description">
-                        <h3><a name="select" class="anchor" href="#select"><span class="octicon octicon-link"></span></a>Select</h3>
-                        <p>There are many implementations of select control, but almost all with the same flaw – lack of keyboard's support. See example.</p><p>It has full keyboard support: Arrows, <span class="keyName">PageUp</span>, <span class="keyName">PageDown</span> and <span class="keyName">HOME</span>, <span class="keyName">END</span>. <br>You could focus it by <span class="keyName">TAB</span>, press arrow and choose item.</p>
+                        <!-- <h3><a name="select" class="anchor" href="#select"><span class="octicon octicon-link"></span></a>Select</h3> -->
+                        <p>It has full keyboard support: <span class="keyName">Up</span>, <span class="keyName">Down</span>, <span class="keyName">PageUp</span>, <span class="keyName">PageDown</span> and <span class="keyName">HOME</span>, <span class="keyName">END</span>.</p>
+                        <p>You could focus it by <span class="keyName">TAB</span>, press arrow and choose item.</p>
                     </div>
                     
                     <div class="example-example">
@@ -247,6 +254,7 @@
 
 })( jQuery, window );</code>
 </pre>
+                    </div>
                 </div>
             </div>
 
@@ -254,203 +262,210 @@
 
 
 <div class="l-example-section" id="sandbox">
-    
-    <!-- START: Example for sandbox-->
-    <div class="b-example">
-        <!-- <div class="example-description"></div> -->
-        <div class="example-example">
-            
-            <!-- START: List of items -->
-            <div class="b-list">
-                <div class="g-panel" id="scrollable-list">
-                    <!-- <div class="panel-head"><span class="panel-title">Sandbox</span></div> -->
-                    <div class="panel-body">
-                        <ul class="list-wrapper">
-                            <li id="item1" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 1</span></li>
-                            <li id="item2" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 2</span></li>
-                            <li id="item3" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 3</span></li>
-                            <li id="item4" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 4</span></li>
-                            <li id="item5" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 5</span></li>
-                            <li id="item6" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 6</span></li>
-                            <li id="item7" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 7</span></li>
-                            <li id="item8" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 8</span></li>
-                            <li id="item9" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 9</span></li>
-                            <li id="item10" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 10</span></li>
-                            <li id="item11" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 11</span></li>
-                            <li id="item12" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 12</span></li>
-                            <li id="item13" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 13</span></li>
-                            <li id="item14" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 14</span></li>
-                            <li id="item15" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 15</span></li>
-                            <li id="item16" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 16</span></li>
-                            <li id="item17" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 17</span></li>
-                            <li id="item18" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 18</span></li>
-                            <li id="item19" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 19</span></li>
-                            <li id="item20" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 20</span></li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            <!-- END: List of items -->
-            
-            <!-- START: Events log -->
-            <div class="b-event-log">
-                <div class="g-panel">
-                    <!-- <div class="panel-head"> -->
-                        <div class="panel-toggle">
-                            <button class="b-but-pipka"></button>
-                        </div>
-                        <!-- <div class="panel-title">Log</div> -->
-                    <!-- </div> -->
-                    <div class="panel-body">
-                        <div class="event-log-wrapper"></div>
-                    </div>
-                </div>
-            </div>
-            <!-- END: Events log -->
 
-        </div>
+    <div class="example-intro">
+        <h2>Sandbox</h2>
+        <p>Try selectable list on the left and different options from right side.</p>
     </div>
-    <!-- END: Example for sandbox-->
     
-    <div class="example-explain">
-        <!-- START: Options for sandbox -->
-        <div class="b-options">
-            <h2>Options</h2>
-            <h4>See all options in the <a href="https://github.com/anovi/selectonic#options">docs on GitHub</a>.</h4>
-            
-            <table class="options-table">
-                <tr>
-                    <td><input type="checkbox" id="multi"><label for="multi"><span class="g-option">multi</span></label></td>
-                    <td><input type="checkbox" id="keyboard"><label for="keyboard"><span class="g-option">keyboard</span></label></td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" id="selectionBlur"><label for="selectionBlur"><span class="g-option">selectionBlur</span></label></td>
-                    <td><input type="checkbox" id="loop"><label for="loop"><span class="g-option">loop</span></label></td>
-                </tr>
-                <tr>
-                    <td><input type="checkbox" id="focusBlur"><label for="focusBlur"><span class="g-option">focusBlur</span></label></td>
-                    <td>
-                        <input type="checkbox" id="handle"><label for="handle"><span class="g-option">handle</span></label>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="checkbox" id="focusOnHover"><label for="focusOnHover"><span class="g-option">focusOnHover</span></label>
-                    </td>
-                    <td> </td>
-                </tr>
-
-
+    <div class="example-body">
+        <!-- START: Example for sandbox-->
+        <div class="b-example">
+            <!-- <div class="example-description"></div> -->
+            <div class="example-example">
                 
-                <tr class="row-group">
-                    <td>
-                        <!-- mouseMode option -->
-                        <span class="g-option">mouseMode</span><br>
-                        <ul>
-                            <li>
-                                <input name="mouseMode" id="mouseMode-standard" type="radio" data-option="standard"><label for="mouseMode-standard">standard</label>
-                            </li>
+                <!-- START: List of items -->
+                <div class="b-list">
+                    <div class="g-panel" id="scrollable-list">
+                        <!-- <div class="panel-head"><span class="panel-title">Sandbox</span></div> -->
+                        <div class="panel-body">
+                            <ul class="list-wrapper">
+                                <li id="item1" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 1</span></li>
+                                <li id="item2" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 2</span></li>
+                                <li id="item3" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 3</span></li>
+                                <li id="item4" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 4</span></li>
+                                <li id="item5" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 5</span></li>
+                                <li id="item6" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 6</span></li>
+                                <li id="item7" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 7</span></li>
+                                <li id="item8" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 8</span></li>
+                                <li id="item9" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 9</span></li>
+                                <li id="item10" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 10</span></li>
+                                <li id="item11" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 11</span></li>
+                                <li id="item12" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 12</span></li>
+                                <li id="item13" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 13</span></li>
+                                <li id="item14" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 14</span></li>
+                                <li id="item15" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 15</span></li>
+                                <li id="item16" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 16</span></li>
+                                <li id="item17" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 17</span></li>
+                                <li id="item18" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 18</span></li>
+                                <li id="item19" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 19</span></li>
+                                <li id="item20" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 20</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <!-- END: List of items -->
+                
+                <!-- START: Events log -->
+                <div class="b-event-log">
+                    <div class="g-panel">
+                        <!-- <div class="panel-head"> -->
+                            <div class="panel-toggle">
+                                <button class="b-but-pipka"></button>
+                            </div>
+                            <!-- <div class="panel-title">Log</div> -->
+                        <!-- </div> -->
+                        <div class="panel-body">
+                            <div class="event-log-wrapper"></div>
+                        </div>
+                    </div>
+                </div>
+                <!-- END: Events log -->
 
-                            <li>
-                                <input name="mouseMode" id="mouseMode-mouseup" type="radio" data-option="mouseup"><label for="mouseMode-mouseup">mouseup</label>
-                            </li>
-                            <li>
-                                <input name="mouseMode" id="mouseMode-toggle" type="radio" data-option="toggle"><label for="mouseMode-toggle">toggle</label>
-                            </li>
-                        </ul>
-                    </td>
-                    <td>
-                        <!-- keyboardMode option -->
-                        <span class="g-option">keyboardMode</span><br>
-                        <ul>
-                            <li>
-                                <input name="keyboardMode" id="keyboardMode-select" type="radio" data-option="select"><label for="keyboardMode-select">select</label>
-                            </li>
-                            <li>
-                                <input name="keyboardMode" id="keyboardMode-toggle" type="radio" data-option="toggle"><label for="keyboardMode-toggle">toggle</label>
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-            </table>
+            </div>
         </div>
-        <!-- END: Options for sandbox -->
+        <!-- END: Example for sandbox-->
+        
+        <div class="example-explain">
+            <!-- START: Options for sandbox -->
+            <div class="b-options">
+                <h2>Options</h2>
+                <h4>See all options in the <a href="https://github.com/anovi/selectonic#options">docs on GitHub</a>.</h4>
+                
+                <table class="options-table">
+                    <tr>
+                        <td><input type="checkbox" id="multi"><label for="multi"><span class="g-option">multi</span></label></td>
+                        <td><input type="checkbox" id="keyboard"><label for="keyboard"><span class="g-option">keyboard</span></label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" id="selectionBlur"><label for="selectionBlur"><span class="g-option">selectionBlur</span></label></td>
+                        <td><input type="checkbox" id="loop"><label for="loop"><span class="g-option">loop</span></label></td>
+                    </tr>
+                    <tr>
+                        <td><input type="checkbox" id="focusBlur"><label for="focusBlur"><span class="g-option">focusBlur</span></label></td>
+                        <td>
+                            <input type="checkbox" id="handle"><label for="handle"><span class="g-option">handle</span></label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="checkbox" id="focusOnHover"><label for="focusOnHover"><span class="g-option">focusOnHover</span></label>
+                        </td>
+                        <td> </td>
+                    </tr>
 
-        <!-- START: Methods for sandbox -->
-        <div class="b-methods">
-            <h2>Methods</h2>
-            <h4>See all methods in the <a href="https://github.com/anovi/selectonic#methods" target="_blank">docs on GitHub</a>.</h4>
 
-            <h3><button data-action="destroy">destroy</button></h3>
-            <p>Detach handlers, clear data and remove plugin's classes</p>
+                    
+                    <tr class="row-group">
+                        <td>
+                            <!-- mouseMode option -->
+                            <span class="g-option">mouseMode</span><br>
+                            <ul>
+                                <li>
+                                    <input name="mouseMode" id="mouseMode-standard" type="radio" data-option="standard"><label for="mouseMode-standard">standard</label>
+                                </li>
 
-            <h3><button data-action="blur">blur</button></h3>
-            <p>Clear selection in a list.</p>
+                                <li>
+                                    <input name="mouseMode" id="mouseMode-mouseup" type="radio" data-option="mouseup"><label for="mouseMode-mouseup">mouseup</label>
+                                </li>
+                                <li>
+                                    <input name="mouseMode" id="mouseMode-toggle" type="radio" data-option="toggle"><label for="mouseMode-toggle">toggle</label>
+                                </li>
+                            </ul>
+                        </td>
+                        <td>
+                            <!-- keyboardMode option -->
+                            <span class="g-option">keyboardMode</span><br>
+                            <ul>
+                                <li>
+                                    <input name="keyboardMode" id="keyboardMode-select" type="radio" data-option="select"><label for="keyboardMode-select">select</label>
+                                </li>
+                                <li>
+                                    <input name="keyboardMode" id="keyboardMode-toggle" type="radio" data-option="toggle"><label for="keyboardMode-toggle">toggle</label>
+                                </li>
+                            </ul>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <!-- END: Options for sandbox -->
 
-            <h3><button data-action="getSelected">getSelected</button></h3>
-            <p>Get array of selected elements.</p>
+            <!-- START: Methods for sandbox -->
+            <div class="b-methods">
+                <h2>Methods</h2>
+                <h4>See all methods in the <a href="https://github.com/anovi/selectonic#methods" target="_blank">docs on GitHub</a>.</h4>
 
-            <h3><button data-action="getSelectedId">getSelectedId</button></h3>
-            <p>Get array of id's of selected elements.</p>
+                <h3><button data-action="destroy">destroy</button></h3>
+                <p>Detach handlers, clear data and remove plugin's classes</p>
 
-            <h3><button data-action="disable">disable</button></h3>
-            <p>Disable plugin, but keep data and save it state.</p>
+                <h3><button data-action="blur">blur</button></h3>
+                <p>Clear selection in a list.</p>
 
-            <h3><button data-action="enable">enable</button></h3>
-            <p>Turn on disabled plugin.</p>
+                <h3><button data-action="getSelected">getSelected</button></h3>
+                <p>Get array of selected elements.</p>
 
-<!--             <h3>refresh</h3>
-            <p>Refresh plugin data. That is necessary when some items in list was removed.</p>
+                <h3><button data-action="getSelectedId">getSelectedId</button></h3>
+                <p>Get array of id's of selected elements.</p>
 
-            <h3>option</h3>
-            <p>Get or set one ore more options.</p>
-            
-            <p>Getter:</p>
-            <pre><code class="language-javascript">elem.selectonic("option", "mouseMode");</code></pre>
-            
-            <p>Setter:</p>
-<pre>
-    <code class="language-javascript">
-    elem.selectonic("option", "mouseMode", "select");
-    elem.selectonic("option", {
-        loop: true,
-        mouseMode: "select"
-    });</code>
-</pre>
+                <h3><button data-action="disable">disable</button></h3>
+                <p>Disable plugin, but keep data and save it state.</p>
 
-            <h3>cancel</h3>
-            <p>Cancel last changes in a list or prevent it, if called in <em>beforeSelect</em> callback. Method can be call only inside callback functions:</p>
-<pre>
-    <code class="language-javascript">
-    elem.selectonic({
-        stop: function(event, ui) {
-            if( condition ) {
-                <strong>this.selectonic("cancel");</strong>
+                <h3><button data-action="enable">enable</button></h3>
+                <p>Turn on disabled plugin.</p>
+
+    <!--             <h3>refresh</h3>
+                <p>Refresh plugin data. That is necessary when some items in list was removed.</p>
+
+                <h3>option</h3>
+                <p>Get or set one ore more options.</p>
+                
+                <p>Getter:</p>
+                <pre><code class="language-javascript">elem.selectonic("option", "mouseMode");</code></pre>
+                
+                <p>Setter:</p>
+    <pre>
+        <code class="language-javascript">
+        elem.selectonic("option", "mouseMode", "select");
+        elem.selectonic("option", {
+            loop: true,
+            mouseMode: "select"
+        });</code>
+    </pre>
+
+                <h3>cancel</h3>
+                <p>Cancel last changes in a list or prevent it, if called in <em>beforeSelect</em> callback. Method can be call only inside callback functions:</p>
+    <pre>
+        <code class="language-javascript">
+        elem.selectonic({
+            stop: function(event, ui) {
+                if( condition ) {
+                    <strong>this.selectonic("cancel");</strong>
+                }
             }
-        }
-    });
-    </code>
-</pre> -->
+        });
+        </code>
+    </pre> -->
 
-            <h3>Select method</h3>
-            <p>You can select items by plugin interface. Plugin accept selector or element:</p>
-            <p><pre><code class="language-javascript">elem.selectonic('select', someElements);</code></pre></p>
-            <p><pre><code class="language-javascript">elem.selectonic('select', &quot;:even&quot;);</code></pre>
-            <button id="chooseEven">Choose</button></p>
-            <p><pre><code class="language-javascript">elem.selectonic('select', &quot;li:eq(3)&quot;);</code></pre><button id="chooseThird">Choose</button></p>
+                <h3>Select method</h3>
+                <p>You can select items by plugin interface. Plugin accept selector or element:</p>
+                <p><pre><code class="language-javascript">elem.selectonic('select', someElements);</code></pre></p>
+                <p><pre><code class="language-javascript">elem.selectonic('select', &quot;:even&quot;);</code></pre>
+                <button id="chooseEven">Choose</button></p>
+                <p><pre><code class="language-javascript">elem.selectonic('select', &quot;li:eq(3)&quot;);</code></pre><button id="chooseThird">Choose</button></p>
+            </div>
+            <!-- END: Methodds for sandbox -->
         </div>
-        <!-- END: Methodds for sandbox -->
-    </div>  
-
+        <!-- END: Example for sandbox-->
+    </div>
 </div>       
 
 
-            <div class="l-section b-about" id="about">
+            <!-- <div class="l-section b-about" id="about">
                 <h2>About</h2>
                 <p>Compatibility: Requires jQuery 1.7+<br>Tested in Firefox, Chrome, Safari, Opera, IE8+</p>
                 <p>Author: Alexey Novichkov</p>
                 <p>License: Released under the MIT License. Feel free to use it in personal and commercial projects.</p>
-            </div>
+            </div> -->
 
         </div>
     </div>

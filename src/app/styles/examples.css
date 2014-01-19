@@ -5,6 +5,16 @@
     Examples
 
 */
+.example-intro {
+    max-width: 45em;
+    /*margin: 2em auto 2em;*/
+    font-size: 1.5em;
+    margin: 2em 2em 2em;
+}
+.example-body {
+    border-top: 1px solid #F1F1F1;
+}
+
 .b-example {
     width: 25em;
     min-height: 10em;
@@ -30,11 +40,3 @@
     margin-left: 25em;
 }
 
-.keyName {
-    display: inline-block;
-    background: #F7F7F7;
-    padding: 0 0.2em;
-    border-radius: 2px;
-    box-shadow: 0 0 1px rgba(0,0,0,0.5);
-    font-family: monospace;
-}
