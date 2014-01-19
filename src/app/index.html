@@ -10,6 +10,7 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+        
         <!-- build:css styles/vendor.css -->
         <link rel="stylesheet" type="text/css" href="styles/normalize.css"/>
         <link rel="stylesheet" href="styles/prism.css">
@@ -55,9 +56,11 @@
     <div class="b-wellcome" id="wellcome">
         <div class="wellcome-wrapper">
             <h1 class="wellcome-title">selectonic</h1>
-            <p class="wellcome-title">jQuery based plugin for making any list of items <br>selectable&nbsp;by mouse and keyboard.<!--  It could be usefull in webapp where are different widgets like menus, dropdowns with keyboard input, lists with multiple selection and so on. --></p>
-            <p>Download <a class="download" href="https://raw.github.com/anovi/selectonic/master/dist/selectonic.min.js" target="_blank">production version</a> (minified) or <a class="download" href="https://raw.github.com/anovi/selectonic/master/dist/selectonic.js" target="_blank">development version</a>.<br>
-            See <a class="download" target="_blank" href="http://github.com/anovi/selectonic"> <span class="title">docs and source on GitHub <span class="icon-github"></span></span></a></p>
+            <p class="wellcome-title">jQuery based plugin for&nbsp;making any&nbsp;list of&nbsp;items selectable by&nbsp;mouse and&nbsp;keyboard.</p>
+            
+            <p>Download <a class="download" href="https://raw.github.com/anovi/selectonic/master/dist/selectonic.min.js" target="_blank">minified version</a> or <a class="download" href="https://raw.github.com/anovi/selectonic/master/dist/selectonic.js" target="_blank">development version</a>.</p>
+
+            <p>See <a class="download" target="_blank" href="http://github.com/anovi/selectonic"> <span class="title">docs and source on GitHub <span class="icon-github"></span></span></a></p>
         </div>
     </div>
 
@@ -66,25 +69,23 @@
 
 
             <div class="l-section" id="begin">
-                <h2>
-                <a name="begin" class="anchor" href="#begin"><span class="octicon octicon-link"></span></a>Begin</h2>
-                <p>jQuery based plugin for making any list of items selectable by mouse and keyboard. It could be usefull in webapp where are different widgets like menus, dropdowns with keyboard input, lists with multiple selection and so on. It maybe too bold for just a simple menu in one place.</p>
-                <p>Selectonic help to inplement widgets with albility to select items. It could be usefull in webapp where are different widgets like menus, dropdowns with keyboard input, lists of items with actions and more. Lets see som examples!</p>
+                <h2>What is about</h2>
+                <p>Selectonic helps to&nbsp;implement widgets with ability to&nbsp;select items. It&nbsp;could be&nbsp;usefull in&nbsp;webapp where are different widgets like menus, dropdowns with keyboard input, lists of&nbsp;items with actions and more.</p>
             </div>
             
             
             <div class="l-example-section" id="example1">
             
                 <div class="example-intro">
-                    <h2>Select input</h2>
-                    <p>There are many implementations of select input, but almost all with the same flaw – lack of keyboard support. Selectonic has all nessasary logic for it. This simplified example of select input demonstrates that.</p>
+                    <h2>Example: Select input</h2>
+                    <p>There are many implementations of&nbsp;select input, but almost all with the same flaw&nbsp;&mdash; lack of&nbsp;keyboard support. Selectonic has all necessary logic for&nbsp;it. This example of&nbsp;select input demonstrates that.</p>
                 </div>
 
                 <div class="example-body">
                 <div class="b-example">
                     <div class="example-description">
                         <!-- <h3><a name="select" class="anchor" href="#select"><span class="octicon octicon-link"></span></a>Select</h3> -->
-                        <p>It has full keyboard support: <span class="keyName">Up</span>, <span class="keyName">Down</span>, <span class="keyName">PageUp</span>, <span class="keyName">PageDown</span> and <span class="keyName">HOME</span>, <span class="keyName">END</span>.</p>
+                        <p>It supports keys: <span class="keyName">Up</span>, <span class="keyName">Down</span>, <span class="keyName">PageUp</span>, <span class="keyName">PageDown</span> and <span class="keyName">HOME</span>, <span class="keyName">END</span>.</p>
                         <p>You could focus it by <span class="keyName">TAB</span>, press arrow and choose item.</p>
                     </div>
                     
@@ -265,7 +266,7 @@
 
     <div class="example-intro">
         <h2>Sandbox</h2>
-        <p>Try selectable list on the left and different options from right side.</p>
+        <p>Try to&nbsp;play with options on&nbsp;the right side. For all possible options and methods <a class="download" target="_blank" href="http://github.com/anovi/selectonic#getting-started">see docs</a> on&nbsp;GitHub.</p>
     </div>
     
     <div class="example-body">
@@ -394,17 +395,17 @@
             <div class="b-methods">
                 <h2>Methods</h2>
 
-                <p><button data-action="destroy">destroy</button> – Detach handlers, clear data and remove plugin's classes</p>
+                <p><button data-action="destroy">destroy</button></p>
 
-                <p><button data-action="blur">blur</button> – Clear selection in a list.</p>
+                <p><button data-action="blur">blur</button></p>
 
-                <p><button data-action="getSelected">getSelected</button> – Get array of selected elements.</p>
+                <p><button data-action="getSelected">getSelected</button></p>
 
-                <p><button data-action="getSelectedId">getSelectedId</button> – Get array of id's of selected elements.</p>
+                <p><button data-action="getSelectedId">getSelectedId</button></p>
 
-                <p><button data-action="disable">disable</button> – Disable plugin, but keep data and save it state.</p>
+                <p><button data-action="disable">disable</button></p>
 
-                <p><button data-action="enable">enable</button> – Turn on disabled plugin.</p>
+                <p><button data-action="enable">enable</button></p>
 
     <!--             <h3>refresh</h3>
                 <p>Refresh plugin data. That is necessary when some items in list was removed.</p>
@@ -455,12 +456,13 @@
 </div>       
 
 
-            <!-- <div class="l-section b-about" id="about">
+            <div class="l-section b-about" id="about">
                 <h2>About</h2>
-                <p>Compatibility: Requires jQuery 1.7+<br>Tested in Firefox, Chrome, Safari, Opera, IE8+</p>
+                <p>Requires jQuery 1.7+<br>
+                Tested in Firefox, Chrome, Safari, Opera, IE8+</p>
                 <p>Author: Alexey Novichkov</p>
                 <p>License: Released under the MIT License. Feel free to use it in personal and commercial projects.</p>
-            </div> -->
+            </div>
 
         </div>
     </div>
@@ -475,7 +477,6 @@
         <script src="scripts/prism.js"></script>
         <!-- endbower -->
         <!-- endbuild -->
-
 
         <!-- build:js scripts/main.js -->
         <script src="select/select.js"></script>

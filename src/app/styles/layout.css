@@ -10,28 +10,19 @@
     .l-docs .docs-wrapper {
         height: 100%;
     }
-
-    .l-sidebar {
-        width: 260px;
-        background: #efebe7;
-    }
-    .l-plugin {
-        display: none;
-    }
     
     .l-section {
         max-width: 45em;
         margin: 0 auto;
     }
 
-
     .l-example-section {
         border-top: 1px solid #ddd;
         border-bottom: 1px solid #ddd;
-        margin: 2em 0;
+        margin: 2em 0 0;
     }
         .l-example-section+.l-example-section {
-            margin-top: -2em;
+            margin-top: 0;
             border-top: none;
         }
         .l-example-section:last-of-type {
