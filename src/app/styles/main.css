@@ -322,3 +322,7 @@ input[type=radio]+label:before {
     z-index: -123;
     height: 26.7em;
 }
+#example-list .b-example {
+    padding-top: 0;
+    padding-bottom: 0;
+}

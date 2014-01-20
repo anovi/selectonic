@@ -2,19 +2,19 @@
   'use strict';
 
   var defaults = {
-    box: { type: 'object' },
-    offset: { default:0, type: 'number' },
-    clone: { default: null, type:'function', isNullable:true }
+    box:    { type: 'object' },
+    offset: { default:0,    type:'number' },
+    clone:  { default:null, type:'function', isNullable:true }
   },
   $window = $( window );
 
-  var Plugin = function($el, options) {
+  var Plugin = function(el, options) {
     this.options = new Options( defaults, options );
-    this.$el = $el;
+    this.$el = el;
     this.box = this.options.get('box');
     this._initState = {
       position: this.$el.css('position'),
-      top: this.$el.css('top'),
+      top:      this.$el.css('top'),
     };
     this.$el.data( 'scrollSpy', this );
     this._bindEvents();
@@ -41,7 +41,7 @@
       boxWindowY    = isWindow ? 0 : $box.offset().top,
 
       // windowViewHeight = $window.outerHeight(),
-      windowScrollTop  = $window.scrollTop(),
+      windowScrollTop = $window.scrollTop(),
 
       item       = this.$el,
       itemHeight = item.outerHeight();
@@ -65,7 +65,7 @@
     } else {
       this._setClone();
       item.css({
-        position:'fixed',
+        position: 'fixed',
         top: 0 + this.options.get('offset')
       });
     }
@@ -108,9 +108,9 @@
 
     if (!this.length) { return this; }
 
-    this.each(function() {
-      var $this = $(this);
-      new Plugin( $this, options );
+    this.each(function(index,el) {
+      var $el = $(el);
+      new Plugin( $el, options );
     });
 
     return this;

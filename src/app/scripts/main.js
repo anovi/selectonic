@@ -216,11 +216,17 @@ var demo = demo || {};
 (function($) {
   'use strict';
   $('.b-select').mySelect();
-  var $window = $(window);
+  
+  var $window = $(window),
+  example1    = $('#example1'),
+  exampleList = $('#example-list'),
+  sandbox     = $('#sandbox'),
+  navHeight   = $('#navbar').height();
 
-  var example1 = $('#example1');
-  var sandbox  = $('#sandbox');
-  var navHeight = $('#navbar').height();
+  exampleList.find('.b-example').scrollSpy({
+    box: exampleList.find('.example-body')[0],
+    offset: navHeight
+  });
 
   example1.find('.b-example').scrollSpy({
     box: example1.find('.example-body')[0],

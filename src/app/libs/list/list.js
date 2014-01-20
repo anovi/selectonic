@@ -1,33 +1,38 @@
-(function( $, window ) {
+(function( $ ) {
   'use strict';
 
-  var
-  $el     = $('.b-select'),
-  list    = $el.find('.select-group'),
-  actions = $el.find('.actionbar');
+  var $el = $('#actions-list'),
+  actions = $el.find('.actions-list__actionbar'),
+  list    = $el.find('.actions-list__group');
 
+  // Attach selectonic 
   list.selectonic({
     multi: true,
     keyboard: true,
     focusBlur: true,
     selectionBlur: true,
 
+    // Before any changes
     before: function(e) {
-      if (e.target === actions[0] || $(e.target).is('.actionbar button')) {
+      if (e.target === actions[0] || $(e.target).is('button.actions-list__button')) {
         this.selectonic('cancel');
       }
     },
+
+    // When one or more items selectes
     select: function() {
       toggleActions(false);
     },
+
+    // When all items clears selection
     unselectAll: function() {
       toggleActions(true);
     }
-
   });
 
   actions.on('click', 'button', function(event) {
     event.preventDefault();
+    // Get selected items from list
     doAction( list.selectonic('getSelected') );
     this.blur();
   });
@@ -52,8 +57,4 @@
 
   toggleActions(true);
 
-})( jQuery, window );
-
-
-
-
+})( jQuery );

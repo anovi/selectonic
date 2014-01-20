@@ -28,6 +28,7 @@
         <link rel="stylesheet" href="styles/options.css">
         <link rel="stylesheet" href="styles/events-log.css">
         <link rel="stylesheet" href="libs/select/select.css">
+        <link rel="stylesheet" href="libs/list/list.css">
         <!-- endbuild -->
     </head>
     <body data-spy="scroll" data-target=".b-navbar" data-offset="50">
@@ -71,6 +72,130 @@
                 <h2>For what</h2>
                 <p>Selectonic helps to&nbsp;implement widgets with ability to&nbsp;select items. It&nbsp;could be&nbsp;usefull in&nbsp;webapp where are different widgets like menus, dropdowns with keyboard input, lists of&nbsp;items with actions and more. See examples below.</p>
             </div>
+
+
+            <!-- div#example2.l-example-section>.example-body>.b-example>.example-description+.example-example^.example-explain>.example-intro -->
+
+
+            <div id="example-list" class="l-example-section">
+                <div class="example-body">
+
+                    <div class="b-example">
+                        <!-- <div class="example-description"> -->
+                            <!--<ul>
+                                <li>Multi-selection list.</li>
+                                <li>Full keyboard support – use <span class="keyName">up</span>, <span class="keyName">down</span>, <span class="keyName">PageUp</span>, <span class="keyName">PageDown</span> and <span class="keyName">HOME</span>, <span class="keyName">END</span>.</li>
+                                <li>Hold <span class="keyName">ctrl</span> when clicking to add/remove items to selection.</li>
+                                <li>Hold <span class="keyName">shift</span> when clicking to select a range of items.</li>
+                            </ul>-->
+                        <!-- </div> -->
+                        <div class="example-example">
+                            <!-- START: Example list with actions -->
+                            <div class="actions-list" id="actions-list">
+                                <ul class="actions-list__group">
+                                    <li class="actions-list__option">Item 1</li>
+                                    <li class="actions-list__option">Item 2</li>
+                                    <li class="actions-list__option">Item 3</li>
+                                    <li class="actions-list__option">Item 4</li>
+                                    <li class="actions-list__option">Item 5</li>
+                                    <li class="actions-list__option">Item 6</li>
+                                    <li class="actions-list__option">Item 7</li>
+                                    <li class="actions-list__option">Item 8</li>
+                                    <li class="actions-list__option">Item 9</li>
+                                    <li class="actions-list__option">Item 10</li>
+                                    <li class="actions-list__option">Item 11</li>
+                                    <li class="actions-list__option">Item 12</li>
+                                    <li class="actions-list__option">Item 13</li>
+                                    <li class="actions-list__option">Item 14</li>
+                                    <li class="actions-list__option">Item 15</li>
+                                    <li class="actions-list__option">Item 16</li>
+                                    <li class="actions-list__option">Item 17</li>
+                                    <li class="actions-list__option">Item 18</li>
+                                    <li class="actions-list__option">Item 19</li>
+                                    <li class="actions-list__option">Item 20</li>
+                                </ul>
+                                <div class="actions-list__actionbar">
+                                    <button class="actions-list__button">Action1</button>
+                                    <button class="actions-list__button">Action2</button>
+                                </div>
+                            </div>
+                            <!-- END: Example list with actions -->
+                        </div>
+                    </div>
+
+                    <div class="example-explain">
+
+                        <div class="example-intro">
+                            <h2>Exapmle: List with actions</h2>
+                            <p>super duper la la la</p>
+                        </div>
+<pre>
+<code class="language-javascript">(function( $ ) {
+  'use strict';
+
+  var $el = $('#actions-list'),
+  actions = $el.find('.actions-list__actionbar'),
+  list    = $el.find('.actions-list__group');
+
+  // Attach selectonic 
+  list.selectonic({
+    multi: true,
+    keyboard: true,
+    focusBlur: true,
+    selectionBlur: true,
+
+    // Before any changes
+    before: function(e) {
+      if (e.target === actions[0] || $(e.target).is('button.actions-list__button')) {
+        this.selectonic('cancel');
+      }
+    },
+
+    // When one or more items selectes
+    select: function() {
+      toggleActions(false);
+    },
+
+    // When all items clears selection
+    unselectAll: function() {
+      toggleActions(true);
+    }
+  });
+
+  actions.on('click', 'button', function(event) {
+    event.preventDefault();
+    // Get selected items from list
+    doAction( list.selectonic('getSelected') );
+    this.blur();
+  });
+
+  function toggleActions (state) {
+    if (state === void 0) {
+      actions.toggleClass('disabled');
+    } else {
+      actions.toggleClass( 'disabled', state );
+    }
+  }
+
+  function doAction (items) {
+    items.each(function(index, el) {
+      var $el = $(el);
+      $el.addClass('animate');
+      setTimeout(function() {
+        $el.removeClass('animate');
+      }, 300);
+    });
+  }
+
+  toggleActions(true);
+
+})( jQuery );</code>
+</pre>
+                    </div>
+
+                </div>
+            </div>
+
             
             
             <div class="l-example-section" id="example1">
@@ -443,10 +568,11 @@
         <!-- endbuild -->
 
         <!-- build:js scripts/main.js -->
-        <script src="libs/select/select.js"></script>
         <script src="scripts/options.js"></script>
         <script src="scripts/scrollspy.js"></script>
         <script src="scrollspy-btst.js"></script>
+        <script src="libs/select/select.js"></script>
+        <script src="libs/list/list.js"></script>
         <script src="scripts/main.js"></script>
         <!-- endbuild -->
 </body>

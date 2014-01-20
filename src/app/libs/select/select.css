@@ -1,6 +1,7 @@
 
 .b-select {
 	display: inline-block;
+	margin: 1em;
 }
 .b-select .select-trigger {
 	width: 250px;
