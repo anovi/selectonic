@@ -38,6 +38,7 @@
     .b-wellcome .download,
     .b-wellcome .download:visited {
         color: #B7E7DA;
+        color: #BDE7B7;
         text-decoration: none;
         border: none;
         font-size: 0.9em;

@@ -48,10 +48,10 @@ var demo = demo || {};
   logContainer = $('.b-event-log .event-log-wrapper');
 
   $('.b-methods').click( function (e) {
-    e.preventDefault();
     var target = e.target;
 
     if ( target.tagName === 'BUTTON' ) {
+      e.preventDefault();
       var action = $( target ).attr('data-action'),
       res;
 

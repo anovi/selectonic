@@ -14,7 +14,7 @@
 .b-navbar a,
 .b-navbar a:hover,
 .b-navbar a:visited {
-	color: #B7E7DA;
+	color: #BDE7B7;
 	text-decoration: none;
 	border: none;
 }
@@ -60,7 +60,8 @@
 
 
 .b-navbar .nav-name {
-	font-weight: bold;	
+	font-weight: bold;
+	text-transform: uppercase;
 }
 	.b-navbar li.nav-name.active,
 	.b-navbar li.nav-name.active:hover {
