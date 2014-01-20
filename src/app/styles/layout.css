@@ -4,8 +4,13 @@
 
 */
 
-/*.l-wrapper {}*/
-    /*.l-docs {}*/
+.l-wrapper {
+    background: #FFF;
+    margin-top: 26.7em;
+}
+    /*.l-docs {*/
+        /*margin-top: 26.7em;*/
+    /*}*/
     
     .l-docs .docs-wrapper {
         height: 100%;
