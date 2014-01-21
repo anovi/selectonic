@@ -141,7 +141,8 @@ var demo = demo || {};
   logContainer = $('#log-screen'),
   mainList = $('#selectable-list').selectonic({
     
-    autoScroll: '#scrollable-list',
+    // autoScroll: '#scrollable-list',
+    autoScroll: true,
 
     create: function() {
       demo.log( 'create', logContainer );
@@ -216,7 +217,12 @@ var demo = demo || {};
 
   example1.find('.b-example').scrollSpy({
     box: example1.find('.example-body')[0],
-    offset: navHeight
+    offset: navHeight,
+    clone: function( clone, elem ) {
+      elem.css({
+        zIndex: '15'
+      });
+    }
   });
 
   sandbox.find('.b-example')
@@ -224,8 +230,9 @@ var demo = demo || {};
     .scrollSpy({
       box: sandbox.find('.example-body')[0],
       offset: navHeight,
-      clone: function(clone) {
-        clone.find( '#scrollable-list' ).attr( 'id', null );
+      clone: function( clone, elem ) {
+        console.log( elem );
+        // clone.find( '#scrollable-list' ).attr( 'id', null );
         clone.find( '#selectable-list' ).attr( 'id', null );
       }
     });

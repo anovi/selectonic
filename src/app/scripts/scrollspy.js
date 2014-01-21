@@ -98,7 +98,10 @@
     var cb = this.options.get( name ), args = [];
     if ( !cb || !$.isFunction(cb) ) { return; }
 
-    if ( name === 'clone' ) { args.push( this._clone ); }
+    if ( name === 'clone' ) {
+      args.push( this._clone );
+      args.push( this.$el );
+    }
     cb.apply( this, args );
   };
 
