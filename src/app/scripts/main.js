@@ -23,7 +23,7 @@ var demo = demo || {};
     }
 
     if ( attr === 'handle' ) {
-      value = (value) ? 'li>.list-item-handle' : value;
+      value = (value) ? '.actions-list__handle' : value;
       mainList.toggleClass( 'handle', value);
       mainList.selectonic( 'option', attr, value );
 
@@ -44,13 +44,14 @@ var demo = demo || {};
 // Methods
 (function( $ ) {
   'use strict';
-  var mainList = $('.b-list .list-wrapper'),
-  logContainer = $('.b-event-log .event-log-wrapper');
+  var mainList = $('#selectable-list'),
+  logContainer = $('#log-screen');
 
   $('.b-methods').click( function (e) {
     var target = e.target;
 
     if ( target.tagName === 'BUTTON' ) {
+      e.stopImmediatePropagation();
       e.preventDefault();
       var action = $( target ).attr('data-action'),
       res;
@@ -70,10 +71,10 @@ var demo = demo || {};
       }
 
       if ( res ) {
-        demo.log( '<div class=\"hr\"><div>', logContainer );
+        demo.log( '<div class=\"eventLog__space\"><div>', logContainer );
 
         $.each( res, function(index, val) {
-          var value = ( action === 'getSelectedId' ) ? ('#' + val) : $( val ).find('.list-item-title').html();
+          var value = ( action === 'getSelectedId' ) ? ('#' + val) : $( val ).find('.actions-list__title').html();
           demo.log( value, logContainer );
         });
       }
@@ -88,22 +89,7 @@ var demo = demo || {};
 (function($) {
   'use strict';
 
-  var delay     = 3000,
-    panel       = $('#sandbox .example-example'),
-    log         = $('.b-event-log'),
-    togglePanel = panel.find('.b-but-pipka');
-
-  log.click( function (e) {
-    e.preventDefault();
-
-    // If panel expanded and collapse button was clicked
-    if ( !panel.hasClass('j-minimized') && $(e.target).is(togglePanel) ) {
-      panel.addClass('j-minimized');
-
-    } else if ( panel.hasClass('j-minimized') ) {
-      panel.removeClass('j-minimized');
-    }
-  });
+  var delay = 3000;
 
   demo.log = function( message, container ) {
     var elem;
@@ -127,7 +113,7 @@ var demo = demo || {};
 // Scenaries
 (function($) {
   'use strict';
-  var mainList = $('.b-list .list-wrapper');
+  var mainList = $('#selectable-list');
 
   demo.scenarios = {
     chooseEven: function() {
@@ -152,7 +138,7 @@ var demo = demo || {};
   number = function() {
     return '<span class=\"log-number\">' + (++couter) + '.</span> ';
   },
-  logContainer = $('.b-event-log .event-log-wrapper'),
+  logContainer = $('#log-screen'),
   mainList = $('#selectable-list').selectonic({
     
     autoScroll: '#scrollable-list',
@@ -164,7 +150,7 @@ var demo = demo || {};
       if ( event && event.target.tagName === 'BUTTON' ) {
         this.selectonic('cancel');
       }
-      demo.log( number() + 'before<div class=\"hr\"></div>', logContainer );
+      demo.log( number() + 'before<div class=\"eventLog__space\"></div>', logContainer );
     },
     focusLost: function() {
       demo.log( number() + 'focusLost', logContainer );

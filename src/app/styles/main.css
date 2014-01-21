@@ -283,7 +283,6 @@ input[type=radio]+label:before {
     font-family: monospace;
 }
 
-
 /* ======================================== 
 
     About
@@ -312,9 +311,7 @@ input[type=radio]+label:before {
     font-size: 1.4em;
     margin: 0.5em 1em 0 0;
 }
-#sandbox .example-explain {
-    padding-bottom: 1.5em;
-}
+
 
 #top-anchor {
     position: absolute;
@@ -325,4 +322,20 @@ input[type=radio]+label:before {
 #example-list .b-example {
     padding-top: 0;
     padding-bottom: 0;
+}
+
+
+/* ======================================== 
+
+    Sandbox
+
+*/
+#sandbox .example-example {
+    margin: 0;
+}
+#sandbox .b-example {
+    padding-top: 0;
+}
+#sandbox .example-explain {
+    padding-bottom: 1.5em;
 }

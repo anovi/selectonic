@@ -23,7 +23,6 @@
         <link rel="stylesheet" href="styles/layout.css">
         <link rel="stylesheet" href="styles/wellcome.css">
         <link rel="stylesheet" href="styles/examples.css">
-        <link rel="stylesheet" href="styles/list.css">
         <link rel="stylesheet" href="styles/navbar.css">
         <link rel="stylesheet" href="styles/options.css">
         <link rel="stylesheet" href="styles/events-log.css">
@@ -395,52 +394,37 @@
         <div class="b-example">
             <!-- <div class="example-description"></div> -->
             <div class="example-example">
-                
-                <!-- START: List of items -->
-                <div class="b-list">
-                    <div class="g-panel" id="scrollable-list">
-                        <!-- <div class="panel-head"><span class="panel-title">Sandbox</span></div> -->
-                        <div class="panel-body">
-                            <ul class="list-wrapper" id="selectable-list">
-                                <li id="item1" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 1</span></li>
-                                <li id="item2" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 2</span></li>
-                                <li id="item3" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 3</span></li>
-                                <li id="item4" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 4</span></li>
-                                <li id="item5" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 5</span></li>
-                                <li id="item6" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 6</span></li>
-                                <li id="item7" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 7</span></li>
-                                <li id="item8" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 8</span></li>
-                                <li id="item9" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 9</span></li>
-                                <li id="item10" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 10</span></li>
-                                <li id="item11" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 11</span></li>
-                                <li id="item12" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 12</span></li>
-                                <li id="item13" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 13</span></li>
-                                <li id="item14" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 14</span></li>
-                                <li id="item15" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 15</span></li>
-                                <li id="item16" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 16</span></li>
-                                <li id="item17" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 17</span></li>
-                                <li id="item18" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 18</span></li>
-                                <li id="item19" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 19</span></li>
-                                <li id="item20" ><span class="list-item-handle">handle</span> <span class="list-item-title">Item 20</span></li>
-                            </ul>
-                        </div>
-                    </div>
+
+                <!-- START: Example list with actions -->
+                <div class="actions-list" id="scrollable-list">
+                    <ul class="actions-list__group" id="selectable-list">
+                        <li id="listItem1" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 1</span></li>
+                        <li id="listItem2" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 2</span></li>
+                        <li id="listItem3" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 3</span></li>
+                        <li id="listItem4" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 4</span></li>
+                        <li id="listItem5" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 5</span></li>
+                        <li id="listItem6" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 6</span></li>
+                        <li id="listItem7" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 7</span></li>
+                        <li id="listItem8" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 8</span></li>
+                        <li id="listItem9" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 9</span></li>
+                        <li id="listItem10" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 10</span></li>
+                        <li id="listItem11" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 11</span></li>
+                        <li id="listItem12" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 12</span></li>
+                        <li id="listItem13" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 13</span></li>
+                        <li id="listItem14" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 14</span></li>
+                        <li id="listItem15" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 15</span></li>
+                        <li id="listItem16" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 16</span></li>
+                        <li id="listItem17" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 17</span></li>
+                        <li id="listItem18" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 18</span></li>
+                        <li id="listItem19" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 19</span></li>
+                        <li id="listItem20" class="actions-list__option"><span class="actions-list__handle">handle</span><span class="actions-list__title"> Item 20</span></li>
+                    </ul>
                 </div>
-                <!-- END: List of items -->
+                <!-- END: Example list with actions -->
                 
                 <!-- START: Events log -->
-                <div class="b-event-log">
-                    <div class="g-panel">
-                        <!-- <div class="panel-head"> -->
-                            <div class="panel-toggle">
-                                <button class="b-but-pipka"></button>
-                            </div>
-                            <!-- <div class="panel-title">Log</div> -->
-                        <!-- </div> -->
-                        <div class="panel-body">
-                            <div class="event-log-wrapper"></div>
-                        </div>
-                    </div>
+                <div class="eventLog">
+                    <div class="eventLog__screen" id="log-screen"></div>
                 </div>
                 <!-- END: Events log -->
 
