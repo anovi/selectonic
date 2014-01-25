@@ -10,6 +10,7 @@
     this.title   = this.button.find('.select-title');
     this.list    = this.$el.find('.select-group');
     this.isOpend = false;
+    this.isEnabled = false;
     this.init();
   };
 
@@ -18,14 +19,17 @@
     var _this = this;
     
     this.button.on('blur', function( e ) {
+      if ( !_this.isEnabled ) { return; }
       _this.close.call( _this, e );
     });
 
     this.$el
       .on('keydown', function( e ) {
+        if ( !_this.isEnabled ) { return; }
         _this.keyHandler.call( _this, e );
       })
       .on('mousedown', function(e) {
+        if ( !_this.isEnabled ) { return; }
         var isOnButton = _this.button[0] === e.target ||
           _this.title[0] === e.target;
         
@@ -96,7 +100,7 @@
 
   Select.prototype.open = function() {
     this.$el.addClass('opend');
-    // Enable selectionic on the list
+    // Enable selectonic on the list
     this.list.selectonic('enable');
 
     if ( this.selected ) {
@@ -123,9 +127,34 @@
   };
 
 
-  $.fn.mySelect = function() {
+  Select.prototype.disable = function() {
+    if ( this.isOpend ) { this.close(); }
+    this.list.selectonic('disable');
+    this.isEnabled = false;
+    this.$el.addClass('disabled');
+  };
+
+  
+  Select.prototype.enable = function() {
+    this.list.selectonic('enable');
+    this.isEnabled = true;
+    this.$el.removeClass('disabled');
+  };
+
+
+  $.fn.mySelect = function( options ) {
     if (!this.length) { return this; }
-    this.each(function() { new Select(this); });
+    var obj;
+    if ( options && typeof options === 'string' ) {
+      obj = this.data('plugin_select');
+      obj[options].call( obj );
+    } else {
+      this.each(function() {
+        var $this = $(this);
+        obj = new Select(this);
+        $this.data('plugin_select', obj);
+      });
+    }
     return $(this);
   };
 
