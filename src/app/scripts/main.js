@@ -202,37 +202,93 @@ var demo = demo || {};
 // Examples
 (function($) {
   'use strict';
-  $('.b-select').mySelect();
+  var selectInput = $('.b-select');
+  selectInput.mySelect();
+  selectInput.mySelect('disable');
   
-  var $window = $(window),
-  example1    = $('#example1'),
-  exampleList = $('#example-list'),
-  sandbox     = $('#sandbox'),
-  navHeight   = $('#navbar').height();
+  var $window     = $(window),
+  example         = {},
+  enabled         = {},
+  navHeight       = $('#navbar').height(),
+  active          = null,
+  isSelectStopped = false;
 
-  exampleList.find('.b-example').scrollSpy({
-    box: exampleList.find('.example-body')[0],
+  example.select  = $('#example1');
+  example.list    = $('#example-list');
+  example.sandbox = $('#sandbox');
+  
+  $.each( example, function(key) {
+    enabled[key] = true;
+  });
+
+  function disable ( elem ) {
+    elem.addClass('disabled');
+    if ( elem === example.select ) {
+      selectInput.mySelect('disable');
+    } else {
+      elem
+        .find('.b-example:not(.scrollSpy-clone) .j-selectable')
+        .selectonic('disable');
+    }
+  }
+
+  function enable ( elem ) {
+    if ( active === elem ) { return; }
+    elem.removeClass('disabled');
+    if ( elem === example.select ) {
+      selectInput.mySelect('enable');
+    } else {
+      elem
+        .find('.b-example:not(.scrollSpy-clone) .j-selectable')
+        .selectonic('enable');
+    }
+    
+    active = elem;
+    $.each( example, function(key, val) {
+      if ( val !== active && enabled[key] ) {
+        disable( val );
+      }
+    });
+  }
+
+  example.list.find('.b-example').scrollSpy({
+    box: example.list.find('.example-body')[0],
     offset: navHeight
   });
 
-  example1.find('.b-example').scrollSpy({
-    box: example1.find('.example-body')[0],
+  example.select.find('.b-example').scrollSpy({
+    box: example.select.find('.example-body')[0],
     offset: navHeight,
+    stop: function() {
+      isSelectStopped = true;
+      enable( example.sandbox );
+    },
+    move: function() {
+      isSelectStopped = false;
+    },
+    visible: function(params) {
+      if ( isSelectStopped ) { return; }
+      // console.log('visible');
+      if ( params.window.scrollTop + params.window.height >= params.box.top + params.item.topInBox + params.item.height ) {
+        enable( example.select );
+      } else if ( params.window.scrollTop + params.window.height < params.box.top + params.item.topInBox + params.item.height ) {
+        enable( example.list );
+      }
+    },
     clone: function( clone, elem ) {
+      console.log('clone');
       elem.css({
         zIndex: '15'
       });
     }
   });
 
-  sandbox.find('.b-example')
+  example.sandbox.find('.b-example')
     .css( 'height', $window.outerHeight() - navHeight )
     .scrollSpy({
-      box: sandbox.find('.example-body')[0],
+      box: example.sandbox.find('.example-body')[0],
       offset: navHeight,
-      clone: function( clone, elem ) {
-        console.log( elem );
-        // clone.find( '#scrollable-list' ).attr( 'id', null );
+      clone: function( clone ) {
         clone.find( '#selectable-list' ).attr( 'id', null );
       }
     });

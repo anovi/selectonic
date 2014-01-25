@@ -24,7 +24,13 @@
     float: left;
     position: relative;
     border-radius: 5px;
+    
+    transition: opacity 0.4s ease;
 }
+    .disabled .b-example {
+        opacity: 0.3;
+    }
+
 .example-explain {
     border-left: 1px solid #ddd;
 }
@@ -37,9 +43,6 @@
 .example-description {
     margin: 1em;
     font-size: 1.3em;
-}
-.example-example {
-    /*margin: 1em;*/
 }
 .example-explain {
     margin-left: 25em;
