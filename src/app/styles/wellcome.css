@@ -15,6 +15,9 @@
     width: 100%;
     z-index: -1;
 }
+    .lt-ie10 .wellcome {
+        display: none;
+    }
 
 .wellcome a {
     border: none;

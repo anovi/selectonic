@@ -8,6 +8,9 @@
     background: #FFF;
     margin-top: 26.7em;
 }
+    .lt-ie10 .l-wrapper {
+        display: none;
+    }
     /*.l-docs {*/
         /*margin-top: 26.7em;*/
     /*}*/

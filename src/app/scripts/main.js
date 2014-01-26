@@ -378,9 +378,10 @@ var demo = demo || {};
 * Navbar Anchors #
 *
 */
-(function($) {
+(function($,window) {
   'use strict';
   var navbar = $('#navbar'),
+  $window = $(window),
   offset = -navbar.height();
   
   navbar.on('click', 'a', function(event) {
@@ -388,7 +389,7 @@ var demo = demo || {};
     var id = $(event.target).attr('href'),
     target = $( id ),
     top = target.offset().top;
-    $('body').scrollTop( top + offset );
+    $window.scrollTop( top + offset );
   });
 
 })(jQuery, window);

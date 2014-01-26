@@ -229,6 +229,20 @@ input[type=radio]+label:before {
 }
 
 
+/* For IE*/
+.browsehappy {
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: white;
+    z-index: 99999;
+    font-size: 2em;
+    text-align: center;
+}
+
+
 
 /* ======================================== 
 
