@@ -1,144 +1,204 @@
-<!DOCTYPE html><!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]--><!--[if gt IE 8]><!--><html class=no-js><!--<![endif]--><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><title>jQuery based plugin for making any list of items selectable by mouse and keyboard</title><meta name=description content=""><meta name=viewport content="width=device-width"><!-- Place favicon.ico and apple-touch-icon.png in the root directory --><link rel=stylesheet href=styles/9f32cdbc.vendor.css><link rel=stylesheet href=styles/6a3b4f1e.main.css><body><!--[if lt IE 10]>
+<!DOCTYPE html><!--[if lt IE 7]>      <html class="no-js lt-ie10 lt-ie9 lt-ie8 lt-ie7"> <![endif]--><!--[if IE 7]>         <html class="no-js lt-ie10 lt-ie9 lt-ie8"> <![endif]--><!--[if IE 8]>         <html class="no-js lt-ie10 lt-ie9"> <![endif]--><!--[if IE 9]>         <html class="no-js lt-ie10"> <![endif]--><!--[if gt IE 9]><!--><html class=no-js><!--<![endif]--><head><meta charset=utf-8><meta http-equiv=X-UA-Compatible content="IE=edge"><title>Selectonic – jQuery based plugin for making any list of items selectable by mouse and keyboard</title><meta name=description content=""><meta name=viewport content="width=device-width"><!-- Place favicon.ico and apple-touch-icon.png in the root directory --><link rel=stylesheet href=styles/0421d3e6.vendor.css><link rel=stylesheet href=styles/6cd68936.main.css><body data-spy=scroll data-target=.b-navbar data-offset=50><span id=top-anchor></span> <!--[if lt IE 10]>
             <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-        <![endif]--><div class=l-wrapper><div class=l-plugin><div class=b-list><div class=g-panel><div class=panel-head><span class=panel-title>Sandbox</span></div><div class=panel-body><ul class=list-wrapper><li id=item1><span class=list-item-handle>handle</span> <span class=list-item-title>Item 1</span></li><li id=item2><span class=list-item-handle>handle</span> <span class=list-item-title>Item 2</span></li><li id=item3><span class=list-item-handle>handle</span> <span class=list-item-title>Item 3</span></li><li id=item4><span class=list-item-handle>handle</span> <span class=list-item-title>Item 4</span></li><li id=item5><span class=list-item-handle>handle</span> <span class=list-item-title>Item 5</span></li><li id=item6><span class=list-item-handle>handle</span> <span class=list-item-title>Item 6</span></li><li id=item7><span class=list-item-handle>handle</span> <span class=list-item-title>Item 7</span></li><li id=item8><span class=list-item-handle>handle</span> <span class=list-item-title>Item 8</span></li><li id=item9><span class=list-item-handle>handle</span> <span class=list-item-title>Item 9</span></li><li id=item10><span class=list-item-handle>handle</span> <span class=list-item-title>Item 10</span></li><li id=item11><span class=list-item-handle>handle</span> <span class=list-item-title>Item 11</span></li><li id=item12><span class=list-item-handle>handle</span> <span class=list-item-title>Item 12</span></li><li id=item13><span class=list-item-handle>handle</span> <span class=list-item-title>Item 13</span></li><li id=item14><span class=list-item-handle>handle</span> <span class=list-item-title>Item 14</span></li><li id=item15><span class=list-item-handle>handle</span> <span class=list-item-title>Item 15</span></li><li id=item16><span class=list-item-handle>handle</span> <span class=list-item-title>Item 16</span></li><li id=item17><span class=list-item-handle>handle</span> <span class=list-item-title>Item 17</span></li><li id=item18><span class=list-item-handle>handle</span> <span class=list-item-title>Item 18</span></li><li id=item19><span class=list-item-handle>handle</span> <span class=list-item-title>Item 19</span></li><li id=item20><span class=list-item-handle>handle</span> <span class=list-item-title>Item 20</span></li></ul></div></div></div><div class=b-event-log><div class=g-panel><!-- <div class="panel-head"> --><div class=panel-toggle><button class=b-but-pipka></button></div><!-- <div class="panel-title">Log</div> --><!-- </div> --><div class=panel-body><div class=event-log-wrapper></div></div></div></div></div><div class=b-wellcome><div class=wellcome-wrapper><h1 class=wellcome-title>selectonic</h1><p class=wellcome-title>jQuery based plugin for making any list of items<br>selectable&nbsp;by mouse and keyboard.<!--  It could be usefull in webapp where are different widgets like menus, dropdowns with keyboard input, lists with multiple selection and so on. --></p><p>Download <a class=download href=https://raw.github.com/anovi/selectonic/master/dist/selectonic.min.js target=_blank>production version</a> (minified) or <a class=download href=https://raw.github.com/anovi/selectonic/master/dist/selectonic.js target=_blank>development version</a>.<br>See <a class=download target=_blank href=http://github.com/anovi/selectonic><span class=title>docs and source on GitHub <span class=icon-github></span></span></a></p></div></div><div class=l-docs><div class=docs-wrapper><div class=b-options><h2>Options</h2><h4>See all options in the <a href=https://github.com/anovi/selectonic#options>docs on GitHub</a>.</h4><table class=options-table><tr><td><input type=checkbox id=multi><label for=multi><span class=g-option>multi</span></label></td><td><span class=options-description>User can select many items in a list.</span></td><tr><td><input type=checkbox id=focusBlur><label for=focusBlur><span class=g-option>focusBlur</span></label></td><td><span class=options-description>List loses focus when user clicks outside of the list.</span></td><tr><td><input type=checkbox id=selectionBlur><label for=selectionBlur><span class=g-option>selectionBlur</span></label></td><td><span class=options-description>List clears selection when user clicks outside of the list.</span></td><tr><td><input type=checkbox id=keyboard><label for=keyboard><span class=g-option>keyboard</span></label></td><td><span class=options-description>Possibility to use keys <span class=g-key>Up</span>, <span class=g-key>Down</span> and <span class=g-key>Home</span>, <span class=g-key>End</span>, <span class=g-key>PageUp</span>, <span class=g-key>PageDown</span> to move cursor (focus), select range of items by holding shift and select all items by pressing <span class=g-key>ctrl+a</span> or <span class=g-key>cmd+a</span>.</span></td><tr><td><input type=checkbox id=loop><label for=loop><span class=g-option>loop</span></label></td><td><span class=options-description>If keyboard: true and focused element is last in a list, pressing <span class=g-key>↓</span> set focus to first element of the list; oppositely with <span class=g-key>↑</span> key, when focus on a first element.</span></td><tr><td><input type=checkbox id=handle><label for=handle><span class=g-option>handle</span></label></td><td><span class=options-description>Matches child elemets, that will be served as clickable area inside each item to select/unselect these items.</span></td><!-- mouseMode option --><tr class=row-group><td><span class=g-option>mouseMode</span><br></td><td><span class=options-description>how toggle selection on an item</span></td><tr class=options-radio><td><input name=mouseMode id=mouseMode-select type=radio data-option=select><label for=mouseMode-select>select</label></td><td><span class=options-description>mouse click selects target item and clear other selection in a list; to add/remove item to selection user needs holds <span class=g-key>ctrl</span> key (file manager style);</span></td><tr class="options-radio end"><td><input name=mouseMode id=mouseMode-toggle type=radio data-option=toggle><label for=mouseMode-toggle>toggle</label></td><td><span class=options-description>mouse click to select/unselect items (like group of checkboxes).</span></td><!-- event option --><tr class=row-group><td colspan=2><span class=g-option>event</span></td><tr class=options-radio><td><input name=event id=event-mousedown type=radio data-option=mousedown><label for=event-mousedown>mousedown</label></td><td><span class=options-description>item will be selected when user push on left mouse button;</span></td><tr class=options-radio><td><input name=event id=event-click type=radio data-option=click><label for=event-click>click</label></td><td><span class=options-description>item will be selected when user click (press and release) on left mouse button;</span></td><tr class="options-radio end"><td><input name=event id=event-hybrid type=radio data-option=hybrid><label for=event-hybrid>hybrid</label></td><td><span class=options-description>unselected items will react on mousedown, but selected items will react on click (press and release). It can be usefull when there is another plugin, for example to dragging selected items.</span></td><!-- keyboardMode option --><tr class=row-group><td><span class=g-option>keyboardMode</span><br></td><td><span class=options-description>how toggle selection on an item</span></td><tr class=options-radio><td><input name=keyboardMode id=keyboardMode-select type=radio data-option=select><label for=keyboardMode-select>select</label></td><td><span class=options-description>pressing keys up/down selects target item and clear other selection in a list; to add/remove item to selection user needs holds <span class=g-key>shift</span> key (file manager style);</span></td><tr class="options-radio end"><td><input name=keyboardMode id=keyboardMode-toggle type=radio data-option=toggle><label for=keyboardMode-toggle>toggle</label></td><td><span class=options-description>keys <span class=g-key>↑</span> <span class=g-key>↓</span> and others only moves focus on items, to select/unselect items user needs press <span class=g-key>space</span>;</span></td></table></div><div class=b-methods><h2>Methods</h2><h4>See all methods in the <a href=https://github.com/anovi/selectonic#methods target=_blank>docs on GitHub</a>.</h4><h3><button data-action=destroy>destroy</button></h3><p>Detach handlers, clear data and remove plugin's classes</p><h3><button data-action=blur>blur</button></h3><p>Clear selection in a list.</p><h3><button data-action=getSelected>getSelected</button></h3><p>Get array of selected elements.</p><h3><button data-action=getSelectedId>getSelectedId</button></h3><p>Get array of id's of selected elements.</p><h3><button data-action=disable>disable</button></h3><p>Disable plugin, but keep data and save it state.</p><h3><button data-action=enable>enable</button></h3><p>Turn on disabled plugin.</p><h3>refresh</h3><p>Refresh plugin data. That is necessary when some items in list was removed.</p><h3>option</h3><p>Get or set one ore more options.</p><p>Getter:</p><pre><code class=language-javascript>elem.selectonic("option", "mouseMode");</code></pre><p>Setter:</p><pre>
-    <code class=language-javascript>
-    elem.selectonic("option", "mouseMode", "select");
-    elem.selectonic("option", {
-        loop: true,
-        mouseMode: "select"
-    });</code>
-</pre><h3>cancel</h3><p>Cancel last changes in a list or prevent it, if called in <em>beforeSelect</em> callback. Method can be call only inside callback functions:</p><pre>
-    <code class=language-javascript>
-    elem.selectonic({
-        stop: function(event, ui) {
-            if( condition ) {
-                <strong>this.selectonic("cancel");</strong>
-            }
-        }
-    });
-    </code>
-</pre><h3>Select method</h3><p>You can select items by plugin interface. Plugin accept selector or element:</p><p><pre><code class=language-javascript>elem.selectonic(someElements);</code></pre></p><p><pre><code class=language-javascript>elem.selectonic(&quot;:even&quot;);</code></pre><button id=chooseEven>Choose</button></p><p><pre><code class=language-javascript>elem.selectonic(&quot;li:eq(3)&quot;);</code></pre><button id=chooseThird>Choose</button></p></div><!--             <div class="b-about">
-                <h2>Callback functions (events)</h2>
-                
-                <p>Callback functions and arguments they receives:</p>
-                
-                <dl class="g-plain-definition-list">
-                    <dt>event</dt>
-                    <dd>event object from mouse or keyboard handlers.</dd>
-                    <dt>ui</dt>
-                    <dd>object that contains properties with DOM elements:
-                        <dl>
-                            <dt>ui.target</dt>
-                            <dd>link to&nbsp;target element, that was clicked.</dd>
-                            <dt>ui.focus</dt>
-                            <dd>link to&nbsp;focused element.</dd>
-                            <dt>ui.items</dt>
-                            <dd>jquery collection of changed elements – it differ from event to&nbsp;event.</dd>
-                        </dl>
-                    </dd>
-                </dl>
+        <![endif]--><div class=b-navbar id=navbar><ul class="nav nav-tabs"><li class=nav-name><a href=#top-anchor>Selectonic</a></li><!-- <li><a href="#begin">Get started</a></li> --><div class=nav-group><li class=nav-group-title>Examples:</li><li><a href=#example-list>List</a></li><li><a href=#example1>Select</a></li><li><a href=#sandbox>Sandbox</a></li></div><li><a href=#about>About</a></li></ul></div><div class=wellcome id=wellcome><div class=wellcome__wrapper><h1 class=wellcome__title>selectonic</h1><p class=wellcome__title>Selectonic is jQuery based plugin for&nbsp;making any&nbsp;list of&nbsp;items selectable by&nbsp;mouse and&nbsp;keyboard.</p><p class=wellcome__downloads><a class=wellcome__download href=https://raw.github.com/anovi/selectonic/master/dist/selectonic.min.js target=_blank>Download minified</a> <a class=wellcome__download href=https://raw.github.com/anovi/selectonic/master/dist/selectonic.js target=_blank>Download development</a></p><p>See <a target=_blank href=http://github.com/anovi/selectonic><span>docs and source on <span class="wellcome__github icon-github"></span> GitHub</span></a></p></div></div><div class=l-wrapper><div class=l-docs><div class=docs-wrapper><div class=l-section id=begin><h2>For what</h2><p>Selectonic helps to&nbsp;implement widgets with ability to&nbsp;select items. It&nbsp;could be&nbsp;usefull in&nbsp;webapp where are different widgets like menus, dropdowns with keyboard input, lists of&nbsp;items with actions and more. See examples below.</p></div><!-- div#example2.l-example-section>.example-body>.b-example>.example-description+.example-example^.example-explain>.example-intro --><div id=example-list class=l-example-section><div class=example-body><div class=b-example><!-- <div class="example-description"> --><!--<ul>
+                                <li>Multi-selection list.</li>
+                                <li>Full keyboard support – use <span class="keyName">up</span>, <span class="keyName">down</span>, <span class="keyName">PageUp</span>, <span class="keyName">PageDown</span> and <span class="keyName">HOME</span>, <span class="keyName">END</span>.</li>
+                                <li>Hold <span class="keyName">ctrl</span> when clicking to add/remove items to selection.</li>
+                                <li>Hold <span class="keyName">shift</span> when clicking to select a range of items.</li>
+                            </ul>--><!-- </div> --><div class=example-example><!-- START: Example list with actions --><div class=actions-list id=actions-list><ul class=actions-list__group><li class=actions-list__option>Item 1</li><li class=actions-list__option>Item 2</li><li class=actions-list__option>Item 3</li><li class=actions-list__option>Item 4</li><li class=actions-list__option>Item 5</li><li class=actions-list__option>Item 6</li><li class=actions-list__option>Item 7</li><li class=actions-list__option>Item 8</li><li class=actions-list__option>Item 9</li><li class=actions-list__option>Item 10</li><li class=actions-list__option>Item 11</li><li class=actions-list__option>Item 12</li><li class=actions-list__option>Item 13</li><li class=actions-list__option>Item 14</li><li class=actions-list__option>Item 15</li><li class=actions-list__option>Item 16</li><li class=actions-list__option>Item 17</li><li class=actions-list__option>Item 18</li><li class=actions-list__option>Item 19</li><li class=actions-list__option>Item 20</li></ul><div class=actions-list__actionbar><button class=actions-list__button>Action1</button> <button class=actions-list__button>Action2</button></div></div><!-- END: Example list with actions --></div></div><div class=example-explain><div class=example-intro><h2>Exapmle: List with actions</h2><p>Lets see simple list of&nbsp;items with&nbsp;actions buttons. Try to&nbsp;select items with mouse or&nbsp;keyboard then&nbsp;click action button. The list has&nbsp;multiple selection</p></div><pre data-line=8-31,37>
+<code class=language-javascript>(function( $ ) {
+  'use strict';
 
+  var $el = $('#actions-list'),
+  actions = $el.find('.actions-list__actionbar'),
+  list    = $el.find('.actions-list__group');
 
-                <table>
-                    <thead>
-                        <tr>
-                            <td>
-                                Callback function
-                            </td></span>
-                            <td>event</td>
-                            <td>ui.target</td>
-                            <td>ui.focus</td>
-                            <td>ui.items</td>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>
-                                <span class="g-option">beforeSelect</span>
-                                <span class="options-description">— calls in every work cycle before any changes will performed</span>
-                            </td>
-                            <td>event</td>
-                            <td>if exist</td>
-                            <td>if exist</td>
-                            <td>—</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="g-option">select</span>
-                                <span class="options-description">— when one or several elements is selected</span>
-                            </td>
-                            <td>event</td>
-                            <td>target element</td>
-                            <td>if exist</td>
-                            <td>jquery collection of elements that was selected</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="g-option">unSelect</span>
-                                <span class="options-description">— one or several elements has been unselected</span>
-                            </td>
-                            <td>event</td>
-                            <td>if exist</td>
-                            <td>if exist</td>
-                            <td>jquery collection of elements that was unselected</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="g-option">unSelectAll</span>
-                                <span class="options-description">— when all elements in list is unselected</span>
-                            </td>
-                            <td>event</td>
-                            <td>if exist</td>
-                            <td>if exist</td>
-                            <td>jquery collection of elements that was unselected</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="g-option">focusLost</span>
-                                <span class="options-description">— when the focus of list is lost</span>
-                            </td>
-                            <td>event</td>
-                            <td>—</td>
-                            <td>Link on focused element. Link will be deleted after this callback.</td>
-                            <td>—</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="g-option">stop</span>
-                                <span class="options-description">— calls in the end of every work cycle</span>
-                            </td>
-                            <td>event</td>
-                            <td>if exist</td>
-                            <td>if exist</td>
-                            <td>all changed items (if they was)</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="g-option">create</span>
-                                <span class="options-description">— calls after initialization</span>
-                            </td>
-                            <td>—</td>
-                            <td>—</td>
-                            <td>—</td>
-                            <td>—</td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <span class="g-option">destroy</span>
-                                <span class="options-description">— calls before plugin will be destroyed</span>
-                            </td>
-                            <td>—</td>
-                            <td>—</td>
-                            <td>—</td>
-                            <td>—</td>
-                        </tr>
-                    </tbody>
-                </table>
+  // Attach selectonic plugin
+  list.selectonic({
+    multi: true,
+    keyboard: true,
+    focusBlur: true,
+    selectionBlur: true,
 
-                <p>Example of usage:</p>
-<code>$(element).selectonic({
-    select: function( event, ui ) {
-        // do something
+    // Before any changes
+    before: function(e) {
+      if (e.target === actions[0] || $(e.target).is('button.actions-list__button')) {
+        this.selectonic('cancel');
+      }
+    },
+
+    // When one or more items selectes
+    select: function() {
+      toggleActions(false);
+    },
+
+    // When all items clears selection
+    unselectAll: function() {
+      toggleActions(true);
     }
-});</code>
-            </div> --><div class=b-about><h2>About</h2><p>Compatibility: Requires jQuery 1.7+<br>Tested in Firefox, Chrome, Safari, Opera, IE8+</p><p>Author: Alexey Novichkov</p><p>License: Released under the MIT License. Feel free to use it in personal and commercial projects.</p></div></div></div></div><script src=scripts/fd80e7e6.vendor.js></script><script src=scripts/2d521b5d.main.js></script>
+  });
+
+  actions.on('click', 'button', function(event) {
+    event.preventDefault();
+    // Get selected items from the list
+    // and pass them to a method
+    doAction( list.selectonic('getSelected') );
+    this.blur();
+  });
+
+  function toggleActions (state) {
+    if (state === void 0) {
+      actions.toggleClass('disabled');
+    } else {
+      actions.toggleClass( 'disabled', state );
+    }
+  }
+
+  function doAction (items) {
+    items.each(function(index, el) {
+      var $el = $(el);
+      $el.addClass('animate');
+      setTimeout(function() {
+        $el.removeClass('animate');
+      }, 300);
+    });
+  }
+
+  toggleActions(true);
+
+})( jQuery );</code>
+</pre></div></div></div><div class=l-example-section id=example1><div class=example-body><div class=b-example><div class=example-description><!-- <h3><a name="select" class="anchor" href="#select"><span class="octicon octicon-link"></span></a>Select</h3> --><p>It supports keys: <span class=keyName>Up</span>, <span class=keyName>Down</span>, <span class=keyName>PageUp</span>, <span class=keyName>PageDown</span> and <span class=keyName>HOME</span>, <span class=keyName>END</span>.</p><p>You could focus it by <span class=keyName>TAB</span>, press arrow and choose item.</p></div><div class=example-example><div class=b-select><button class=select-trigger><div class=select-title>Choose something…</div></button><ul class=select-group><li class=select-option>Item 1</li><li class=select-option>Item 2</li><li class=select-option>Item 3</li><li class=select-option>Item 4</li><li class=select-option>Item 5</li><li class=select-option>Item 6</li><li class=select-option>Item 7</li><li class=select-option>Item 8</li><li class=select-option>Item 9</li><li class=select-option>Item 10</li><li class=select-option>Item 11</li><li class=select-option>Item 12</li><li class=select-option>Item 13</li><li class=select-option>Item 14</li><li class=select-option>Item 15</li><li class=select-option>Item 16</li><li class=select-option>Item 17</li><li class=select-option>Item 18</li><li class=select-option>Item 19</li><li class=select-option>Item 20</li></ul></div></div></div><div class=example-explain><div class=example-intro><h2>Example: Select input</h2><p>There are many implementations of&nbsp;select input, but almost all with same flaw&nbsp;&mdash; lack of&nbsp;keyboard support. Selectonic has all necessary logic for&nbsp;it. This example of&nbsp;select input demonstrates that.</p></div><pre data-line=49-77,101,106,108,117>
+<code class=language-javascript>(function( $, window ) {
+  'use strict';
+
+  var keyCode = { UP:38, DOWN:40, ESCAPE:27, ENTER:13 },
+  $document = $( window.document ),
+
+  Select = function( elem ) {
+    this.$el     = $( elem );
+    this.button  = this.$el.find('.select-trigger');
+    this.title   = this.button.find('.select-title');
+    this.list    = this.$el.find('.select-group');
+    this.isOpend = false;
+    this.init();
+  };
+
+
+  Select.prototype.init = function() {
+    var _this = this;
+    
+    this.button.on('blur', function( e ) {
+      _this.close.call( _this, e );
+    });
+
+    this.$el
+      .on('keydown', function( e ) {
+        _this.keyHandler.call( _this, e );
+      })
+      .on('mousedown', function(e) {
+        var isOnButton = _this.button[0] === e.target ||
+          _this.title[0] === e.target;
+        
+        if ( isOnButton ) {
+          if (!_this.isOpend) {
+            e.stopPropagation();
+            _this.open.call( _this );
+          } else {
+            _this.close.call( _this );
+          }
+          return;
+        }
+        e.preventDefault();
+      })
+      .on('mouseup', function(e) {
+        e.stopPropagation();
+      });
+    
+    $document.on('mouseup', function() { _this.close(); });
+    
+    // attach selectionc with options
+    this.list.selectonic({
+      multi: false,
+      keyboard: true,
+      keyboardMode: 'toggle',
+      mouseMode: 'mouseup',
+      focusOnHover: true,
+      selectionBlur: false,
+      focusBlur: true,
+      
+      // After plugin's initialisation
+      create: function() {
+        // we don't want for any list's 
+        // reaction on keyboard in closed state
+        this.selectonic('disable');
+      },
+      // When item of list has been selected
+      select: function( e, ui ) {
+        e.preventDefault();
+        _this.selected = ui.target;
+        _this.setValue( ui.items.html() );
+        _this.close();
+      },
+      // After each works cycle
+      stop: function( e ) {
+        if ( e.which === keyCode.ENTER && _this.isOpend ) {
+          _this.close();
+        }
+      }
+    });
+  };
+
+
+  Select.prototype.keyHandler = function( e ) {
+    var key = e.which;
+    if ( !this.isOpend &&
+      (key === keyCode.UP || key === keyCode.DOWN )
+    ) {
+      e.stopPropagation();
+      e.preventDefault();
+      this.open();
+    }
+    if ( this.isOpend && key === keyCode.ESCAPE ) {
+      this.close();
+      e.stopPropagation();
+    }
+  };
+
+
+  Select.prototype.open = function() {
+    this.$el.addClass('opend');
+    // Enable selectionic on the list
+    this.list.selectonic('enable');
+
+    if ( this.selected ) {
+      this.list
+        // Set focus on selected element
+        .selectonic('focus', this.selected)
+        // and scroll to it
+        .selectonic('scroll');
+    }
+    this.isOpend = true;
+  };
+
+
+  Select.prototype.close = function() {
+    this.$el.removeClass('opend');
+    // Disable plugin on the list
+    this.list.selectonic('disable');
+    this.isOpend = false;
+  };
+
+
+  Select.prototype.setValue = function( val ) {
+    this.title.html( val );
+  };
+
+
+  $.fn.mySelect = function() {
+    if (!this.length) { return this; }
+    this.each(function() { new Select(this); });
+    return $(this);
+  };
+
+})( jQuery, window );</code>
+</pre></div></div></div><div class=l-example-section id=sandbox><div class=example-body><!-- START: Example for sandbox--><div class=b-example><!-- <div class="example-description"></div> --><div class=example-example><!-- START: Example list with actions --><div class=actions-list><ul class=actions-list__group id=selectable-list><li id=listItem1 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 1</span></li><li id=listItem2 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 2</span></li><li id=listItem3 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 3</span></li><li id=listItem4 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 4</span></li><li id=listItem5 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 5</span></li><li id=listItem6 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 6</span></li><li id=listItem7 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 7</span></li><li id=listItem8 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 8</span></li><li id=listItem9 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 9</span></li><li id=listItem10 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 10</span></li><li id=listItem11 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 11</span></li><li id=listItem12 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 12</span></li><li id=listItem13 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 13</span></li><li id=listItem14 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 14</span></li><li id=listItem15 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 15</span></li><li id=listItem16 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 16</span></li><li id=listItem17 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 17</span></li><li id=listItem18 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 18</span></li><li id=listItem19 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 19</span></li><li id=listItem20 class=actions-list__option><span class=actions-list__handle>handle</span><span class=actions-list__title>Item 20</span></li></ul></div><!-- END: Example list with actions --><!-- START: Events log --><div class=eventLog><div class=eventLog__screen id=log-screen></div></div><!-- END: Events log --></div></div><!-- END: Example for sandbox--><div class=example-explain><div class=example-intro><h2>Sandbox</h2><p>Try to&nbsp;play with options and methods. For all possible options and&nbsp;methods <a class=download target=_blank href=http://github.com/anovi/selectonic#getting-started>see docs</a> on&nbsp;GitHub.</p></div><!-- START: Options for sandbox --><div class=b-options><h2>Options</h2><table class=options-table><tr><td><input type=checkbox id=multi><label for=multi><span class=g-option>multi</span></label></td><td><input type=checkbox id=keyboard><label for=keyboard><span class=g-option>keyboard</span></label></td><tr><td><input type=checkbox id=selectionBlur><label for=selectionBlur><span class=g-option>selectionBlur</span></label></td><td><input type=checkbox id=loop><label for=loop><span class=g-option>loop</span></label></td><tr><td><input type=checkbox id=focusBlur><label for=focusBlur><span class=g-option>focusBlur</span></label></td><td><input type=checkbox id=handle><label for=handle><span class=g-option>handle</span></label></td><tr><td><input type=checkbox id=focusOnHover><label for=focusOnHover><span class=g-option>focusOnHover</span></label></td><td></td><tr class=row-group><td><!-- mouseMode option --><span class=g-option>mouseMode</span><br><ul><li><input name=mouseMode id=mouseMode-standard type=radio data-option=standard><label for=mouseMode-standard>standard</label></li><li><input name=mouseMode id=mouseMode-mouseup type=radio data-option=mouseup><label for=mouseMode-mouseup>mouseup</label></li><li><input name=mouseMode id=mouseMode-toggle type=radio data-option=toggle><label for=mouseMode-toggle>toggle</label></li></ul></td><td><!-- keyboardMode option --><span class=g-option>keyboardMode</span><br><ul><li><input name=keyboardMode id=keyboardMode-select type=radio data-option=select><label for=keyboardMode-select>select</label></li><li><input name=keyboardMode id=keyboardMode-toggle type=radio data-option=toggle><label for=keyboardMode-toggle>toggle</label></li></ul></td></table><p>See all <a target=_blank href=https://github.com/anovi/selectonic#options>options in the docs</a>.</p></div><!-- END: Options for sandbox --><!-- START: Methods for sandbox --><div class=b-methods><h2>Methods</h2><p><button data-action=destroy>destroy</button></p><p><button data-action=blur>blur</button></p><p><button data-action=getSelected>getSelected</button></p><p><button data-action=getSelectedId>getSelectedId</button></p><p><button data-action=disable>disable</button></p><p><button data-action=enable>enable</button></p><h3>select</h3><p>You can select items by plugin interface. Plugin accept selector or element:</p><p><pre><code class=language-javascript>elem.selectonic('select', someElements);</code></pre></p><p><pre><code class=language-javascript>elem.selectonic('select', &quot;:even&quot;);</code></pre><button id=chooseEven>Select</button></p><p><pre><code class=language-javascript>elem.selectonic('select', &quot;li:eq(3)&quot;);</code></pre><button id=chooseThird>Select</button></p><p>See all <a href=https://github.com/anovi/selectonic#methods target=_blank>methods in the docs</a>.</p></div><!-- END: Methodds for sandbox --></div><!-- END: Example for sandbox--></div></div><div class="l-section b-about" id=about><h2>About</h2><p>Requires jQuery 1.7+<br>Tested in Firefox, Chrome, Safari, Opera, IE8+</p><p>Author: <a href=http://github.com/anovi target=_blank>Alexey Novichkov</a></p><p>License: Released under the MIT License. Feel free to use it in personal and commercial projects.</p></div></div></div></div><script src=scripts/e5588a53.vendor.js></script><script src=scripts/ac8580ce.main.js></script>
