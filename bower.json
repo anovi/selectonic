@@ -8,10 +8,7 @@
     "name": "Alexey Novichkov",
     "email": "mygrib@gmail.com"
   },
-  "main": [
-    "./dist/selectonic.js",
-    "./dist/selectonic.min.js"
-  ],
+  "main": "./dist/selectonic.js",
   "keywords": [
     "list",
     "jquery",
