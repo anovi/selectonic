@@ -134,16 +134,12 @@ pre {
 
 /* Button */
 button {
-    padding: 0.17em 0.4em 0.25em;
+    padding: 0.2em 0.5em 0.3em;
     font-size: 0.9em;
-
-    -webkit-box-shadow: 0 1px 0 0 white;
-    -moz-box-shadow: 0 1px 0 0 white;
-    box-shadow: 0 1px 0 0 white;
-    background: #FDFEFF;
-    
+    border: none;
     border-radius: 3px;
-    border: 1px solid #88D8C8;
+    box-shadow: 0 1px 0 0 white;
+    background: #E5F1ED;
 }
     .ie9 button {
         filter: none;
@@ -152,7 +148,7 @@ button {
     button:active {
         color: #777;
         background: #F3F5F4;
-        border: 1px solid #d5dde2;
+        border: none;
         box-shadow: inset 0 1px 0 rgba(0,0,0,0.1);
     }
     button:focus {

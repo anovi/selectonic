@@ -39,7 +39,7 @@
     <div class="b-navbar" id="navbar">
         <ul class="nav nav-tabs">
             <li class="nav-name"><a href="#top-anchor">Selectonic</a></li>
-            <li><a href="#begin">Get started</a></li>
+            <!-- <li><a href="#begin">Get started</a></li> -->
             <div class="nav-group">
                 <li class="nav-group-title">Examples:</li>
                 <li><a href="#example-list">List</a></li>
@@ -131,9 +131,9 @@
 
                         <div class="example-intro">
                             <h2>Exapmle: List with actions</h2>
-                            <p>super duper la la la</p>
+                            <p>Lets see simple list of&nbsp;items with&nbsp;actions buttons. Try to&nbsp;select items with mouse or&nbsp;keyboard then&nbsp;click action button. The list has&nbsp;multiple selection</p>
                         </div>
-<pre>
+<pre data-line="8-31,37">
 <code class="language-javascript">(function( $ ) {
   'use strict';
 
@@ -141,7 +141,7 @@
   actions = $el.find('.actions-list__actionbar'),
   list    = $el.find('.actions-list__group');
 
-  // Attach selectonic 
+  // Attach selectonic plugin
   list.selectonic({
     multi: true,
     keyboard: true,
@@ -168,7 +168,8 @@
 
   actions.on('click', 'button', function(event) {
     event.preventDefault();
-    // Get selected items from list
+    // Get selected items from the list
+    // and pass them to a method
     doAction( list.selectonic('getSelected') );
     this.blur();
   });
@@ -245,7 +246,7 @@
 
                 <div class="example-intro">
                     <h2>Example: Select input</h2>
-                    <p>There are many implementations of&nbsp;select input, but almost all with the same flaw&nbsp;&mdash; lack of&nbsp;keyboard support. Selectonic has all necessary logic for&nbsp;it. This example of&nbsp;select input demonstrates that.</p>
+                    <p>There are many implementations of&nbsp;select input, but almost all with same flaw&nbsp;&mdash; lack of&nbsp;keyboard support. Selectonic has all necessary logic for&nbsp;it. This example of&nbsp;select input demonstrates that.</p>
                 </div>
 
 
