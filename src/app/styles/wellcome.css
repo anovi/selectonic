@@ -3,7 +3,7 @@
     Wellcome block
 
 */
-.b-wellcome {
+.wellcome {
     padding-top: 1.7em;
     line-height: 1.5;
     color: #d8a888;
@@ -15,47 +15,44 @@
     width: 100%;
     z-index: -1;
 }
-    .b-wellcome .wellcome-wrapper {
-        padding: 3em 0 3em 0;
-        max-width: 45em;
-        margin: 0 2em 0 4em;
-    }
-    .b-wellcome h1.wellcome-title {
-        margin: 0 0 0.3em 0;
-        font-size: 2em;
-        line-height: 1em;
-        font-weight: bold;
-        color: #f2dfdd;
-    }
-    .b-wellcome p.wellcome-title {
-        margin: 0 0 0.4em 0;
-        font-size: 1em;
-        max-width: 33em;
-    }
-    .b-wellcome p {
-        margin: 0.5em 0;
-    }
-    .b-wellcome .download,
-    .b-wellcome .download:visited {
-        color: #B7E7DA;
-        color: #BDE7B7;
-        text-decoration: none;
-        border: none;
-        font-size: 0.9em;
-    }
-        .b-wellcome .download:hover {
-            color: white;
-        }
-        .b-wellcome .download .icon-github {
-            font-size: 1.3em;
-        }
-        .b-wellcome .download .title {
-            vertical-align: baseline;
-        }
 
+.wellcome .wellcome__wrapper {
+    padding: 3em 0 3em 0;
+    max-width: 45em;
+    margin: 0 2em 0 4em;
+}
 
+h1.wellcome__title {
+    margin: 0 0 0.3em 0;
+    font-size: 2em;
+    line-height: 1em;
+    font-weight: bold;
+    color: #f2dfdd;
+}
+p.wellcome__title {
+    margin: 0 0 0.4em 0;
+    font-size: 1em;
+    max-width: 33em;
+}
 
+.wellcome p {
+    margin: 0.5em 0;
+}
 
+.wellcome__download,
+.wellcome__download:visited {
+    color: #BDE7B7;
+    text-decoration: none;
+    border: none;
+    font-size: 0.9em;
+}
+.wellcome__download:hover {
+    color: white;
+}
+
+.wellcome__github {
+    font-size: 1.3em;
+}
 
 
 
