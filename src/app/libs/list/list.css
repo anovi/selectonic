@@ -11,7 +11,6 @@
 	list-style-type: none;
 	max-height: 19em;
 	overflow: auto;
-	border-bottom: 1px solid #F8F7F3;
 }
 .actions-list__option {
 	list-style: none;
@@ -84,6 +83,7 @@
 /* Actions */
 .actions-list__actionbar {
 	padding: 0.7em;
+	border-top: 1px solid #F1F0EB;
 }
 	.actions-list__button {
 		margin: 0 0.4em 0 0;

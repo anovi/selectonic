@@ -1,6 +1,11 @@
 var demo = demo || {};
 
-// Options
+
+/*
+*
+* Sandbox optioins
+*
+*/
 (function($) {
   'use strict';
 
@@ -41,7 +46,12 @@ var demo = demo || {};
 })(jQuery, window);
 
 
-// Methods
+
+/*
+*
+* Sandbox Methods buttons
+*
+*/
 (function( $ ) {
   'use strict';
   var mainList = $('#selectable-list'),
@@ -85,7 +95,11 @@ var demo = demo || {};
 
 
 
-// LOG
+/*
+*
+* Events log
+*
+*/
 (function($) {
   'use strict';
 
@@ -110,7 +124,11 @@ var demo = demo || {};
 
 
 
-// Scenaries
+/*
+*
+* Scenarios
+*
+*/
 (function($) {
   'use strict';
   var mainList = $('#selectable-list');
@@ -131,7 +149,11 @@ var demo = demo || {};
 
 
 
-// Attach plugin
+/*
+*
+* Attach plugin
+*
+*/
 (function($) {
   'use strict';
   var couter = -1,
@@ -199,7 +221,11 @@ var demo = demo || {};
 
 
 
-// Examples
+/*
+*
+* Examples
+*
+*/
 (function($) {
   'use strict';
   var selectInput = $('.b-select');
@@ -251,43 +277,59 @@ var demo = demo || {};
     });
   }
 
+  // List with actions
   example.list.find('.b-example').scrollSpy({
     box: example.list.find('.example-body')[0],
-    offset: navHeight
+    offset: navHeight,
+    visible: function( params ) {
+      if (
+        example.select.fromItemBottomOffset === void 0 ||
+        params.window.scrollTop + params.window.height < example.select.fromItemBottomOffset
+      ) {
+        enable( example.list );
+      }
+    }
   });
 
+  // Select input example
   example.select.find('.b-example').scrollSpy({
     box: example.select.find('.example-body')[0],
     offset: navHeight,
-    stop: function() {
-      isSelectStopped = true;
-      enable( example.sandbox );
-    },
-    move: function() {
-      isSelectStopped = false;
-    },
     visible: function(params) {
       if ( isSelectStopped ) { return; }
-      // console.log('visible');
-      if ( params.window.scrollTop + params.window.height >= params.box.top + params.item.topInBox + params.item.height ) {
+      example.select.fromItemBottomOffset = params.box.top + params.item.topInBox + params.item.height;
+      example.select.fromBoxBottomOffset  = params.box.top + params.box.height;
+      example.select.itemHeight           = params.item.height;
+      
+      if (
+        params.window.scrollTop + params.window.height >= example.select.fromItemBottomOffset &&
+        example.select.fromBoxBottomOffset - params.window.scrollTop > params.item.height + navHeight
+      ) {
         enable( example.select );
-      } else if ( params.window.scrollTop + params.window.height < params.box.top + params.item.topInBox + params.item.height ) {
-        enable( example.list );
       }
     },
     clone: function( clone, elem ) {
-      console.log('clone');
       elem.css({
         zIndex: '15'
       });
     }
   });
 
+  // Sandbox example
   example.sandbox.find('.b-example')
     .css( 'height', $window.outerHeight() - navHeight )
     .scrollSpy({
       box: example.sandbox.find('.example-body')[0],
       offset: navHeight,
+      visible: function( params ) {
+        if (
+          example.select.fromBoxBottomOffset === void 0 ||
+          example.select.itemHeight === void 0 ||
+          example.select.fromBoxBottomOffset - params.window.scrollTop < example.select.itemHeight + navHeight
+        ) {
+          enable( example.sandbox );
+        }
+      },
       clone: function( clone ) {
         clone.find( '#selectable-list' ).attr( 'id', null );
       }
@@ -297,7 +339,11 @@ var demo = demo || {};
 
 
 
-// Navbar Anchors #
+/*
+*
+* Navbar Anchors #
+*
+*/
 (function($) {
   'use strict';
   var navbar = $('#navbar'),
