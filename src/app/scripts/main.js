@@ -3,6 +3,40 @@ var demo = demo || {};
 
 /*
 *
+* Wellcome hole
+*
+*/
+(function($,window) {
+  'use strict';
+
+  function setMargin ( height ) {
+    wrapper.css( 'margin-top', height );
+  }
+
+  var wellcome = $('#wellcome'),
+  height = wellcome.height(),
+  wrapper = $('.l-wrapper'),
+  $window = $(window),
+  timeout;
+
+  setMargin( height );
+
+  $window.on('resize', function() {
+    if ( timeout ) {
+      clearTimeout( timeout );
+      timeout = null;
+    }
+    timeout = setTimeout(function() {
+      height = wellcome.height();
+      setMargin( height );
+    }, 100);
+  });
+})(jQuery, window);
+
+
+
+/*
+*
 * Sandbox optioins
 *
 */

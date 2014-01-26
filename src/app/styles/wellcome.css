@@ -16,6 +16,15 @@
     z-index: -1;
 }
 
+.wellcome a {
+    border: none;
+    color: #BDE7B7;
+    text-decoration: none;
+}
+.wellcome a:hover {
+    color: white;
+}
+
 .wellcome .wellcome__wrapper {
     padding: 3em 0 3em 0;
     max-width: 45em;
@@ -39,15 +48,25 @@ p.wellcome__title {
     margin: 0.5em 0;
 }
 
-.wellcome__download,
-.wellcome__download:visited {
+.wellcome .wellcome__downloads {
+    margin: 0;
+}
+
+a.wellcome__download,
+a.wellcome__download:visited {
+    display: inline-block;
+    font-size: 0.9em;
+    padding: 0.5em 1em;
+    margin: 0.5em 0.5em 0.5em 0;
+    
     color: #BDE7B7;
     text-decoration: none;
-    border: none;
-    font-size: 0.9em;
+    border-radius: 0.4em;
+    border: 1px solid #96B193;
 }
-.wellcome__download:hover {
+a.wellcome__download:hover {
     color: white;
+    border-color: #BBBBBB;
 }
 
 .wellcome__github {
