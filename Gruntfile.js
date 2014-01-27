@@ -121,6 +121,19 @@ module.exports = function(grunt) {
         ]
         
       }
+    },
+    yuidoc: {
+      compile: {
+        name: '<%= pkg.name %>',
+        description: '<%= pkg.description %>',
+        version: '<%= pkg.version %>',
+        url: '<%= pkg.homepage %>',
+        options: {
+          paths: 'src/',
+          // themedir: 'path/to/custom/theme/',
+          outdir: 'docs/'
+        }
+      }
     }
   });
 
@@ -132,6 +145,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-qunit');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-yuidoc');
   grunt.loadNpmTasks('grunt-replace');
 
   // Register Tasks.
