@@ -74,6 +74,7 @@
       },
       // After each works cycle
       stop: function( e ) {
+        e.preventDefault();
         if ( e.which === keyCode.ENTER && _this.isOpend ) {
           _this.close();
         }
@@ -136,7 +137,7 @@
 
   
   Select.prototype.enable = function() {
-    this.list.selectonic('enable');
+    if ( this.isOpend ) { this.list.selectonic('enable'); }
     this.isEnabled = true;
     this.$el.removeClass('disabled');
   };

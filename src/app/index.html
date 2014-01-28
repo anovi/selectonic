@@ -252,7 +252,7 @@
 
 
                     
-<pre data-line="49-77,101,106,108,117" >
+<pre data-line="49-78,100,105,107,116" >
 <code class="language-javascript">(function( $, window ) {
   'use strict';
 
@@ -326,6 +326,7 @@
       },
       // After each works cycle
       stop: function( e ) {
+        e.preventDefault();
         if ( e.which === keyCode.ENTER && _this.isOpend ) {
           _this.close();
         }
@@ -553,7 +554,7 @@
         <!-- build:js scripts/vendor.js -->
         <!-- bower:js -->
         <script src="bower_components/jquery/jquery.js"></script>
-        <script src="bower_components/selectonic/dist/selectonic.min.js"></script>
+        <script src="bower_components/selectonic/dist/selectonic.js"></script>
         <script src="scripts/prism.js"></script>
         <!-- endbower -->
         <!-- endbuild -->
