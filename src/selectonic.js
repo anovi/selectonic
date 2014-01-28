@@ -113,7 +113,6 @@
   
   /**
   Gets plugin's data object
-  
   @param {HTMLElement} el
   @method getDataObject
   @static
@@ -131,7 +130,8 @@
   Core
 
   */
-  /** Initialisation method.
+  /**
+  Initialisation method.
   @method _init
   @private
   **/
@@ -239,7 +239,6 @@
 
   /**
   Set scrollable container.
-  
   @method _setScrolledElem
   @private
   @param {String|HTMLElement} selector Element or selector as scrollable elem.
@@ -267,7 +266,6 @@
   /**
   Cancel list changes in the current cycle or prevent them
   if called in `before` callback.
-  
   @method _cancel
   @private
   @param {Object} event Event object.
@@ -308,7 +306,6 @@
 
     this._mouseEvent = function(e) {
       if ( _this._isEnable ) { _this._mouseHandler.call(_this, e); }
-      return e;
     };
     this._keyboardEvent = function(e) {
       if( _this.options.keyboard && _this._isEnable ) { _this._keyHandler.call(_this, e); }
@@ -330,8 +327,8 @@
   };
 
   
-  // Detach instance handlers.
   /**
+  Detach instance handlers.
   @method _unbindEvents
   @private
   **/
@@ -543,7 +540,6 @@
   Control the state of a list.
   It can be called from _keyHandler, _mouseHandler or API
   and does list's changes depending from reseived params.
-  
   @method _controller
   @private
   @param {Object|null} event Event object
@@ -556,23 +552,18 @@
     delete this._isPrevented;
     this._callEvent('before', e, params);
 
-    // If cancel flag is true any changes will be prevented
     if( this._isPrevented ) {
       this._cancel( e, params );
       this._stop( e, params );
       return;
     }
 
-    // Flag - if there was any selected items before changes
     params.wasSelected = ( this._selected > 0 );
 
-    // Flag - if target was selectedl before changes
     if ( params.target && params.isTargetWasSelected === undefined ) {
       params.isTargetWasSelected = this._getIsSelected( params.target );
     }
     
-    // If it is range selection
-    // and target is selected and equal to focus
     if (
       params.isRangeSelect && 
       params.isTargetWasSelected && 
@@ -633,7 +624,6 @@
 
   /**
   Used by _controller to perform range selection in the list.
-
   @method _perfomRangeSelect
   @private
   @param {Object|null} event Event object
@@ -696,7 +686,6 @@
   /**
   Changes items states from unselected to selected and back.
   Used by _select and _unselect methods.
-
   @method _changeItemsStates
   @private
   @param {jQuery collection} items jQuery collection of items that will be change.
@@ -958,7 +947,6 @@
   */
   /**
   Handles keyboard events and calls _controller.
-
   @method _keyHandler
   @private
   @param {Object} event
@@ -1100,7 +1088,6 @@
   FOR SHIFT MODE ONLY
   - turns on shift mode flags
   - solves different situations with shift+arrows selection
-
   @method _multiVariator
   @private
   @param {Object} params Current params.
@@ -1161,7 +1148,6 @@
   /**
   Used by _keyHandler
   when UP, DOWN, PageUp, PageDown keys has pressed — find target or first/last element of the list
-
   @method _findNextTarget
   @private
   @param {String} direction Indicates 'prev' 'next' or 'pageup' 'pagedown' item to find 
@@ -1186,7 +1172,6 @@
   /**
   Used by _keyHandler or public scroll method.
   Recalculates scroll position, if focused item is not visible in container's viewport.
-
   @method _refreshBoxScroll
   @private
   @param {HTMLElement} box Container whose scroll will be calculated for showing focused element.
@@ -1277,8 +1262,7 @@
     // mousedown and click only
     } else if (type === 'mousedown' || type === 'click') {
       target = this._getTarget(e);
-      // Mousedown on item 
-      // Except cases mathes all conditions:
+      // Mousedown on item, except cases mathes all conditions:
       // - in multi/range modes 
       // - with multi:true
       // - with mouseMode:'standard'
@@ -1576,7 +1560,6 @@
   Cancel changes in current cycle. This method
   only could be invoked from callbacks function.
   If called from `before` callback, then it will premvent any changes.
-
   @method cancel
   **/
   Plugin.prototype.cancel = function() {
@@ -1591,11 +1574,7 @@
   **/
   Plugin.prototype.refresh = function() {
     var focus = this.ui.focus;
-
-    // Check if focus is visible
     if ( focus && !$(focus).is(':visible') ) { delete this.ui.focus; }
-
-    // Recalculate amount of selected items
     this._selected = ( this.getSelected() ).length;
     return this.$el;
   };
