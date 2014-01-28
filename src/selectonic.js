@@ -896,8 +896,11 @@
       this._controller( e, params );
       // Recalculate plugin's box and window's scrolls
       this.scroll();
+    } else {
+      params.prevItemsStates = [];
+      this._callEvent('before', e, params);
+      this._callEvent('stop', e, params);
     }
-    return e;
   };
 
 

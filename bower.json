@@ -1,7 +1,7 @@
 {
   "name": "selectonic",
   "title": "Selectonic",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "jQuery-plugin for making any list of items selectable by mouse and keyboard.",
   "homepage": "https://github.com/anovi/selectonic",
   "author": {
@@ -47,11 +47,11 @@
   },
   "devDependencies": {
     "qunit": "~1.12.0",
-    "syn": "~3.3.1",
     "jquery-1.7.0": "jquery#1.7.0",
     "jquery-1.9.0": "jquery#1.9.0",
     "jquery-1.10.2": "jquery#1.10.2",
     "jquery-2.0.3": "jquery#2.0.3",
-    "benchmark": "~1.0.0"
+    "benchmark": "~1.0.0",
+    "syn": "~0.0.2"
   }
 }
