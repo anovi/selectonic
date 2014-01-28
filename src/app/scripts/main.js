@@ -266,8 +266,7 @@ var demo = demo || {};
   selectInput.mySelect();
   selectInput.mySelect('disable');
   
-  var $window     = $(window),
-  example         = {},
+  var example     = {},
   enabled         = {},
   navHeight       = $('#navbar').height(),
   active          = null,
@@ -351,7 +350,6 @@ var demo = demo || {};
 
   // Sandbox example
   example.sandbox.find('.b-example')
-    .css( 'height', $window.outerHeight() - navHeight )
     .scrollSpy({
       box: example.sandbox.find('.example-body')[0],
       offset: navHeight,
