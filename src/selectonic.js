@@ -51,6 +51,118 @@
 
   $document = $( window.document );
 
+  /**
+  @class Options
+  @constructor
+  @for Selectonic
+  @param {Object} schema Options schema.
+  @param {Object} initial Initial options, will be mixed with schema's defaults.
+  **/ 
+  function Options ( schema, initial ) {
+    if ( typeof schema !== 'object' ) { throw new TypeError('First argument must be an object with scheme of default options.'); }
+    this._schema    = schema;
+    this._options   = {};
+    this._callbacks = {};
+    this.set( initial, true );
+    return this;
+  }
+
+  Options.checkType = function(val, schema) {
+    var type = typeof val, isNullable = val === null && schema.nullable;
+    return ( schema.type instanceof Array ) ? schema.type.indexOf( type ) >= 0 || isNullable : type === schema.type || isNullable;
+  };
+
+  Options.prototype.set = function( obj, isNew ) {
+    var schema = this._schema,
+    newOptions = isNew ? {} : this.get(),
+    defaults = {},
+    option, callback;
+    obj = obj || {};
+
+    // Check options
+    for ( option in obj ) {
+      var val = obj[ option ],
+      defOption = schema[ option ];
+
+      if ( defOption !== void 0 ) {
+        // unchangeable
+        if ( defOption.unchangeable && !isNew ) {
+          throw new Error( 'Option \"' + option + '\" could be setted once at the begining.' );
+        }
+        // wrong type
+        if ( !Options.checkType(val, defOption) ) {
+          var msg = 'Option \"' + option + '\" must be ' +
+            ( defOption.type instanceof Array ? defOption.type.join(', ') : defOption.type ) +
+            ( defOption.nullable ? ' or null.' : '.' );
+          throw new TypeError( msg );
+        }
+        // out of values
+        if ( defOption.values && defOption.values.indexOf(val) < 0 ) {
+          throw new RangeError( 'Option \"' + option + '\" only could be in these values: \"' + defOption.values.join('\", \"') + '\".' );
+        }
+      }
+    }
+    // Create new options object
+    if ( isNew ) {
+      for ( option in schema ) {
+        if ( schema[option].default !== void 0 ) { defaults[option] = schema[option].default; }
+      }
+    }
+    newOptions = isNew ? $.extend( defaults, obj ) : obj;
+    // Callbacks
+    for ( option in obj ) {
+      if ( (callback = this._callbacks[option]) ) {
+        obj[option] = callback.call( this, obj[option] );
+      }
+    }
+    this._options = $.extend( this._options, newOptions );
+  };
+
+  Options.prototype.get = function( opt ) {
+    return opt ? this._options[ opt ] : $.extend( {}, this._options );
+  };
+
+  Options.prototype.on = function( option, cb ) {
+    this._callbacks[ option ] = cb;
+  };
+
+  Options.prototype.off = function() {
+    for ( var option in this._callbacks ) { delete this._callbacks[option]; }
+  };
+
+
+  var schema = {
+    // Base
+    filter:         { default:'> *',          type:'string'                                             },
+    multi:          { default:true,           type:'boolean'                                            },
+    // Mouse
+    mouseMode:      { default:'standard',     type:'string', values:['standard','mouseup','toggle'],    },
+    focusBlur:      { default:false,          type:'boolean'                                            },
+    selectionBlur:  { default:false,          type:'boolean'                                            },
+    handle:         { default:null,           type:'string', nullable:true                              },
+    textSelection:  { default:false,          type:'boolean'                                            },
+    focusOnHover:   { default:false,          type:'boolean'                                            },
+    // Keyboard
+    keyboard:       { default:false,          type:'boolean'                                            },
+    keyboardMode:   { default:'select',       type:'string', values:['select','toggle'],                },
+    autoScroll:     { default:true,           type:['boolean','string']                                 },
+    loop:           { default:false,          type:'boolean'                                            },
+    preventInputs:  { default:true,           type:'boolean'                                            },
+    // Classes
+    listClass:      { default:'j-selectable', type:'string', unchangeable:true                          },
+    focusClass:     { default:'j-focused',    type:'string', unchangeable:true                          },
+    selectedClass:  { default:'j-selected',   type:'string', unchangeable:true                          },
+    disabledClass:  { default:'j-disabled',   type:'string', unchangeable:true                          },
+    // Callbacks
+    create:         { default:null,           type:'function', nullable:true                            },
+    before:         { default:null,           type:'function', nullable:true                            },
+    focusLost:      { default:null,           type:'function', nullable:true                            },
+    select:         { default:null,           type:'function', nullable:true                            },
+    unselect:       { default:null,           type:'function', nullable:true                            },
+    unselectAll:    { default:null,           type:'function', nullable:true                            },
+    stop:           { default:null,           type:'function', nullable:true                            },
+    destroy:        { default:null,           type:'function', nullable:true                            }
+  };
 
   /**
   @class Selectonic
@@ -66,49 +178,25 @@
     this._selected  = 0;    // Amount of selected items
     this._isEnable  = true; // Flag that plugin is enabled - used by handlers
     this._keyModes  = {};   // to saving holding keys
-    this.options    = {};
-    
-    var initialOptions = $.extend( {}, Plugin.defaults, (options || {}) );
-    this._setOptions( initialOptions );
+    this.options    = new Options( schema, options );
+
+    var _this = this;
+    this.options.on('filter', function( value ) {
+      // Cache items selector to compare it with clicked elements
+      _this._itemsSelector = '.' + _this.options.get('listClass') + ' ' + value;
+      return value;
+    });
+    this.options.on('autoScroll', function( value ) {
+      _this._setScrolledElem( value ); // Set scrollable containter
+      return value;
+    });
+    this._itemsSelector = '.' + this.options.get('listClass') + ' ' + this.options.get('filter');
+    this._setScrolledElem( this.options.get('autoScroll') );
     this._init();
   }
 
-  Plugin.pluginName     = 'selectonic';
-  Plugin.keyCode        = { DOWN:40, UP:38, SHIFT:16, END:35, HOME:36, PAGE_DOWN:34, PAGE_UP:33, A:65, SPACE:32, ENTER:13 };
-  Plugin.optionsEvents  = ['create','before','focusLost','select','unselect','unselectAll','stop','destroy'];
-  Plugin.optionsStrings = ['filter','mouseMode','keyboardMode','listClass','focusClass','selectedClass','disabledClass','handle'];
-  Plugin.defaults       = {
-    // Base
-    filter:         '> *',
-    multi:          true,
-    // Mouse
-    mouseMode:      ['standard','mouseup','toggle'],
-    focusBlur:      false,
-    selectionBlur:  false,
-    handle:         null,
-    textSelection:  false,
-    focusOnHover:   false,
-    // Keyboard
-    keyboard:       false,
-    keyboardMode:   ['select','toggle'],
-    autoScroll:     true,
-    loop:           false,
-    preventInputs:  true,
-    // Classes
-    listClass:      'j-selectable',
-    focusClass:     'j-focused',
-    selectedClass:  'j-selected',
-    disabledClass:  'j-disabled',
-    // Callbacks
-    create:         null,
-    before:         null,
-    focusLost:      null,
-    select:         null,
-    unselect:       null,
-    unselectAll:    null,
-    stop:           null,
-    destroy:        null
-  };
+  Plugin.pluginName = 'selectonic';
+  Plugin.keyCode    = { DOWN:40, UP:38, SHIFT:16, END:35, HOME:36, PAGE_DOWN:34, PAGE_UP:33, A:65, SPACE:32, ENTER:13 };
 
   
   /**
@@ -136,81 +224,10 @@
   @private
   **/
   Plugin.prototype._init = function() {
-    this.$el.addClass( this.options.listClass );           // Add class to box
+    this.$el.addClass( this.options.get('listClass') );           // Add class to box
     this._bindEvents();                                    // Attach handlers6
     this.$el.data( 'plugin_' + Plugin.pluginName, this );  // Save plugin's instance
     this._callEvent('create');                             // Callback
-  };
-
-  /**
-  Set options for plugin instance.
-  @param {Object|String} option Options hash or options name
-  @param {any} [value] Options value, if first argument is a string
-  @method _setOptions
-  @private
-  **/
-  Plugin.prototype._setOptions = function() {
-    var option, newOptions, isFunction, options = {}, _this = this;
-    
-    if ( arguments.length === 2 ) {
-      // First arg is name of option and a second is a value
-      options[arguments[ 0 ]] = arguments[1];
-    
-    // options hash
-    } else if ( $.isPlainObject(options) ) {
-      options = arguments[0];
-    } else {
-      throw new Error('Format of \"option\" could be: \"option\" or \"option\",\"name\" or \"option\",\"name\",val or \"option\",{}');
-    }
-
-    // Ensure that actions are strings
-    $.each( Plugin.optionsStrings, function(index, name) {
-      option = options[ name ];
-      if( option ) {
-        var pos = ['mouseMode','keyboardMode'].indexOf( name );
-        
-        // default option
-        if ( $.isArray( option ) && pos >= 0 && option === Plugin.defaults[name] ) {
-          options[ name ] = option[0];
-
-        // string option with finite values
-        } else if ( pos >= 0) {
-          var values = Plugin.defaults[ name ];
-          if ( values.indexOf( $.trim(String(option)) ) < 0 ) {
-            throw new RangeError( 'Option \"' + name + '\" only could be in these values: \"' + values.join('\", \"') + '\".' );
-          }
-
-        } else {
-          options[ name ] = $.trim( String(option) );
-        }
-        // If it's working list and is attempt to change classes
-        if ( _this._itemsSelector &&
-          (name === 'listClass' ||
-           name === 'focusClass' ||
-           name === 'selectedClass' ||
-           name === 'disabledClass')
-        ) { throw new Error( 'Sorry, it\'s not allowed to dynamically change classnames!' ); }
-      }
-    });
-
-    // Ensure that callbacks options are functions
-    $.each( Plugin.optionsEvents, function(index, name) {
-      option = options[name];
-      if( void 0 === option ) { return; }
-      isFunction = $.isFunction( option );
-      if ( !isFunction && null !== option ) {
-        throw new TypeError( 'Option \"' + name + '\" should be a function or \"null\"!' );
-      }
-    });
-
-    newOptions = $.extend( {}, this.options, options );
-    // Cache items selector to compare it with clicked elements
-    // Plugin's class name + Item selector
-    this._itemsSelector = '.' + newOptions.listClass + ' ' + newOptions.filter;
-
-    // Set scrollable containter
-    if ( options.autoScroll !== void 0 ) { this._setScrolledElem( options.autoScroll ); }
-    this.options = newOptions;
   };
 
 
@@ -224,14 +241,16 @@
     this._unbindEvents();
     if ( this._focusHoverTimeout ) { clearTimeout(this._focusHoverTimeout); }
     if( this.ui.focus ) {
-      $(this.ui.focus).removeClass( this.options.focusClass );
+      $(this.ui.focus).removeClass( this.options.get('focusClass') );
       delete this.ui.focus;
     }
     if( this._selected > 0 ) {
-      this.getSelected().removeClass( this.options.selectedClass );
+      this.getSelected().removeClass( this.options.get('selectedClass') );
     }
-    this.$el.removeClass( this.options.disabledClass );
-    this.$el.removeClass( this.options.listClass );
+    this.$el.removeClass( this.options.get('disabledClass') );
+    this.$el.removeClass( this.options.get('listClass') );
+    this.options.off();
+    delete this.options;
     delete this._scrolledElem;
     delete this.ui.solidInitialElem;
   };
@@ -308,13 +327,13 @@
       if ( _this._isEnable ) { _this._mouseHandler.call(_this, e); }
     };
     this._keyboardEvent = function(e) {
-      if( _this.options.keyboard && _this._isEnable ) { _this._keyHandler.call(_this, e); }
+      if( _this.options.get('keyboard') && _this._isEnable ) { _this._keyHandler.call(_this, e); }
     };
     this._selectstartEvent = function() {
-      if ( !_this.options.textSelection ) { return false; }
+      if ( !_this.options.get('textSelection') ) { return false; }
     };
     this._mousemoveEvent = _throttle( function(e) {
-      if( _this._isEnable && _this.options.focusOnHover ) { _this._mousemoveHandler.call(_this, e); }
+      if( _this._isEnable && _this.options.get('focusOnHover') ) { _this._mousemoveHandler.call(_this, e); }
     }, 20);
 
     $document.on( 'keydown.'+name       ,this._keyboardEvent    );
@@ -354,7 +373,7 @@
   **/
   Plugin.prototype._getTarget = function( e ) {
     var elem = e.target,
-      handle = this.options.handle,
+      handle = this.options.get('handle'),
       $elem, target, handleElem;
 
     // While plugin's element or top of the DOM is achieved
@@ -414,17 +433,17 @@
       return this._getNextPageElem( params, target, elem);
 
     case 'first':
-      items = params.allItems ? params.allItems : this.$el.find( this.options.filter );
+      items = params.allItems ? params.allItems : this.$el.find( this.options.get('filter') );
       params.allItems = items;
       return items.first();
 
     case 'last':
-      items = params.allItems ? params.allItems : this.$el.find( this.options.filter );
+      items = params.allItems ? params.allItems : this.$el.find( this.options.get('filter') );
       params.allItems = items;
       return items.last();
 
     default:
-      items = params.allItems ? params.allItems : this.$el.find( this.options.filter );
+      items = params.allItems ? params.allItems : this.$el.find( this.options.get('filter') );
       params.allItems = items;
       return items;
     }
@@ -516,7 +535,7 @@
   @param {Object} params Current params.
   **/
   Plugin.prototype._callEvent = function( name, event, params ) {
-    var ui, cb = this.options[name];
+    var ui, cb = this.options.get(name);
     if ( !cb ) { return; }
     if ( name === 'create' || name === 'destroy' ) {
       return cb.call( this.$el );
@@ -600,7 +619,7 @@
       this._select( e, params, params.items, params.isTargetWasSelected );
 
     // if there are selected items and 'selectionBlur' option is true
-    } else if ( !params.target && this._selected > 0 && this.options.selectionBlur ) { 
+    } else if ( !params.target && this._selected > 0 && this.options.get('selectionBlur') ) { 
       this._unselectAll( e, params );
     }
 
@@ -612,7 +631,7 @@
     params.prevFocus = ( this.ui.focus ) ? this.ui.focus : null;
 
     // it is not item of list was clicked and 'focusBlur' option is ON
-    if ( !params.target && this.options.focusBlur ) {
+    if ( !params.target && this.options.get('focusBlur') ) {
       this._blur(e, params);
     // or set new
     } else if ( params.target && !params.wasCancelled ) { this._setFocus( params.target ); }
@@ -725,7 +744,7 @@
       }
 
       // Finally add/remove class to item
-      $( item ).toggleClass( _this.options.selectedClass, aboveZero );
+      $( item ).toggleClass( _this.options.get('selectedClass'), aboveZero );
 
     });
 
@@ -839,7 +858,7 @@
   @return {Boolean} true if element is selected.
   **/
   Plugin.prototype._getIsSelected = function( target ) {
-    var options = this.options;
+    var options = this.options.get();
     
     // If was get one item or nothing
     if( $(target).length <= 1 ) {
@@ -865,7 +884,7 @@
       this._callEvent('focusLost', e, params);
     }
     if( this.ui.focus ) {
-      $( this.ui.focus ).removeClass( this.options.focusClass );
+      $( this.ui.focus ).removeClass( this.options.get('focusClass') );
       delete this.ui.focus;
     }
   };
@@ -880,10 +899,10 @@
   Plugin.prototype._setFocus = function( target ) {
     if( !target ) { return; }
     if( this.ui.focus ) {
-      $(this.ui.focus).removeClass( this.options.focusClass );
+      $(this.ui.focus).removeClass( this.options.get('focusClass') );
     }
     this.ui.focus = target;
-    $( this.ui.focus ).addClass( this.options.focusClass );
+    $( this.ui.focus ).addClass( this.options.get('focusClass') );
     return this.ui.focus;
   };
 
@@ -953,8 +972,8 @@
   **/
   Plugin.prototype._keyHandler = function( e ) {
 
-    if ( !this.options.keyboard ) { return; }
-    if ( this.options.preventInputs && e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') { return; }
+    if ( !this.options.get('keyboard') ) { return; }
+    if ( this.options.get('preventInputs') && e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') { return; }
     var key = e.which, params = {}, target, isAllSelect, direction, page;
 
     if (e.type === 'keyup') {
@@ -964,7 +983,7 @@
       }
       return;
     }
-    if ( key === Plugin.keyCode.A && this._isMulti(e) && this.options.multi ) {
+    if ( key === Plugin.keyCode.A && this._isMulti(e) && this.options.get('multi') ) {
       target = this._getItems( params );
       isAllSelect = true; // flag that is all items is selected
 
@@ -992,14 +1011,14 @@
         var isDown = key === Plugin.keyCode.PAGE_DOWN;
         direction  = isDown ? 'next' : 'prev';
         page       = isDown ? 'pagedown' : 'pageup';
-        params.isShiftPageRange = this.options.multi && e.shiftKey && !isAllSelect;
+        params.isShiftPageRange = this.options.get('multi') && e.shiftKey && !isAllSelect;
         target = this._findNextTarget( page, params );
         break;
       case Plugin.keyCode.SPACE:
         target = $( this.ui.focus );
         break;
       case Plugin.keyCode.ENTER:
-        if ( !this.options.multi ) { target = $( this.ui.focus ); }
+        if ( !this.options.get('multi') ) { target = $( this.ui.focus ); }
         break;
       }
     }
@@ -1011,18 +1030,18 @@
       params.items = target;
 
       // Toggle mode
-      if ( this.options.keyboardMode === 'toggle' ) {
+      if ( this.options.get('keyboardMode') === 'toggle' ) {
         if (
           key !== Plugin.keyCode.SPACE &&
-          !(key === Plugin.keyCode.ENTER && !this.options.multi)
+          !(key === Plugin.keyCode.ENTER && !this.options.get('multi'))
         ) {
           delete params.items;
         }
-        if ( this.options.multi ) { params.isMultiSelect = true; }
+        if ( this.options.get('multi') ) { params.isMultiSelect = true; }
         delete this.ui.solidInitialElem;
 
       // SHIFT mode
-      } else if ( this.ui.focus && this.options.multi && e.shiftKey && !isAllSelect ) {
+      } else if ( this.ui.focus && this.options.get('multi') && e.shiftKey && !isAllSelect ) {
         // Call multiVariator or rangeVariator – 
         // it set all needed params depends from arguments
         if (
@@ -1165,7 +1184,7 @@
       res = ( this.ui.focus ) ? this._getItems( params, direction, this.ui.focus ) : this._getItems( params, edge );
 
     // If has not found any items and loop option is ON
-    if ( (res === null || res.length === 0) && this.options.loop ) {
+    if ( (res === null || res.length === 0) && this.options.get('loop') ) {
       res = this._getItems( params, edge ); // find extreme item
     }
     return res;
@@ -1239,7 +1258,7 @@
   **/
   Plugin.prototype._mouseHandler = function( e ) {
     var
-    options = this.options,
+    options = this.options.get(),
     type    = e.type,
     isMulti = this._isMulti(e),
     isRange = this._isRange(e),
@@ -1404,20 +1423,22 @@
     if( args > 0 && typeof option === 'string' ) {
       // Received strings and any argument
       if( args > 1 ) {
-        this._setOptions( option, value );
+        var opt = {};
+        opt[option] = value;
+        this.options.set( opt );
         return this.$el;
       }
       // Return value of option
-      return this.options[ option ];
+      return this.options.get( option );
     }
     // Received object
     if( args > 0 && $.isPlainObject( option ) ) {
-      this._setOptions( option );
+      this.options.set( option );
       return this.$el;
     }
     // Return whole options object
     if ( args === 0 ) {
-      return $.extend({}, this.options);
+      return this.options.get();
     } else {
       throw new Error('Format of \"option\" could be: \"option\" or \"option\",\"name\" or \"option\",\"name\",val or \"option\",{}');
     }
@@ -1479,7 +1500,7 @@
   **/
   Plugin.prototype.getSelected = function( getIds ) {
     var arr,
-    items = this._getItems({}).filter( '.' + this.options.selectedClass );
+    items = this._getItems({}).filter( '.' + this.options.get('selectedClass') );
 
     if( getIds ) {
       arr = [];
@@ -1542,7 +1563,7 @@
   **/
   Plugin.prototype.enable = function() {
     this._isEnable = true;
-    this.$el.removeClass( this.options.disabledClass );
+    this.$el.removeClass( this.options.get('disabledClass') );
     return this.$el;
   };
 
@@ -1554,7 +1575,7 @@
   Plugin.prototype.disable = function() {
     this._isEnable = false;
     this._isHovered = false;
-    this.$el.addClass( this.options.disabledClass );
+    this.$el.addClass( this.options.get('disabledClass') );
     return this.$el;
   };
 

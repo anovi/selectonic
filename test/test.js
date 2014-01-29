@@ -518,7 +518,7 @@
         handle:        '.handle',
 
         multi:         false,
-        autoScroll:  false,
+        autoScroll:    false,
         preventInputs: false,
         
         focusBlur:     true,
@@ -964,7 +964,7 @@
     try {
       box.selectonic( 'option', 'listClass', 'superlalala' );
     } catch (err) {
-      ok( err.message.match(/change.*class.*/), 'Is not allowed to change classnames' );
+      ok( err.message.match(/.*listClass.*once/), 'Is not allowed to change classnames' );
     }
     try {
       box.selectonic( 'option', 'before', 'superlalala' );
