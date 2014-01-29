@@ -1,4 +1,4 @@
-/*! Selectonic - v0.4.0 - 2014-01-12
+/*! Selectonic - v0.4.1 - 2014-01-28
 * https://github.com/anovi/selectonic
 * Copyright (c) 2014 Alexey Novichkov; Licensed MIT */
 (function($, window, undefined) {
@@ -899,8 +899,11 @@
       this._controller( e, params );
       // Recalculate plugin's box and window's scrolls
       this.scroll();
+    } else {
+      params.prevItemsStates = [];
+      this._callEvent('before', e, params);
+      this._callEvent('stop', e, params);
     }
-    return e;
   };
 
 
