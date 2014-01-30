@@ -38,12 +38,17 @@ module.exports = function(grunt) {
     uglify: {
       options: {
         banner: '<%= banner %>',
-        report: 'gzip'
+        // report: 'gzip'
       },
       dist: {
-        src: '<%= concat.dist.dest %>',
-        dest: 'dist/<%= pkg.name %>.min.js'
-      },
+        options: {
+          sourceMap: true,
+          sourceMapName: 'dist/<%= pkg.name %>.min.map'
+        },
+        files:{
+          'dist/<%= pkg.name %>.min.js': '<%= concat.dist.dest %>'
+        }
+      }
     },
     qunit: {
       all: {
