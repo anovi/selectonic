@@ -1,25 +1,6 @@
 (function($, window, undefined) {
   'use strict';
 
-  // For IE compatibility
-  if (typeof Array.prototype.indexOf === 'undefined') {
-    Array.prototype.indexOf = function (searchElement, fromIndex) {
-      if (!this) { throw new TypeError(); }
-      fromIndex = isNaN( fromIndex = +fromIndex ) ? 0 : fromIndex;
-
-      var length = this.length;
-      if ( length === 0 || fromIndex >= length ) { return -1; }
-      if ( fromIndex < 0 ) { fromIndex += length; }
-
-      while (fromIndex < length) {
-        if ( this[fromIndex] === searchElement ) { return fromIndex; }
-        ++fromIndex;
-      }
-      return -1;
-    };
-  }
-
-
   // From Underscore library – http://underscorejs.org/#throttle
   var _throttle = function(func, wait, options) {
     var context, args, result;
@@ -67,9 +48,16 @@
     return this;
   }
 
+  var itContains = function( array, elem ) {
+    if ( array instanceof Array && array.length > 0 && elem !== undefined ) {
+      for (var i = 0; i < array.length; i++) { if (elem === array[i]) {return true;} }
+    }
+    return false;
+  };
+
   Options.checkType = function(val, schema) {
     var type = typeof val, isNullable = val === null && schema.nullable;
-    return ( schema.type instanceof Array ) ? schema.type.indexOf( type ) >= 0 || isNullable : type === schema.type || isNullable;
+    return ( schema.type instanceof Array ) ? itContains(schema.type, type) || isNullable : type === schema.type || isNullable;
   };
 
   Options.prototype.set = function( obj, isNew ) {
@@ -84,7 +72,7 @@
       var val = obj[ option ],
       defOption = schema[ option ];
 
-      if ( defOption !== void 0 ) {
+      if ( defOption !== undefined ) {
         // unchangeable
         if ( defOption.unchangeable && !isNew ) {
           throw new Error( 'Option \"' + option + '\" could be setted once at the begining.' );
@@ -97,7 +85,7 @@
           throw new TypeError( msg );
         }
         // out of values
-        if ( defOption.values && defOption.values.indexOf(val) < 0 ) {
+        if ( defOption.values && !itContains(defOption.values, val) ) {
           throw new RangeError( 'Option \"' + option + '\" only could be in these values: \"' + defOption.values.join('\", \"') + '\".' );
         }
       }
@@ -105,7 +93,7 @@
     // Create new options object
     if ( isNew ) {
       for ( option in schema ) {
-        if ( schema[option].default !== void 0 ) { defaults[option] = schema[option].default; }
+        if ( schema[ option ]['default'] !== undefined ) { defaults[ option ] = schema[ option ]['default']; }
       }
     }
     newOptions = isNew ? $.extend( defaults, obj ) : obj;
@@ -126,42 +114,42 @@
     this._callbacks[ option ] = cb;
   };
 
-  Options.prototype.off = function() {
-    for ( var option in this._callbacks ) { delete this._callbacks[option]; }
+  Options.prototype.off = function( option ) {
+    if ( this._callbacks[ option ] ) { delete this._callbacks[option]; }
   };
 
 
   var schema = {
     // Base
-    filter:         { default:'> *',          type:'string'                                             },
-    multi:          { default:true,           type:'boolean'                                            },
+    filter:         { 'default':'> *',          type:'string'                                             },
+    multi:          { 'default':true,           type:'boolean'                                            },
     // Mouse
-    mouseMode:      { default:'standard',     type:'string', values:['standard','mouseup','toggle'],    },
-    focusBlur:      { default:false,          type:'boolean'                                            },
-    selectionBlur:  { default:false,          type:'boolean'                                            },
-    handle:         { default:null,           type:'string', nullable:true                              },
-    textSelection:  { default:false,          type:'boolean'                                            },
-    focusOnHover:   { default:false,          type:'boolean'                                            },
+    mouseMode:      { 'default':'standard',     type:'string', values:['standard','mouseup','toggle'],    },
+    focusBlur:      { 'default':false,          type:'boolean'                                            },
+    selectionBlur:  { 'default':false,          type:'boolean'                                            },
+    handle:         { 'default':null,           type:'string', nullable:true                              },
+    textSelection:  { 'default':false,          type:'boolean'                                            },
+    focusOnHover:   { 'default':false,          type:'boolean'                                            },
     // Keyboard
-    keyboard:       { default:false,          type:'boolean'                                            },
-    keyboardMode:   { default:'select',       type:'string', values:['select','toggle'],                },
-    autoScroll:     { default:true,           type:['boolean','string']                                 },
-    loop:           { default:false,          type:'boolean'                                            },
-    preventInputs:  { default:true,           type:'boolean'                                            },
+    keyboard:       { 'default':false,          type:'boolean'                                            },
+    keyboardMode:   { 'default':'select',       type:'string', values:['select','toggle'],                },
+    autoScroll:     { 'default':true,           type:['boolean','string']                                 },
+    loop:           { 'default':false,          type:'boolean'                                            },
+    preventInputs:  { 'default':true,           type:'boolean'                                            },
     // Classes
-    listClass:      { default:'j-selectable', type:'string', unchangeable:true                          },
-    focusClass:     { default:'j-focused',    type:'string', unchangeable:true                          },
-    selectedClass:  { default:'j-selected',   type:'string', unchangeable:true                          },
-    disabledClass:  { default:'j-disabled',   type:'string', unchangeable:true                          },
+    listClass:      { 'default':'j-selectable', type:'string', unchangeable:true                          },
+    focusClass:     { 'default':'j-focused',    type:'string', unchangeable:true                          },
+    selectedClass:  { 'default':'j-selected',   type:'string', unchangeable:true                          },
+    disabledClass:  { 'default':'j-disabled',   type:'string', unchangeable:true                          },
     // Callbacks
-    create:         { default:null,           type:'function', nullable:true                            },
-    before:         { default:null,           type:'function', nullable:true                            },
-    focusLost:      { default:null,           type:'function', nullable:true                            },
-    select:         { default:null,           type:'function', nullable:true                            },
-    unselect:       { default:null,           type:'function', nullable:true                            },
-    unselectAll:    { default:null,           type:'function', nullable:true                            },
-    stop:           { default:null,           type:'function', nullable:true                            },
-    destroy:        { default:null,           type:'function', nullable:true                            }
+    create:         { 'default':null,           type:'function', nullable:true                            },
+    before:         { 'default':null,           type:'function', nullable:true                            },
+    focusLost:      { 'default':null,           type:'function', nullable:true                            },
+    select:         { 'default':null,           type:'function', nullable:true                            },
+    unselect:       { 'default':null,           type:'function', nullable:true                            },
+    unselectAll:    { 'default':null,           type:'function', nullable:true                            },
+    stop:           { 'default':null,           type:'function', nullable:true                            },
+    destroy:        { 'default':null,           type:'function', nullable:true                            }
   };
 
   /**

@@ -1,5 +1,23 @@
 (function( $, QUnit ) {
 
+  // For IE compatibility
+  if (typeof Array.prototype.indexOf === 'undefined') {
+    Array.prototype.indexOf = function (searchElement, fromIndex) {
+      if (!this) { throw new TypeError(); }
+      fromIndex = isNaN( fromIndex = +fromIndex ) ? 0 : fromIndex;
+
+      var length = this.length;
+      if ( length === 0 || fromIndex >= length ) { return -1; }
+      if ( fromIndex < 0 ) { fromIndex += length; }
+
+      while (fromIndex < length) {
+        if ( this[fromIndex] === searchElement ) { return fromIndex; }
+        ++fromIndex;
+      }
+      return -1;
+    };
+  }
+
   var _Utils = {},
 
   // Helpers
