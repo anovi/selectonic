@@ -1,27 +1,8 @@
-/*! Selectonic - v0.4.1 - 2014-01-28
+/*! Selectonic - v0.4.2 - 2014-02-02
 * https://github.com/anovi/selectonic
 * Copyright (c) 2014 Alexey Novichkov; Licensed MIT */
 (function($, window, undefined) {
   'use strict';
-
-  // For IE compatibility
-  if (typeof Array.prototype.indexOf === 'undefined') {
-    Array.prototype.indexOf = function (searchElement, fromIndex) {
-      if (!this) { throw new TypeError(); }
-      fromIndex = isNaN( fromIndex = +fromIndex ) ? 0 : fromIndex;
-
-      var length = this.length;
-      if ( length === 0 || fromIndex >= length ) { return -1; }
-      if ( fromIndex < 0 ) { fromIndex += length; }
-
-      while (fromIndex < length) {
-        if ( this[fromIndex] === searchElement ) { return fromIndex; }
-        ++fromIndex;
-      }
-      return -1;
-    };
-  }
-
 
   // From Underscore library – http://underscorejs.org/#throttle
   var _throttle = function(func, wait, options) {
@@ -54,12 +35,132 @@
 
   $document = $( window.document );
 
+  /**
+  @class Options
+  @constructor
+  @for Selectonic
+  @param {Object} schema Options schema.
+  @param {Object} initial Initial options, will be mixed with schema's defaults.
+  **/ 
+  function Options ( schema, initial ) {
+    if ( typeof schema !== 'object' ) { throw new TypeError('First argument must be an object with scheme of default options.'); }
+    this._schema    = schema;
+    this._options   = {};
+    this._callbacks = {};
+    this.set( initial, true );
+    return this;
+  }
 
-  /* 
-  Constructor
-  element – html element
-  options – plugin initial options
-  */
+  var itContains = function( array, elem ) {
+    if ( array instanceof Array && array.length > 0 && elem !== undefined ) {
+      for (var i = 0; i < array.length; i++) { if (elem === array[i]) {return true;} }
+    }
+    return false;
+  };
+
+  Options.checkType = function(val, schema) {
+    var type = typeof val, isNullable = val === null && schema.nullable;
+    return ( schema.type instanceof Array ) ? itContains(schema.type, type) || isNullable : type === schema.type || isNullable;
+  };
+
+  Options.prototype.set = function( obj, isNew ) {
+    var schema = this._schema,
+    newOptions = isNew ? {} : this.get(),
+    defaults = {},
+    option, callback;
+    obj = obj || {};
+
+    // Check options
+    for ( option in obj ) {
+      var val = obj[ option ],
+      defOption = schema[ option ];
+
+      if ( defOption !== undefined ) {
+        // unchangeable
+        if ( defOption.unchangeable && !isNew ) {
+          throw new Error( 'Option \"' + option + '\" could be setted once at the begining.' );
+        }
+        // wrong type
+        if ( !Options.checkType(val, defOption) ) {
+          var msg = 'Option \"' + option + '\" must be ' +
+            ( defOption.type instanceof Array ? defOption.type.join(', ') : defOption.type ) +
+            ( defOption.nullable ? ' or null.' : '.' );
+          throw new TypeError( msg );
+        }
+        // out of values
+        if ( defOption.values && !itContains(defOption.values, val) ) {
+          throw new RangeError( 'Option \"' + option + '\" only could be in these values: \"' + defOption.values.join('\", \"') + '\".' );
+        }
+      }
+    }
+    // Create new options object
+    if ( isNew ) {
+      for ( option in schema ) {
+        if ( schema[ option ]['default'] !== undefined ) { defaults[ option ] = schema[ option ]['default']; }
+      }
+    }
+    newOptions = isNew ? $.extend( defaults, obj ) : obj;
+    // Callbacks
+    for ( option in obj ) {
+      if ( (callback = this._callbacks[option]) ) {
+        obj[option] = callback.call( this, obj[option] );
+      }
+    }
+    this._options = $.extend( this._options, newOptions );
+  };
+
+  Options.prototype.get = function( opt ) {
+    return opt ? this._options[ opt ] : $.extend( {}, this._options );
+  };
+
+  Options.prototype.on = function( option, cb ) {
+    this._callbacks[ option ] = cb;
+  };
+
+  Options.prototype.off = function( option ) {
+    if ( this._callbacks[ option ] ) { delete this._callbacks[option]; }
+  };
+
+
+  var schema = {
+    // Base
+    filter:         { 'default':'> *',          type:'string'                                             },
+    multi:          { 'default':true,           type:'boolean'                                            },
+    // Mouse
+    mouseMode:      { 'default':'standard',     type:'string', values:['standard','mouseup','toggle'],    },
+    focusBlur:      { 'default':false,          type:'boolean'                                            },
+    selectionBlur:  { 'default':false,          type:'boolean'                                            },
+    handle:         { 'default':null,           type:'string', nullable:true                              },
+    textSelection:  { 'default':false,          type:'boolean'                                            },
+    focusOnHover:   { 'default':false,          type:'boolean'                                            },
+    // Keyboard
+    keyboard:       { 'default':false,          type:'boolean'                                            },
+    keyboardMode:   { 'default':'select',       type:'string', values:['select','toggle'],                },
+    autoScroll:     { 'default':true,           type:['boolean','string']                                 },
+    loop:           { 'default':false,          type:'boolean'                                            },
+    preventInputs:  { 'default':true,           type:'boolean'                                            },
+    // Classes
+    listClass:      { 'default':'j-selectable', type:'string', unchangeable:true                          },
+    focusClass:     { 'default':'j-focused',    type:'string', unchangeable:true                          },
+    selectedClass:  { 'default':'j-selected',   type:'string', unchangeable:true                          },
+    disabledClass:  { 'default':'j-disabled',   type:'string', unchangeable:true                          },
+    // Callbacks
+    create:         { 'default':null,           type:'function', nullable:true                            },
+    before:         { 'default':null,           type:'function', nullable:true                            },
+    focusLost:      { 'default':null,           type:'function', nullable:true                            },
+    select:         { 'default':null,           type:'function', nullable:true                            },
+    unselect:       { 'default':null,           type:'function', nullable:true                            },
+    unselectAll:    { 'default':null,           type:'function', nullable:true                            },
+    stop:           { 'default':null,           type:'function', nullable:true                            },
+    destroy:        { 'default':null,           type:'function', nullable:true                            }
+  };
+
+  /**
+  @class Selectonic
+  @constructor
+  @param {HTMLElement} element
+  @param {Object} options will be mixed with default options
+  **/ 
   function Plugin( element, options ) {
     this._name      = Plugin.pluginName;
     this.el         = element;
@@ -68,51 +169,35 @@
     this._selected  = 0;    // Amount of selected items
     this._isEnable  = true; // Flag that plugin is enabled - used by handlers
     this._keyModes  = {};   // to saving holding keys
-    this.options    = {};
-    
-    var initialOptions = $.extend( {}, Plugin.defaults, (options || {}) );
-    this._setOptions( initialOptions );
+    this.options    = new Options( schema, options );
+
+    var _this = this;
+    this.options.on('filter', function( value ) {
+      // Cache items selector to compare it with clicked elements
+      _this._itemsSelector = '.' + _this.options.get('listClass') + ' ' + value;
+      return value;
+    });
+    this.options.on('autoScroll', function( value ) {
+      _this._setScrolledElem( value ); // Set scrollable containter
+      return value;
+    });
+    this._itemsSelector = '.' + this.options.get('listClass') + ' ' + this.options.get('filter');
+    this._setScrolledElem( this.options.get('autoScroll') );
     this._init();
   }
 
-  Plugin.pluginName     = 'selectonic';
-  Plugin.keyCode        = { DOWN:40, UP:38, SHIFT:16, END:35, HOME:36, PAGE_DOWN:34, PAGE_UP:33, A:65, SPACE:32, ENTER:13 };
-  Plugin.optionsEvents  = ['create','before','focusLost','select','unselect','unselectAll','stop','destroy'];
-  Plugin.optionsStrings = ['filter','mouseMode','keyboardMode','listClass','focusClass','selectedClass','disabledClass','handle'];
-  Plugin.defaults       = {
-    // Base
-    filter:         '> *',
-    multi:          true,
-    // Mouse
-    mouseMode:      ['standard','mouseup','toggle'],
-    focusBlur:      false,
-    selectionBlur:  false,
-    handle:         null,
-    textSelection:  false,
-    focusOnHover:   false,
-    // Keyboard
-    keyboard:       false,
-    keyboardMode:   ['select','toggle'],
-    autoScroll:     true,
-    loop:           false,
-    preventInputs:  true,
-    // Classes
-    listClass:      'j-selectable',
-    focusClass:     'j-focused',
-    selectedClass:  'j-selected',
-    disabledClass:  'j-disabled',
-    // Callbacks
-    create:         null,
-    before:         null,
-    focusLost:      null,
-    select:         null,
-    unselect:       null,
-    unselectAll:    null,
-    stop:           null,
-    destroy:        null
-  };
+  Plugin.pluginName = 'selectonic';
+  Plugin.keyCode    = { DOWN:40, UP:38, SHIFT:16, END:35, HOME:36, PAGE_DOWN:34, PAGE_UP:33, A:65, SPACE:32, ENTER:13 };
 
-  // Get plugin's data object:
+  
+  /**
+  Gets plugin's data object
+  @param {HTMLElement} el
+  @method getDataObject
+  @static
+  @private
+  @return {Object} Selectonic instance.
+  **/ 
   Plugin.getDataObject = function( el ) {
     return $( el ).data( 'plugin_' + Plugin.pluginName );
   };
@@ -124,100 +209,25 @@
   Core
 
   */
+  /**
+  Initialisation method.
+  @method _init
+  @private
+  **/
   Plugin.prototype._init = function() {
-    this.$el.addClass( this.options.listClass );           // Add class to box
+    this.$el.addClass( this.options.get('listClass') );           // Add class to box
     this._bindEvents();                                    // Attach handlers6
     this.$el.data( 'plugin_' + Plugin.pluginName, this );  // Save plugin's instance
     this._callEvent('create');                             // Callback
   };
 
 
-  Plugin.prototype._setOptions = function() {
-    var option, newOptions, isFunction, options = {}, _this = this;
-    
-    if ( arguments.length === 2 ) {
-      // First arg is name of option and a second is a value
-      options[arguments[ 0 ]] = arguments[1];
-    } else {
-      // options hash
-      if ( $.isPlainObject(options) ) {
-        options = arguments[0];
-      } else {
-        throw new Error('Format of \"option\" could be: \"option\" or \"option\",\"name\" or \"option\",\"name\",val or \"option\",{}');
-      }
-    }
-
-    // Ensure that actions are strings
-    $.each( Plugin.optionsStrings, function(index, name) {
-      option = options[ name ];
-      if( option ) {
-        var pos = ['mouseMode','event','keyboardMode'].indexOf( name );
-        
-        // default option
-        if ( $.isArray( option ) && pos >= 0 && option === Plugin.defaults[name] ) {
-          options[ name ] = option[0];
-
-        // string option with finite values
-        } else if ( pos >= 0) {
-          var values = Plugin.defaults[ name ];
-          if ( values.indexOf( $.trim(String(option)) ) < 0 ) {
-            throw new RangeError( 'Option \"' + name + '\" only could be in these values: \"' + values.join('\", \"') + '\".' );
-          }
-
-        } else {
-          options[ name ] = $.trim( String(option) );
-        }
-        // If it's working list and is attempt to change classes
-        if ( _this._itemsSelector &&
-          (name === 'listClass' ||
-           name === 'focusClass' ||
-           name === 'selectedClass' ||
-           name === 'disabledClass')
-        ) { throw new Error( 'Sorry, it\'s not allowed to dynamically change classnames!' ); }
-      }
-    });
-
-    // Ensure that callbacks options are functions
-    $.each( Plugin.optionsEvents, function(index, name) {
-      option = options[name];
-      if( void 0 === option ) { return; }
-      isFunction = $.isFunction( option );
-      if ( !isFunction && null !== option ) {
-        throw new TypeError( 'Option \"' + name + '\" should be a function or \"null\"!' );
-      }
-    });
-
-    newOptions = $.extend( {}, this.options, options );
-    // Cache items selector to compare it with clicked elements
-    // Plugin's class name + Item selector
-    this._itemsSelector = '.' + newOptions.listClass + ' ' + newOptions.filter;
-
-    // Set scrollable containter
-    if ( options.autoScroll !== void 0 ) { this._setScrolledElem( options.autoScroll ); }
-    this.options = newOptions;
-  };
-
-
-  Plugin.prototype._destroy = function() {
-    this._callEvent('destroy');
-    this._unbindEvents();
-    if ( this._focusHoverTimeout ) { clearTimeout(this._focusHoverTimeout); }
-    // remove class and property
-    if( this.ui.focus ) {
-      $(this.ui.focus).removeClass( this.options.focusClass );
-      delete this.ui.focus;
-    }
-    // find items and remove class
-    if( this._selected > 0 ) {
-      this.getSelected().removeClass( this.options.selectedClass );
-    }
-    this.$el.removeClass( this.options.disabledClass );
-    this.$el.removeClass( this.options.listClass );
-    delete this._scrolledElem;
-    delete this.ui.solidInitialElem;
-  };
-
-
+  /**
+  Set scrollable container.
+  @method _setScrolledElem
+  @private
+  @param {String|HTMLElement} selector Element or selector as scrollable elem.
+  **/
   Plugin.prototype._setScrolledElem = function( selector ) {
     var elem;
 
@@ -238,6 +248,14 @@
   };
 
 
+  /**
+  Cancel list changes in the current cycle or prevent them
+  if called in `before` callback.
+  @method _cancel
+  @private
+  @param {Object} event Event object.
+  @param {Object} params Current params.
+  **/
   Plugin.prototype._cancel = function( e, params ) {
     if ( params.wasCancelled ) { return; }
     params.isCancellation = this._isPrevented = true;
@@ -263,26 +281,25 @@
   };
 
   
-  // Attath handlers
+  /**
+  Attath handlers for plugin instace.
+  @method _bindEvents
+  @private
+  **/
   Plugin.prototype._bindEvents = function() {
     var _this = this, name = this._name;
 
-    // Handler for mouse events
     this._mouseEvent = function(e) {
       if ( _this._isEnable ) { _this._mouseHandler.call(_this, e); }
-      return e;
     };
-    // Handler for keyboard events
     this._keyboardEvent = function(e) {
-      if( _this.options.keyboard && _this._isEnable ) { _this._keyHandler.call(_this, e); }
+      if( _this.options.get('keyboard') && _this._isEnable ) { _this._keyHandler.call(_this, e); }
     };
-    // Handler for selection start
     this._selectstartEvent = function() {
-      if ( !_this.options.textSelection ) { return false; }
+      if ( !_this.options.get('textSelection') ) { return false; }
     };
-    // Handler for mousemove
     this._mousemoveEvent = _throttle( function(e) {
-      if( _this._isEnable && _this.options.focusOnHover ) { _this._mousemoveHandler.call(_this, e); }
+      if( _this._isEnable && _this.options.get('focusOnHover') ) { _this._mousemoveHandler.call(_this, e); }
     }, 20);
 
     $document.on( 'keydown.'+name       ,this._keyboardEvent    );
@@ -295,7 +312,11 @@
   };
 
   
-  // Detach handlers
+  /**
+  Detach instance handlers.
+  @method _unbindEvents
+  @private
+  **/
   Plugin.prototype._unbindEvents = function() {
     var name = this._name;
     $document.off( 'keydown.'+name       ,this._keyboardEvent    );
@@ -308,11 +329,17 @@
   };
 
 
-  // Get item, that was clicked
-  // or null, if click was not on an item
+  /**
+  Gets item, that was clicked
+  or null, if click was not on an item
+  @method _getTarget
+  @private
+  @param {Object} event Event object.
+  @return {HTMLElement|null} Targeted element if it has found of null.
+  **/
   Plugin.prototype._getTarget = function( e ) {
     var elem = e.target,
-      handle = this.options.handle,
+      handle = this.options.get('handle'),
       $elem, target, handleElem;
 
     // While plugin's element or top of the DOM is achieved
@@ -320,16 +347,10 @@
       $elem = $(elem);
       // Set context, because old (< 1.10.0) versions of jQuery gives wrong result.
       $elem.context = window.document;
-      // If item matches to selector
       if( $elem.is(this._itemsSelector) ) { target = elem; }
-      // If handle option is ON and that elem match to handle's selector
       if( handle && $elem.is(handle) ) { handleElem = elem; }
-      // Get parent element
       elem = elem.parentNode;
     }
-
-    // If handle option is ON and it was found
-    // and item of this list was clicked
     if( handle && elem && handleElem ) {
       return target;
 
@@ -342,6 +363,16 @@
   };
 
 
+  /**
+  Getter for list's items.
+  @method _getItems
+  @private
+  @param {Object} params Current params.
+  @param {String} [target] Find 'next' 'prev' 'pageup' 'pagedown' item 
+    relative to `elem` argument or 'first' or 'last' item of the list.
+  @param {HTMLElement} [elem] Element.
+  @return {jQuery object|null} Found element wrapped in jQuery or null.
+  **/
   Plugin.prototype._getItems = function( params, target, elem ) {
     var items;
 
@@ -366,33 +397,41 @@
       return this._getNextPageElem( params, target, elem);
 
     case 'first':
-      items = params.allItems ? params.allItems : this.$el.find( this.options.filter );
+      items = params.allItems ? params.allItems : this.$el.find( this.options.get('filter') );
       params.allItems = items;
       return items.first();
 
     case 'last':
-      items = params.allItems ? params.allItems : this.$el.find( this.options.filter );
+      items = params.allItems ? params.allItems : this.$el.find( this.options.get('filter') );
       params.allItems = items;
       return items.last();
 
     default:
-      items = params.allItems ? params.allItems : this.$el.find( this.options.filter );
+      items = params.allItems ? params.allItems : this.$el.find( this.options.get('filter') );
       params.allItems = items;
       return items;
     }
   };
 
 
+  /**
+  * Used by _getItems
+  * There are two versions of algorithm for searching target depending from page height.
+  * Page's height is window's or _scrolledElem's height ( which is smaller ).
+  * Both algorithms runs loop until total item's height reaches maximum possible value,
+  * but lower than page height. But first version gets from DOM one next element every cycle,
+  * and second version gets all items at the beginning and then iterates through them.
+  * And it set allItems and rangeStart and rangeEnd for params. So second version used only 
+  * for Shift+pageUp/Down cases for performance and can be enabled by flag params.isShiftPageRange.
+  *
+  * @method _getNextPageElem
+  * @private
+  * @param {Object} params Current params.
+  * @param {String} target Find 'pageup' 'pagedown' item relative to `elem` argument.
+  * @param {HTMLElement} elem Element.
+  * @return {jQuery object|null} Found element wrapped in jQuery or null.
+  **/ 
   Plugin.prototype._getNextPageElem = function( params, target, elem ) {
-    /*
-    * There are two versions of algorithm for searching target depending from page height.
-    * Page's height is window's or _scrolledElem's height ( which is smaller ).
-    * Both algorithms runs loop until total item's height reaches maximum possible value,
-    * but lower than page height. But first version gets from DOM one next element every cycle,
-    * and second version gets all items at the beginning and then iterates through them.
-    * And it set allItems and rangeStart and rangeEnd for params. So second version used only 
-    * for Shift+pageUp/Down cases for performance and can be enabled by flag params.isShiftPageRange.
-    */ 
     var
       _isOptimized  = params.isShiftPageRange, 
       box           = this._scrolledElem || this.el,
@@ -438,7 +477,6 @@
           if ( _isOptimized ) { params.rangeEnd = currentIndex; }
           return $candidate;
         }
-        
         if ( _isOptimized ) { params.rangeEnd = currentIndex - direction; }
         return $current;
       }
@@ -449,9 +487,18 @@
   };
 
 
-  // Creates ui object and calls a callback from the options
+  /**
+  Calls callbacks functions from options if it exists:
+  - Creates ui object with target, focus and changed items
+  - Passess to callback event or null and ui object
+  @method _callEvent
+  @private
+  @param {String} name Name of callback.
+  @param {Object|null} event Event object
+  @param {Object} params Current params.
+  **/
   Plugin.prototype._callEvent = function( name, event, params ) {
-    var ui, cb = this.options[name];
+    var ui, cb = this.options.get(name);
     if ( !cb ) { return; }
     if ( name === 'create' || name === 'destroy' ) {
       return cb.call( this.$el );
@@ -471,9 +518,15 @@
   };
 
 
-  // Control the state of a list.
-  // It can be called from _keyHandler, _mouseHandler or API
-  // and does list's changes depending from reseived params.
+  /**
+  Control the state of a list.
+  It can be called from _keyHandler, _mouseHandler or API
+  and does list's changes depending from reseived params.
+  @method _controller
+  @private
+  @param {Object|null} event Event object
+  @param {Object} params Current params.
+  **/
   Plugin.prototype._controller = function( e, params ) {
     var method;
     params.changedItems = [];
@@ -481,23 +534,16 @@
     delete this._isPrevented;
     this._callEvent('before', e, params);
 
-    // If cancel flag is true any changes will be prevented
     if( this._isPrevented ) {
       this._cancel( e, params );
       this._stop( e, params );
       return;
     }
-
-    // Flag - if there was any selected items before changes
     params.wasSelected = ( this._selected > 0 );
-
-    // Flag - if target was selectedl before changes
     if ( params.target && params.isTargetWasSelected === undefined ) {
       params.isTargetWasSelected = this._getIsSelected( params.target );
     }
     
-    // If it is range selection
-    // and target is selected and equal to focus
     if (
       params.isRangeSelect && 
       params.isTargetWasSelected && 
@@ -533,8 +579,7 @@
       // Select item. Callback 'select' calls only if target was selected
       this._select( e, params, params.items, params.isTargetWasSelected );
 
-    // if there are selected items and 'selectionBlur' option is true
-    } else if ( !params.target && this._selected > 0 && this.options.selectionBlur ) { 
+    } else if ( !params.target && this._selected > 0 && this.options.get('selectionBlur') ) { 
       this._unselectAll( e, params );
     }
 
@@ -542,20 +587,26 @@
       this._callEvent('unselectAll', e, params);
     }
     
-    // Cache old focus
     params.prevFocus = ( this.ui.focus ) ? this.ui.focus : null;
 
-    // it is not item of list was clicked and 'focusBlur' option is ON
-    if ( !params.target && this.options.focusBlur ) {
+    if ( !params.target && this.options.get('focusBlur') ) {
       this._blur(e, params);
-    // or set new
-    } else if ( params.target && !params.wasCancelled ) { this._setFocus( params.target ); }
+    } else if ( params.target && !params.wasCancelled ) {
+      this._setFocus( params.target );
+    }
     
     // End of the cycle
     this._stop( e, params );
   };
 
 
+  /**
+  Used by _controller to perform range selection in the list.
+  @method _perfomRangeSelect
+  @private
+  @param {Object|null} event Event object
+  @param {Object} params Current params.
+  **/
   Plugin.prototype._perfomRangeSelect = function( e, params ) {
     var method, items, initial, beforeStart, afterStart, beforeEnd, afterEnd,
 
@@ -610,24 +661,27 @@
   };
 
 
+  /**
+  Changes items states from unselected to selected and back.
+  Used by _select and _unselect methods.
+  @method _changeItemsStates
+  @private
+  @param {jQuery collection} items jQuery collection of items that will be change.
+  @param {Nubmer} delta Ss number to modifying selection counter
+    above zero `delta` from _select/ sub zero `delta` from _unselect
+  @param {Object} params Current params.
+  **/
   Plugin.prototype._changeItemsStates = function( items, delta, params ) {
-    /*
-    'delta' is number to modifying selection counter
-    above zero 'delta' from _select/ sub zero 'delta' from _unselect
-    */
     var
       aboveZero = delta > 0,
       changedItems = [],
       _this = this;
-
-    // For each of items calls function in scope plugin's object instance
+    
     $( items ).each( function( index, item ) {
-
       var
         isSelected = _this._getIsSelected( item ),
         // Condition - if item is not selected (_select) or items is selected (_unselect)
         selectedCondition = ( aboveZero ) ? !isSelected : isSelected,
-        // if the item is target and is selected
         isSelectedTarget = ( item === params.target && params.isTargetWasSelected );
 
       /*  If it's unselecting and item is selected target,
@@ -637,29 +691,32 @@
       if (isSelectedTarget && !aboveZero && !params.isMultiSelect && !params.isRangeSelect ) { return; }
 
       if( selectedCondition ) {
-        // it is not cancellation
         if( !params.isCancellation ) {
           changedItems.push( item );
           params.prevItemsStates.push( isSelected );
         }
         _this._selected += delta;
       }
-
-      // Finally add/remove class to item
-      $( item ).toggleClass( _this.options.selectedClass, aboveZero );
+      $( item ).toggleClass( _this.options.get('selectedClass'), aboveZero );
 
     });
 
-    // If it is not cancellation
     if( !params.isCancellation ) {
       params[ (aboveZero?'selected':'unselected') ] = $( changedItems );
-
-      // Add items of this iteration to array of changed elements
       params.changedItems = params.changedItems.concat( changedItems );
     }
   };
 
 
+  /**
+  Select items.
+  @method _select
+  @private
+  @param {Object} event Event object.
+  @param {Object} params Current params.
+  @param {jQuery collection} items jQuery collection of items that will be selected.
+  @param {Boolean} [silent] If true then `select` callback won't be called.
+  **/
   Plugin.prototype._select = function( e, params, items, silent ) {
     this._changeItemsStates( items, 1, params);
     if ( !silent ) { this._callEvent('select', e, params); }
@@ -667,6 +724,15 @@
   };
 
 
+  /**
+  Unselect items.
+  @method _unselect
+  @private
+  @param {Object} event Event object.
+  @param {Object} params Current params.
+  @param {jQuery collection} items jQuery collection of items that will be unselected.
+  @param {Boolean} [silent] If true then `unselect` callback won't be called.
+  **/
   Plugin.prototype._unselect = function( e, params, items, silent ) {
     this._changeItemsStates( items, -1, params );
     if ( !silent ) { this._callEvent('unselect', e, params); }
@@ -674,29 +740,45 @@
   };
 
 
+  /**
+  Unselect all items.
+  @method _unselectAll
+  @private
+  @param {Object} event Event object.
+  @param {Object} params Current params.
+  **/
   Plugin.prototype._unselectAll = function( e, params ) {
     var isOnlyTargetSelected, items;
     if( !this._selected || this._selected === 0 ) { return; }
 
-    // Get all items
     items = this._getItems( params );
     // target was only selected item ( flag used for preventing callback )
     isOnlyTargetSelected = params.target && params.isTargetWasSelected && this._selected === 1;
-
     this._unselect( e, params, items, isOnlyTargetSelected );
   };
 
 
+  /**
+  Turn on multiselect mode.
+  @method _multiSelect
+  @private
+  @param {Object} params Current params.
+  **/
   Plugin.prototype._multiSelect = function( params ) {
     params.isMultiSelect = true;
     return $( params.target );
   };
 
 
+  /**
+  Turn on range select mode.
+  @method _rangeSelect
+  @private
+  @param {Object} params Current params.
+  @return {jQuery object} Range of items between focused and targeted elements (included).
+  **/
   Plugin.prototype._rangeSelect = function( params ) {
     params.isRangeSelect = true;
-
-    // If target is focused item - do nothing
     if( params.target === this.ui.focus ) { return $( params.target ); }
 
     // Detect position of target and focus in the list
@@ -715,59 +797,84 @@
   };
 
 
+  /**
+  Check if element is selected.
+  @method _getIsSelected
+  @private
+  @param {HTMLElement} target
+  @return {Boolean} true if element is selected.
+  **/
   Plugin.prototype._getIsSelected = function( target ) {
-    var options = this.options;
-    
-    // If was get one item or nothing
+    var options = this.options.get();
+
     if( $(target).length <= 1 ) {
       return $( target ).hasClass( options.selectedClass );
     }
-    // Return array of boolean values
     return $.map( $(target), function( item ) {
       return $( item ).hasClass( options.selectedClass );
     });
   };
 
 
+  /**
+  Clears focus of the list.
+  @method _blur
+  @private
+  @param {Object} event Event object.
+  @param {Object} params Current params.
+  @param {Boolean} [silent] If true `focusLost` callback won't be called.
+  **/
   Plugin.prototype._blur = function( e, params, silent ) {
-    // If is not silent mode and focus exists
     if( !silent && this.ui.focus ) {
-      // Callback of focus lost
       this._callEvent('focusLost', e, params);
     }
     if( this.ui.focus ) {
-      // remove class from focus
-      $( this.ui.focus ).removeClass( this.options.focusClass );
+      $( this.ui.focus ).removeClass( this.options.get('focusClass') );
       delete this.ui.focus;
     }
   };
 
 
+  /**
+  Set focus of the list.
+  @method _setFocus
+  @private
+  @param {HTMLElement} target
+  **/
   Plugin.prototype._setFocus = function( target ) {
     if( !target ) { return; }
-
     if( this.ui.focus ) {
-      // remove class from old focused item
-      $(this.ui.focus).removeClass( this.options.focusClass );
+      $(this.ui.focus).removeClass( this.options.get('focusClass') );
     }
-
-    this.ui.focus = target; // set new focus
-    $( this.ui.focus ).addClass( this.options.focusClass );
-
+    this.ui.focus = target;
+    $( this.ui.focus ).addClass( this.options.get('focusClass') );
     return this.ui.focus;
   };
 
 
+  /**
+  Finalization function of every cycle.
+  @method _stop
+  @private
+  @param {Object} event Event object.
+  @param {Object} params Current params.
+  **/
   Plugin.prototype._stop = function( e, params ) {
     this._callEvent('stop', e, params);
     if( this._isPrevented ) { this._cancel( e, params ); }
   };
 
 
+  /**
+  Checks if object is HTMLElement or element wrapped in jQuery
+  @method _checkIfElem
+  @private
+  @param {any} selector
+  @return {Boolean} True if `selector` is element of jQuery element.
+  **/
   Plugin.prototype._checkIfElem = function( selector ) {
     var res;
     if ( selector && (selector.jquery || selector.nodeType) ) {
-      // Filter received elements through cached selecter
       selector = selector.jquery ? selector : $( selector );
       res = selector.filter( this._itemsSelector );
       return res.length > 0 ? res : null;
@@ -776,13 +883,20 @@
   };
 
 
+  /**
+  Checks if argument is a string and selector.
+  @method _checkIfSelector
+  @private
+  @param {any} selector
+  @return {jQuery object|false|null} If `selector` is a selector 
+    and match some elements then method return these elements.
+  **/
   Plugin.prototype._checkIfSelector = function( selector ) {
     var res;
-    // Test for selector
     if ( selector && typeof selector === 'string') {
       res = this.$el
-        .find( selector ) // Try to find
-        .filter( this._itemsSelector ); // Filter found resents
+        .find( selector )
+        .filter( this._itemsSelector );
       return ( res.jquery && res.length > 0 ) ? res : null;
     
     } else { return false; }
@@ -795,13 +909,18 @@
   Keyboard
 
   */
+  /**
+  Handles keyboard events and calls _controller.
+  @method _keyHandler
+  @private
+  @param {Object} event
+  **/
   Plugin.prototype._keyHandler = function( e ) {
 
-    if ( !this.options.keyboard ) { return; }
-    if ( this.options.preventInputs && e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') { return; }
+    if ( !this.options.get('keyboard') ) { return; }
+    if ( this.options.get('preventInputs') && e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') { return; }
     var key = e.which, params = {}, target, isAllSelect, direction, page;
 
-    // Key is released
     if (e.type === 'keyup') {
       if ( key === Plugin.keyCode.SHIFT ) {
         delete this._shiftModeAction; // while SHIFT is held
@@ -809,8 +928,7 @@
       }
       return;
     }
-    // If CTRL+A or CMD+A pressed and multi option is true
-    if ( key === Plugin.keyCode.A && this._isMulti(e) && this.options.multi ) {
+    if ( key === Plugin.keyCode.A && this._isMulti(e) && this.options.get('multi') ) {
       target = this._getItems( params );
       isAllSelect = true; // flag that is all items is selected
 
@@ -819,58 +937,56 @@
       switch ( key ) {
       case Plugin.keyCode.DOWN:
         direction = 'next';
-        target = this._findNextTarget( 'next', params );
+        target    = this._findNextTarget( 'next', params );
         break;
       case Plugin.keyCode.UP:
         direction = 'prev';
-        target = this._findNextTarget( 'prev', params );
+        target    = this._findNextTarget( 'prev', params );
         break;
       case Plugin.keyCode.HOME:
         direction = 'prev';
-        target = this._getItems( params, 'first');
+        target    = this._getItems( params, 'first');
         break;
       case Plugin.keyCode.END:
         direction = 'next';
-        target = this._getItems( params, 'last');
+        target    = this._getItems( params, 'last');
         break;
       case Plugin.keyCode.PAGE_DOWN:
       case Plugin.keyCode.PAGE_UP:
         var isDown = key === Plugin.keyCode.PAGE_DOWN;
         direction  = isDown ? 'next' : 'prev';
         page       = isDown ? 'pagedown' : 'pageup';
-        params.isShiftPageRange = this.options.multi && e.shiftKey && !isAllSelect;
+        params.isShiftPageRange = this.options.get('multi') && e.shiftKey && !isAllSelect;
         target = this._findNextTarget( page, params );
         break;
       case Plugin.keyCode.SPACE:
         target = $( this.ui.focus );
         break;
       case Plugin.keyCode.ENTER:
-        if ( !this.options.multi ) { target = $( this.ui.focus ); }
+        if ( !this.options.get('multi') ) { target = $( this.ui.focus ); }
         break;
       }
     }
-    // If target has found, that one of the arrows was pressed
+    // One of the arrows was pressed
     if ( target && target.length > 0 ) {
-      // Disable default window scroll by arrow keys
-      e.preventDefault();
+      e.preventDefault(); // Disable default window scroll by arrow keys
 
-      // Set target to found target item
       params.target = target[0];
       params.items = target;
 
       // Toggle mode
-      if ( this.options.keyboardMode === 'toggle' ) {
+      if ( this.options.get('keyboardMode') === 'toggle' ) {
         if (
           key !== Plugin.keyCode.SPACE &&
-          !(key === Plugin.keyCode.ENTER && !this.options.multi)
+          !(key === Plugin.keyCode.ENTER && !this.options.get('multi'))
         ) {
           delete params.items;
         }
-        if ( this.options.multi ) { params.isMultiSelect = true; }
+        if ( this.options.get('multi') ) { params.isMultiSelect = true; }
         delete this.ui.solidInitialElem;
 
       // SHIFT mode
-      } else if ( this.ui.focus && this.options.multi && e.shiftKey && !isAllSelect ) {
+      } else if ( this.ui.focus && this.options.get('multi') && e.shiftKey && !isAllSelect ) {
         // Call multiVariator or rangeVariator – 
         // it set all needed params depends from arguments
         if (
@@ -895,9 +1011,7 @@
       } else {
         delete this.ui.solidInitialElem;
       }
-      // There are all necessary attributes now
       this._controller( e, params );
-      // Recalculate plugin's box and window's scrolls
       this.scroll();
     } else {
       params.prevItemsStates = [];
@@ -907,6 +1021,12 @@
   };
 
 
+  /**
+  Sets range or multi modes for selection depending from `params`.
+  @method _rangeVariator
+  @private
+  @param {Object} params Current params.
+  **/
   Plugin.prototype._rangeVariator = function( params ) {
     var
       isFocusSelected = void 0 === params.isFocusSelected ? this._getIsSelected( this.ui.focus ) : params.isFocusSelected,
@@ -917,7 +1037,6 @@
       params.target = params.items = this.ui.focus;
       params.isMultiSelect = true;
     } else {
-      // Range will be selected
       params.items = this._rangeSelect( params );
       // Cut target from end or begin because we do not want to unselect it
       if ( isTargetSelected ) {
@@ -929,19 +1048,23 @@
   };
 
 
-  /*  FOR SHIFT MODE ONLY
-  *   - turns on shift mode flags
-  *   - solves different situations with shift+arrows selection
-  */
+  /**
+  FOR SHIFT MODE ONLY
+  - turns on shift mode flags
+  - solves different situations with shift+arrows selection
+  @method _multiVariator
+  @private
+  @param {Object} params Current params.
+  @param {Number} key Keycode of pressed key.
+  @param {String} direction Indicates 'prev' or 'next' item to find.
+  @param {HTMLElement} target Targeted element.
+  **/
   Plugin.prototype._multiVariator = function( params, key, direction, target ) {
     var
-      // Check if focus or target is selected
       isFocusSelected       = void 0 === params.isFocusSelected ? this._getIsSelected( this.ui.focus ) : params.isFocusSelected,
       isTargetSelected      = this._getIsSelected( params.target ),
-      // Search for next target in the same direction
-      afterTarget           = this._getItems( params, direction, target ),
-      // Check if second target is selected (flag)
-      isSelectedAfterTarget = this._getIsSelected( afterTarget ),
+      afterTarget           = this._getItems( params, direction, target ), // Search for next target in the same direction
+      isSelectedAfterTarget = this._getIsSelected( afterTarget ), // Check if second target is selected
       prevItem;
 
     // If another arrow was pressed that means the direction was changed
@@ -955,7 +1078,6 @@
 
       // While first unselected item will be found or edge of the list will be reached
       while( this._getIsSelected(params.items) && params.items.length > 0 ) {
-        // get next item in the same direction
         prevItem = params.items;
         params.items = this._getItems( params, direction, params.items );
       }
@@ -986,10 +1108,16 @@
   };
 
 
-  /*
+  /**
   Used by _keyHandler
   when UP, DOWN, PageUp, PageDown keys has pressed — find target or first/last element of the list
-  */
+  @method _findNextTarget
+  @private
+  @param {String} direction Indicates 'prev' 'next' or 'pageup' 'pagedown' item to find 
+    relative to the focused element.
+  @param {Object} params Current params.
+  @return {jQuery object|null} Targeted element.
+  **/
   Plugin.prototype._findNextTarget = function( direction, params ) {
     var edge = ( direction === 'next' || direction === "pagedown" ) ? 'first' : 'last', // extreme item of the list
       // If there is the focus - try to find next sibling
@@ -997,18 +1125,20 @@
       res = ( this.ui.focus ) ? this._getItems( params, direction, this.ui.focus ) : this._getItems( params, edge );
 
     // If has not found any items and loop option is ON
-    if ( (res === null || res.length === 0) && this.options.loop ) {
-      // find extreme item
-      res = this._getItems( params, edge );
+    if ( (res === null || res.length === 0) && this.options.get('loop') ) {
+      res = this._getItems( params, edge ); // find extreme item
     }
     return res;
   };
 
 
-  /*
-  Used by _keyHandler or public scroll method
-  Recalculate scroll position, if focused item is not visible in container viewport
-  */
+  /**
+  Used by _keyHandler or public scroll method.
+  Recalculates scroll position, if focused item is not visible in container's viewport.
+  @method _refreshBoxScroll
+  @private
+  @param {HTMLElement} box Container whose scroll will be calculated for showing focused element.
+  **/
   Plugin.prototype._refreshBoxScroll = function( box ) {
     var
       $box          = $( box ),
@@ -1033,11 +1163,23 @@
   };
 
 
+  /**
+  @method _isRange
+  @private
+  @param {Object} event Event object.
+  @return {Boolean} True if it's range select with shift.
+  **/
   Plugin.prototype._isRange = function( e ) {
     return e.shiftKey || (e.shiftKey && e.ctrlKey) || (e.shiftKey && e.metaKey);
   };
 
 
+  /**
+  @method _isMulti
+  @private
+  @param {Object} event Event object.
+  @return {Boolean} True if it's multi-select with ctrl.
+  **/
   Plugin.prototype._isMulti = function( e ) {
     return e.ctrlKey || e.metaKey;
   };
@@ -1049,10 +1191,15 @@
   Mouse
 
   */
-  // Mouse events handler - set necessary paramaters and calls _controller
+  /**
+  Mouse events handler - set necessary paramaters and calls _controller
+  @method _mouseHandler
+  @private
+  @param {Object} event Event object.
+  **/
   Plugin.prototype._mouseHandler = function( e ) {
     var
-    options = this.options,
+    options = this.options.get(),
     type    = e.type,
     isMulti = this._isMulti(e),
     isRange = this._isRange(e),
@@ -1060,26 +1207,20 @@
     target;
 
     /* Find target: */
-    // mouseup mode
     if (options.mouseMode === 'mouseup') {
       if (type === 'mouseup') {
         target = this._getTarget(e);
-
-      // if mousedown event was at the item then do nothing
       } else if ( type === 'mousedown' || (target = this._getTarget(e)) ) {
         return;
-
       } else { return; }
 
     // because this click may be after mousedown in multi/range mode
     } else if (type === 'click' && !this._mousedownOnItem) {
       return;
 
-    // mousedown and click only
     } else if (type === 'mousedown' || type === 'click') {
       target = this._getTarget(e);
-      // Mousedown on item 
-      // Except cases mathes all conditions:
+      // Mousedown on item, except cases mathes all conditions:
       // - in multi/range modes 
       // - with multi:true
       // - with mouseMode:'standard'
@@ -1091,8 +1232,6 @@
     } else { return; }
 
     params.target = target;
-
-    // If multi options is true and target exists
     if( options.multi && params.target ) {
 
       // Range select
@@ -1111,7 +1250,12 @@
   };
 
 
-  // Tries to find target under cursor when mouse moves
+  /**
+  Tries to find target under cursor when mouse moves
+  @method _mousemoveHandler
+  @private
+  @param {Object} event Event object.
+  **/
   Plugin.prototype._mousemoveHandler = function( e ) {
     if ( this._isFocusOnHoverPrevented ) { return; }
     var params = {}, target;
@@ -1131,8 +1275,13 @@
   };
 
 
-  // Prevent changing focus under cursor when user moves focus by keyboard
-  // and list's element changes scroll position
+  /**
+  Prevent changing focus under cursor when user moves focus by keyboard
+  and list's element changes scroll position
+
+  @method _preventMouseMove
+  @private
+  **/
   Plugin.prototype._preventMouseMove = function() {
     var _this = this;
     this._isFocusOnHoverPrevented = true;
@@ -1155,7 +1304,14 @@
   Public API
 
   */
-  Plugin._callPublicMethod = function( options ) {
+  /**
+  Searches public method and calls it if exists.
+
+  @method _callPublicMethod
+  @private
+  @param {String} method
+  **/
+  Plugin._callPublicMethod = function( method ) {
     var
       _this = Plugin.getDataObject( this ),
       publicMethod, args;
@@ -1164,25 +1320,35 @@
       throw new Error( 'Element ' + this[0] + ' has no plugin ' + Plugin.pluginName );
     }
     // Try to find method
-    if ( _this[options] && $.isFunction(_this[options]) ) {
-      publicMethod = _this[options];
+    if ( _this[method] && $.isFunction(_this[method]) ) {
+      publicMethod = _this[method];
     }
     // If method exists and it is not private – call him
-    if ( publicMethod && $.isFunction( publicMethod ) && options.charAt(0) !== '_' ) {
+    if ( publicMethod && $.isFunction( publicMethod ) && method.charAt(0) !== '_' ) {
       args = Array.prototype.slice.call( arguments );
       args.shift();
       return publicMethod.apply( _this, args );
     }
-    // Nothing has found
-    throw new Error( 'Plugin \"' + Plugin.pluginName + '\" has no method \"' + options + '\"' );
+    throw new Error( 'Plugin \"' + Plugin.pluginName + '\" has no method \"' + method + '\"' );
   };
 
 
+  /**
+  @method isEnabled
+  @return {Boolean} True if selectable list is enabled.
+  **/
   Plugin.prototype.isEnabled = function() {
     return this._isEnable;
   };
 
 
+  /**
+  Sets plugin's instance options
+  @method option
+  @param {Object|String} option Hash of options or option name.
+  @param {any} [value] Value of an option if first argument is a string.
+  @return Option value if option name was passed as one argument.
+  **/
   Plugin.prototype.option = function( option, value ) {
     var args = arguments.length;
 
@@ -1190,34 +1356,60 @@
     if( args > 0 && typeof option === 'string' ) {
       // Received strings and any argument
       if( args > 1 ) {
-        this._setOptions( option, value );
+        var opt = {};
+        opt[option] = value;
+        this.options.set( opt );
         return this.$el;
       }
       // Return value of option
-      return this.options[ option ];
+      return this.options.get( option );
     }
     // Received object
     if( args > 0 && $.isPlainObject( option ) ) {
-      this._setOptions( option );
+      this.options.set( option );
       return this.$el;
     }
     // Return whole options object
     if ( args === 0 ) {
-      return $.extend({}, this.options);
+      return this.options.get();
     } else {
       throw new Error('Format of \"option\" could be: \"option\" or \"option\",\"name\" or \"option\",\"name\",val or \"option\",{}');
     }
   };
 
 
+  /**
+  Destroy plugin's instance. Detaches event handlers and removes HTML-classes.
+  @method destroy
+  **/
   Plugin.prototype.destroy = function() {
-    this._destroy();
+    this._callEvent('destroy');
+    this._unbindEvents();
+    if ( this._focusHoverTimeout ) { clearTimeout(this._focusHoverTimeout); }
+    if( this.ui.focus ) {
+      $(this.ui.focus).removeClass( this.options.get('focusClass') );
+      delete this.ui.focus;
+    }
+    if( this._selected > 0 ) {
+      this.getSelected().removeClass( this.options.get('selectedClass') );
+    }
+    this.$el.removeClass( this.options.get('disabledClass') );
+    this.$el.removeClass( this.options.get('listClass') );
+    this.options.off();
+    delete this.options;
+    delete this._scrolledElem;
+    delete this.ui.solidInitialElem;
     this.$el.removeData( 'plugin_' + Plugin.pluginName );
     this.$el = null;
     return;
   };
 
 
+  /**
+  Select one or move items in the list.
+  @method select
+  @param {HTMLElement|String} selector A selector or element to select.
+  **/
   Plugin.prototype.select = function( selector ) {
     var $elem;
 
@@ -1237,16 +1429,25 @@
   };
 
 
+  /**
+  Clear focus and selection of list's options allow that.
+  @method blur
+  **/
   Plugin.prototype.blur = function() {
-    // Call _controller with null instead of event object
     this._controller( null, { target: null } );
     return this.$el;
   };
 
 
+  /**
+  Get selected items in the list.
+  @method getSelected
+  @param {Boolean} [getIds] If true method return array of IDs of selcted elements.
+  @return {Array|jQuery object} Selected items as jQuery collection or array of IDs.
+  **/
   Plugin.prototype.getSelected = function( getIds ) {
     var arr,
-    items = this._getItems({}).filter( '.' + this.options.selectedClass );
+    items = this._getItems({}).filter( '.' + this.options.get('selectedClass') );
 
     if( getIds ) {
       arr = [];
@@ -1257,11 +1458,21 @@
   };
 
 
+  /**
+  Get array of IDs of  selected items in the list.
+  @method getSelectedId
+  @return {Array} Selected items as array of IDs.
+  **/
   Plugin.prototype.getSelectedId = function() {
     return this.getSelected( true );
   };
 
 
+  /**
+  Focus one element.
+  @method focus
+  @param {HTMLElement|String} selector A selector or element to select.
+  **/
   Plugin.prototype.focus = function( selector ) {
     var $elem;
 
@@ -1280,6 +1491,10 @@
   };
 
 
+  /**
+  Recalculate scroll of scrollable element and window.
+  @method scroll
+  **/
   Plugin.prototype.scroll = function() {
     this._preventMouseMove();
     if (this.ui.focus) {
@@ -1289,34 +1504,48 @@
   };
 
 
+  /**
+  Enable disabled selectable list.
+  @method enable
+  **/
   Plugin.prototype.enable = function() {
     this._isEnable = true;
-    this.$el.removeClass( this.options.disabledClass );
+    this.$el.removeClass( this.options.get('disabledClass') );
     return this.$el;
   };
 
 
+  /**
+  Disable selectable list.
+  @method disable
+  **/
   Plugin.prototype.disable = function() {
     this._isEnable = false;
     this._isHovered = false;
-    this.$el.addClass( this.options.disabledClass );
+    this.$el.addClass( this.options.get('disabledClass') );
     return this.$el;
   };
 
 
+  /**
+  Cancel changes in current cycle. This method
+  only could be invoked from callbacks function.
+  If called from `before` callback, then it will premvent any changes.
+  @method cancel
+  **/
   Plugin.prototype.cancel = function() {
     this._isPrevented = true;
     return this.$el;
   };
 
-
+  /**
+  Refresh plugins data. Sould be used when some selected
+  items was deleted from the list.
+  @method refresh
+  **/
   Plugin.prototype.refresh = function() {
     var focus = this.ui.focus;
-
-    // Check if focus is visible
     if ( focus && !$(focus).is(':visible') ) { delete this.ui.focus; }
-
-    // Recalculate amount of selected items
     this._selected = ( this.getSelected() ).length;
     return this.$el;
   };
@@ -1329,12 +1558,9 @@
 
   */
   $.fn[Plugin.pluginName] = function( options ) {
-
-    // If string passed
     if( options && options.charAt ) {
       return Plugin._callPublicMethod.apply( this, arguments );
     }
-    // Create instances
     return this.each( function(key, elem) {
       if ( !Plugin.getDataObject(elem) ) { new Plugin( elem, options ); }
     });
