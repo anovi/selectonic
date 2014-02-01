@@ -220,31 +220,6 @@
 
 
   /**
-  Detaches event handlers and removes HTML-classes.
-  @method _destroy
-  @private
-  **/
-  Plugin.prototype._destroy = function() {
-    this._callEvent('destroy');
-    this._unbindEvents();
-    if ( this._focusHoverTimeout ) { clearTimeout(this._focusHoverTimeout); }
-    if( this.ui.focus ) {
-      $(this.ui.focus).removeClass( this.options.get('focusClass') );
-      delete this.ui.focus;
-    }
-    if( this._selected > 0 ) {
-      this.getSelected().removeClass( this.options.get('selectedClass') );
-    }
-    this.$el.removeClass( this.options.get('disabledClass') );
-    this.$el.removeClass( this.options.get('listClass') );
-    this.options.off();
-    delete this.options;
-    delete this._scrolledElem;
-    delete this.ui.solidInitialElem;
-  };
-
-
-  /**
   Set scrollable container.
   @method _setScrolledElem
   @private
@@ -373,8 +348,6 @@
       if( handle && $elem.is(handle) ) { handleElem = elem; }
       elem = elem.parentNode;
     }
-
-    // If handle option is ON and it was found and item of this list was clicked
     if( handle && elem && handleElem ) {
       return target;
 
@@ -501,7 +474,6 @@
           if ( _isOptimized ) { params.rangeEnd = currentIndex; }
           return $candidate;
         }
-        
         if ( _isOptimized ) { params.rangeEnd = currentIndex - direction; }
         return $current;
       }
@@ -564,9 +536,7 @@
       this._stop( e, params );
       return;
     }
-
     params.wasSelected = ( this._selected > 0 );
-
     if ( params.target && params.isTargetWasSelected === undefined ) {
       params.isTargetWasSelected = this._getIsSelected( params.target );
     }
@@ -606,7 +576,6 @@
       // Select item. Callback 'select' calls only if target was selected
       this._select( e, params, params.items, params.isTargetWasSelected );
 
-    // if there are selected items and 'selectionBlur' option is true
     } else if ( !params.target && this._selected > 0 && this.options.get('selectionBlur') ) { 
       this._unselectAll( e, params );
     }
@@ -615,14 +584,13 @@
       this._callEvent('unselectAll', e, params);
     }
     
-    // Cache old focus
     params.prevFocus = ( this.ui.focus ) ? this.ui.focus : null;
 
-    // it is not item of list was clicked and 'focusBlur' option is ON
     if ( !params.target && this.options.get('focusBlur') ) {
       this._blur(e, params);
-    // or set new
-    } else if ( params.target && !params.wasCancelled ) { this._setFocus( params.target ); }
+    } else if ( params.target && !params.wasCancelled ) {
+      this._setFocus( params.target );
+    }
     
     // End of the cycle
     this._stop( e, params );
@@ -705,15 +673,12 @@
       aboveZero = delta > 0,
       changedItems = [],
       _this = this;
-
-    // For each of items calls function in scope plugin's object instance
+    
     $( items ).each( function( index, item ) {
-
       var
         isSelected = _this._getIsSelected( item ),
         // Condition - if item is not selected (_select) or items is selected (_unselect)
         selectedCondition = ( aboveZero ) ? !isSelected : isSelected,
-        // if the item is target and is selected
         isSelectedTarget = ( item === params.target && params.isTargetWasSelected );
 
       /*  If it's unselecting and item is selected target,
@@ -723,24 +688,18 @@
       if (isSelectedTarget && !aboveZero && !params.isMultiSelect && !params.isRangeSelect ) { return; }
 
       if( selectedCondition ) {
-        // it is not cancellation
         if( !params.isCancellation ) {
           changedItems.push( item );
           params.prevItemsStates.push( isSelected );
         }
         _this._selected += delta;
       }
-
-      // Finally add/remove class to item
       $( item ).toggleClass( _this.options.get('selectedClass'), aboveZero );
 
     });
 
-    // If it is not cancellation
     if( !params.isCancellation ) {
       params[ (aboveZero?'selected':'unselected') ] = $( changedItems );
-
-      // Add items of this iteration to array of changed elements
       params.changedItems = params.changedItems.concat( changedItems );
     }
   };
@@ -789,7 +748,6 @@
     var isOnlyTargetSelected, items;
     if( !this._selected || this._selected === 0 ) { return; }
 
-    // Get all items
     items = this._getItems( params );
     // target was only selected item ( flag used for preventing callback )
     isOnlyTargetSelected = params.target && params.isTargetWasSelected && this._selected === 1;
@@ -818,8 +776,6 @@
   **/
   Plugin.prototype._rangeSelect = function( params ) {
     params.isRangeSelect = true;
-
-    // If target is focused item - do nothing
     if( params.target === this.ui.focus ) { return $( params.target ); }
 
     // Detect position of target and focus in the list
@@ -847,12 +803,10 @@
   **/
   Plugin.prototype._getIsSelected = function( target ) {
     var options = this.options.get();
-    
-    // If was get one item or nothing
+
     if( $(target).length <= 1 ) {
       return $( target ).hasClass( options.selectedClass );
     }
-    // Return array of boolean values
     return $.map( $(target), function( item ) {
       return $( item ).hasClass( options.selectedClass );
     });
@@ -980,19 +934,19 @@
       switch ( key ) {
       case Plugin.keyCode.DOWN:
         direction = 'next';
-        target = this._findNextTarget( 'next', params );
+        target    = this._findNextTarget( 'next', params );
         break;
       case Plugin.keyCode.UP:
         direction = 'prev';
-        target = this._findNextTarget( 'prev', params );
+        target    = this._findNextTarget( 'prev', params );
         break;
       case Plugin.keyCode.HOME:
         direction = 'prev';
-        target = this._getItems( params, 'first');
+        target    = this._getItems( params, 'first');
         break;
       case Plugin.keyCode.END:
         direction = 'next';
-        target = this._getItems( params, 'last');
+        target    = this._getItems( params, 'last');
         break;
       case Plugin.keyCode.PAGE_DOWN:
       case Plugin.keyCode.PAGE_UP:
@@ -1054,9 +1008,7 @@
       } else {
         delete this.ui.solidInitialElem;
       }
-      // There are all necessary attributes now
       this._controller( e, params );
-      // Recalculate plugin's box and window's scrolls
       this.scroll();
     } else {
       params.prevItemsStates = [];
@@ -1082,7 +1034,6 @@
       params.target = params.items = this.ui.focus;
       params.isMultiSelect = true;
     } else {
-      // Range will be selected
       params.items = this._rangeSelect( params );
       // Cut target from end or begin because we do not want to unselect it
       if ( isTargetSelected ) {
@@ -1124,7 +1075,6 @@
 
       // While first unselected item will be found or edge of the list will be reached
       while( this._getIsSelected(params.items) && params.items.length > 0 ) {
-        // get next item in the same direction
         prevItem = params.items;
         params.items = this._getItems( params, direction, params.items );
       }
@@ -1254,22 +1204,17 @@
     target;
 
     /* Find target: */
-    // mouseup mode
     if (options.mouseMode === 'mouseup') {
       if (type === 'mouseup') {
         target = this._getTarget(e);
-
-      // if mousedown event was at the item then do nothing
       } else if ( type === 'mousedown' || (target = this._getTarget(e)) ) {
         return;
-
       } else { return; }
 
     // because this click may be after mousedown in multi/range mode
     } else if (type === 'click' && !this._mousedownOnItem) {
       return;
 
-    // mousedown and click only
     } else if (type === 'mousedown' || type === 'click') {
       target = this._getTarget(e);
       // Mousedown on item, except cases mathes all conditions:
@@ -1284,8 +1229,6 @@
     } else { return; }
 
     params.target = target;
-
-    // If multi options is true and target exists
     if( options.multi && params.target ) {
 
       // Range select
@@ -1383,7 +1326,6 @@
       args.shift();
       return publicMethod.apply( _this, args );
     }
-    // Nothing has found
     throw new Error( 'Plugin \"' + Plugin.pluginName + '\" has no method \"' + method + '\"' );
   };
 
@@ -1434,11 +1376,26 @@
 
 
   /**
-  Destroy plugin's instance.
+  Destroy plugin's instance. Detaches event handlers and removes HTML-classes.
   @method destroy
   **/
   Plugin.prototype.destroy = function() {
-    this._destroy();
+    this._callEvent('destroy');
+    this._unbindEvents();
+    if ( this._focusHoverTimeout ) { clearTimeout(this._focusHoverTimeout); }
+    if( this.ui.focus ) {
+      $(this.ui.focus).removeClass( this.options.get('focusClass') );
+      delete this.ui.focus;
+    }
+    if( this._selected > 0 ) {
+      this.getSelected().removeClass( this.options.get('selectedClass') );
+    }
+    this.$el.removeClass( this.options.get('disabledClass') );
+    this.$el.removeClass( this.options.get('listClass') );
+    this.options.off();
+    delete this.options;
+    delete this._scrolledElem;
+    delete this.ui.solidInitialElem;
     this.$el.removeData( 'plugin_' + Plugin.pluginName );
     this.$el = null;
     return;
@@ -1474,7 +1431,6 @@
   @method blur
   **/
   Plugin.prototype.blur = function() {
-    // Call _controller with null instead of event object
     this._controller( null, { target: null } );
     return this.$el;
   };
@@ -1599,12 +1555,9 @@
 
   */
   $.fn[Plugin.pluginName] = function( options ) {
-
-    // If string passed
     if( options && options.charAt ) {
       return Plugin._callPublicMethod.apply( this, arguments );
     }
-    // Create instances
     return this.each( function(key, elem) {
       if ( !Plugin.getDataObject(elem) ) { new Plugin( elem, options ); }
     });
