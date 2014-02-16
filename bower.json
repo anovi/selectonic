@@ -49,6 +49,7 @@
     "jquery-1.10.2": "jquery#1.10.2",
     "jquery-2.0.3": "jquery#2.0.3",
     "benchmark": "~1.0.0",
-    "syn": "~0.0.2"
+    "syn": "~0.0.2",
+    "zepto-full": "~1.1.2"
   }
 }
