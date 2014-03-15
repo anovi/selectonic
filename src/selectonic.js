@@ -875,7 +875,7 @@
   **/
   Plugin.prototype._checkIfElem = function( selector ) {
     var res;
-    if ( selector && (selector.jquery || selector.nodeType) ) {
+    if ( selector && (selector.jquery || selector.zepto || selector.nodeType) ) {
       selector = (selector.jquery||selector.zepto) ? selector : $( selector );
       res = selector.filter( this._itemsSelector );
       return res.length > 0 ? res : null;

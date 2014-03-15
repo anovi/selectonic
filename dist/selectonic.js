@@ -1,8 +1,12 @@
-/*! Selectonic - v0.4.2 - 2014-02-02
+/*! Selectonic - v0.4.2 - 2014-02-16
 * https://github.com/anovi/selectonic
 * Copyright (c) 2014 Alexey Novichkov; Licensed MIT */
 (function($, window, undefined) {
   'use strict';
+
+  // Library detection
+  var outerHeight = $.fn.jquery ? 'outerHeight' : 'height';
+  if ( !$.fn.jquery && !$.fn.zepto ) { $.fn.zepto = true; }
 
   // From Underscore library – http://underscorejs.org/#throttle
   var _throttle = function(func, wait, options) {
@@ -436,11 +440,11 @@
       _isOptimized  = params.isShiftPageRange, 
       box           = this._scrolledElem || this.el,
       boxViewHeight = box.clientHeight,
-      winViewHeight = $( window ).outerHeight(),
+      winViewHeight = $( window )[outerHeight](),
       $current      = $( elem ),
       isBoxBigger   = boxViewHeight > winViewHeight,
       pageHeight    = isBoxBigger ? winViewHeight : boxViewHeight,
-      itemHeight    = $current.outerHeight(),
+      itemHeight    = $current[outerHeight](),
       currentHeight = itemHeight,
       itemsHeight   = itemHeight,
       direction     = (target === 'pageup') ? 'prev' : 'next',
@@ -461,14 +465,14 @@
         $candidate = this._getItems( params, direction, $current );  
       }
       
-      if ( !$candidate && $current.is( elem ) ) {
+      if ( !$candidate && $current[0] === elem ) {
         break;
       } else if ( !$candidate  ) {
         if ( _isOptimized ) { params.rangeEnd = currentIndex - direction; }
         return $current;
       }
       
-      candHeight = $candidate.outerHeight();
+      candHeight = $candidate[outerHeight]();
       itemsHeight = itemsHeight + candHeight;
       
       if ( itemsHeight > pageHeight ) {
@@ -874,8 +878,8 @@
   **/
   Plugin.prototype._checkIfElem = function( selector ) {
     var res;
-    if ( selector && (selector.jquery || selector.nodeType) ) {
-      selector = selector.jquery ? selector : $( selector );
+    if ( selector && (selector.jquery || selector.zepto || selector.nodeType) ) {
+      selector = (selector.jquery||selector.zepto) ? selector : $( selector );
       res = selector.filter( this._itemsSelector );
       return res.length > 0 ? res : null;
     
@@ -1143,12 +1147,12 @@
     var
       $box          = $( box ),
       isWindow      = box === window,
-      boxViewHeight = isWindow ? $box.outerHeight() : box.clientHeight,
+      boxViewHeight = isWindow ? $box[outerHeight]() : box.clientHeight,
       boxScrollTop  = $box.scrollTop(),
       boxWindowY    = isWindow ? 0 : $box.offset().top,
 
       $item         = $( this.ui.focus ),
-      itemHeight    = $item.outerHeight(),
+      itemHeight    = $item[outerHeight](),
       itemBoxTop    = isWindow ? $item.offset().top : ( $item.offset().top - boxWindowY + boxScrollTop );
 
     if ( itemBoxTop < boxScrollTop ) {
@@ -1478,7 +1482,7 @@
 
     if ( arguments.length > 0 ) {
       $elem = ($elem = this._checkIfElem( selector )) === false ? this._checkIfSelector( selector ) : $elem;
-      if ( $elem && $elem.jquery ) {
+      if ( $elem && ($elem.jquery || $elem.zepto) ) {
         this._setFocus( $elem[0] );
 
       } else if ( $elem === false) {
@@ -1566,4 +1570,18 @@
     });
   };
 
-}(jQuery, window));
+
+
+
+
+  /* DEVELOPMENT */
+  /* DO NOT CHANGE THIS!
+  All code below DEVELOPMENT line ( except closing function wrapper )
+  will be automatically removed for production by grunt replace task */
+  window[ '_' + Plugin.pluginName ] = Plugin;
+
+
+
+
+
+}((window.jQuery || window.Zepto), window));
