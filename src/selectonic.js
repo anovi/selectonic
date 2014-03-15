@@ -2,7 +2,7 @@
   'use strict';
 
   // Library detection
-  var outerHeight = $.fn.jquery ? 'outerHeight' : 'height';
+  var outerHeight = $.fn.outerHeight ? 'outerHeight' : 'height';
   if ( !$.fn.jquery && !$.fn.zepto ) { $.fn.zepto = true; }
 
   // From Underscore library – http://underscorejs.org/#throttle
@@ -34,6 +34,16 @@
     };
   },
 
+  __indexOf = Array.prototype.indexOf || function(item) {
+    for (var i = 0, l = this.length; i < l; i++) { if (this[i] === item) {return i;}  }
+    return -1;
+  },
+
+  itContains = function( array, elem ) {
+    if (array instanceof Array) { return __indexOf.call(array, elem) >= 0; }
+    return false;
+  },
+
   $document = $( window.document );
 
   /**
@@ -43,21 +53,14 @@
   @param {Object} schema Options schema.
   @param {Object} initial Initial options, will be mixed with schema's defaults.
   **/ 
-  function Options ( schema, initial ) {
+  function Options ( schema, defaults, initial ) {
     if ( typeof schema !== 'object' ) { throw new TypeError('First argument must be an object with scheme of default options.'); }
     this._schema    = schema;
     this._options   = {};
     this._callbacks = {};
-    this.set( initial, true );
+    this.set( $.extend({}, defaults, initial||{}), true );
     return this;
   }
-
-  var itContains = function( array, elem ) {
-    if ( array instanceof Array && array.length > 0 && elem !== undefined ) {
-      for (var i = 0; i < array.length; i++) { if (elem === array[i]) {return true;} }
-    }
-    return false;
-  };
 
   Options.checkType = function(val, schema) {
     var type = typeof val, isNullable = val === null && schema.nullable;
@@ -65,11 +68,7 @@
   };
 
   Options.prototype.set = function( obj, isNew ) {
-    var schema = this._schema,
-    newOptions = isNew ? {} : this.get(),
-    defaults = {},
-    option, callback;
-    obj = obj || {};
+    var schema = this._schema, option, callback;
 
     // Check options
     for ( option in obj ) {
@@ -94,20 +93,13 @@
         }
       }
     }
-    // Create new options object
-    if ( isNew ) {
-      for ( option in schema ) {
-        if ( schema[ option ]['default'] !== undefined ) { defaults[ option ] = schema[ option ]['default']; }
-      }
-    }
-    newOptions = isNew ? $.extend( defaults, obj ) : obj;
     // Callbacks
     for ( option in obj ) {
       if ( (callback = this._callbacks[option]) ) {
         obj[option] = callback.call( this, obj[option] );
       }
     }
-    this._options = $.extend( this._options, newOptions );
+    this._options = $.extend( this._options, obj );
   };
 
   Options.prototype.get = function( opt ) {
@@ -123,38 +115,69 @@
   };
 
 
-  var schema = {
-    // Base
-    filter:         { 'default':'> *',          type:'string'                                             },
-    multi:          { 'default':true,           type:'boolean'                                            },
+  var defaults = {
+    filter:         '> *',
+    multi:          true,
     // Mouse
-    mouseMode:      { 'default':'standard',     type:'string', values:['standard','mouseup','toggle'],    },
-    focusBlur:      { 'default':false,          type:'boolean'                                            },
-    selectionBlur:  { 'default':false,          type:'boolean'                                            },
-    handle:         { 'default':null,           type:'string', nullable:true                              },
-    textSelection:  { 'default':false,          type:'boolean'                                            },
-    focusOnHover:   { 'default':false,          type:'boolean'                                            },
+    mouseMode:      'standard',
+    focusBlur:      false,
+    selectionBlur:  false,
+    handle:         null,
+    textSelection:  false,
+    focusOnHover:   false,
     // Keyboard
-    keyboard:       { 'default':false,          type:'boolean'                                            },
-    keyboardMode:   { 'default':'select',       type:'string', values:['select','toggle'],                },
-    autoScroll:     { 'default':true,           type:['boolean','string']                                 },
-    loop:           { 'default':false,          type:'boolean'                                            },
-    preventInputs:  { 'default':true,           type:'boolean'                                            },
+    keyboard:       false,
+    keyboardMode:   'select',
+    autoScroll:     true,
+    loop:           false,
+    preventInputs:  true,
     // Classes
-    listClass:      { 'default':'j-selectable', type:'string', unchangeable:true                          },
-    focusClass:     { 'default':'j-focused',    type:'string', unchangeable:true                          },
-    selectedClass:  { 'default':'j-selected',   type:'string', unchangeable:true                          },
-    disabledClass:  { 'default':'j-disabled',   type:'string', unchangeable:true                          },
+    listClass:      'j-selectable',
+    focusClass:     'j-focused',
+    selectedClass:  'j-selected',
+    disabledClass:  'j-disabled',
     // Callbacks
-    create:         { 'default':null,           type:'function', nullable:true                            },
-    before:         { 'default':null,           type:'function', nullable:true                            },
-    focusLost:      { 'default':null,           type:'function', nullable:true                            },
-    select:         { 'default':null,           type:'function', nullable:true                            },
-    unselect:       { 'default':null,           type:'function', nullable:true                            },
-    unselectAll:    { 'default':null,           type:'function', nullable:true                            },
-    stop:           { 'default':null,           type:'function', nullable:true                            },
-    destroy:        { 'default':null,           type:'function', nullable:true                            }
+    create:         null,
+    before:         null,
+    focusLost:      null,
+    select:         null,
+    unselect:       null,
+    unselectAll:    null,
+    stop:           null,
+    destroy:        null
+  },
+  schema = {
+    filter:         { type:'string'                                         },
+    multi:          { type:'boolean'                                        },
+    // Mouse
+    mouseMode:      { type:'string', values:['standard','mouseup','toggle'] },
+    focusBlur:      { type:'boolean'                                        },
+    selectionBlur:  { type:'boolean'                                        },
+    handle:         { type:'string', nullable:true                          },
+    textSelection:  { type:'boolean'                                        },
+    focusOnHover:   { type:'boolean'                                        },
+    // Keyboard
+    keyboard:       { type:'boolean'                                        },
+    keyboardMode:   { type:'string', values:['select','toggle'],            },
+    autoScroll:     { type:['boolean','string']                             },
+    loop:           { type:'boolean'                                        },
+    preventInputs:  { type:'boolean'                                        },
+    // Classes
+    listClass:      { type:'string', unchangeable:true                      },
+    focusClass:     { type:'string', unchangeable:true                      },
+    selectedClass:  { type:'string', unchangeable:true                      },
+    disabledClass:  { type:'string', unchangeable:true                      },
+    // Callbacks
+    create:         { type:'function', nullable:true                        },
+    before:         { type:'function', nullable:true                        },
+    focusLost:      { type:'function', nullable:true                        },
+    select:         { type:'function', nullable:true                        },
+    unselect:       { type:'function', nullable:true                        },
+    unselectAll:    { type:'function', nullable:true                        },
+    stop:           { type:'function', nullable:true                        },
+    destroy:        { type:'function', nullable:true                        }
   };
+
 
   /**
   @class Selectonic
@@ -170,7 +193,7 @@
     this._selected  = 0;    // Amount of selected items
     this._isEnable  = true; // Flag that plugin is enabled - used by handlers
     this._keyModes  = {};   // to saving holding keys
-    this.options    = new Options( schema, options );
+    this.options    = new Options( schema, defaults, options );
 
     var _this = this;
     this.options.on('filter', function( value ) {
@@ -879,7 +902,6 @@
       selector = (selector.jquery||selector.zepto) ? selector : $( selector );
       res = selector.filter( this._itemsSelector );
       return res.length > 0 ? res : null;
-    
     } else { return false; }
   };
 
@@ -1566,6 +1588,8 @@
       if ( !Plugin.getDataObject(elem) ) { new Plugin( elem, options ); }
     });
   };
+
+  $.fn[Plugin.pluginName].defaults = defaults;
 
 
 
