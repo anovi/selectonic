@@ -66,6 +66,9 @@
       case 'Mouseup mouseMode':
         $.extend( advanced, { mouseMode: 'mouseup' });
         break;
+      case 'Blurable mouseup':
+        $.extend( advanced, { mouseMode: 'mouseup', focusBlur:true });
+        break;
       case 'Filter odd mousedown':
       case 'Filter odd up/down':
         $.extend( advanced, { filter: 'li:odd', selectionBlur: true });
@@ -223,6 +226,17 @@
     assert
       .selectedFocus( el(4) )
       .selectedCount(1);
+  });
+
+  test( 'Blurable mouseup', 3, function() {
+    var el = elems();
+    el(3).trigger('mouseup');
+    assert.selectedFocus( el(3) );
+    
+    $('body').trigger('mousedown');
+    assert
+      .selected( el(3) )
+      .notFocused( el(3) );
   });
 
   test( 'Toggle mouseMode', 4, function() {

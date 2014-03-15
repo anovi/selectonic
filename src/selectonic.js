@@ -1,7 +1,7 @@
 (function($, window, undefined) {
   'use strict';
 
-  // Library detection
+  // Method for getting full elements height, jQuery's outerHeight is like Zepto's height
   var outerHeight = $.fn.outerHeight ? 'outerHeight' : 'height';
   if ( !$.fn.jquery && !$.fn.zepto ) { $.fn.zepto = true; }
 
@@ -54,7 +54,6 @@
   @param {Object} initial Initial options, will be mixed with schema's defaults.
   **/ 
   function Options ( schema, defaults, initial ) {
-    if ( typeof schema !== 'object' ) { throw new TypeError('First argument must be an object with scheme of default options.'); }
     this._schema    = schema;
     this._options   = {};
     this._callbacks = {};
@@ -62,34 +61,34 @@
     return this;
   }
 
-  Options.checkType = function(val, schema) {
+  Options.isCorrectType = function(val, schema) {
     var type = typeof val, isNullable = val === null && schema.nullable;
     return ( schema.type instanceof Array ) ? itContains(schema.type, type) || isNullable : type === schema.type || isNullable;
   };
 
   Options.prototype.set = function( obj, isNew ) {
-    var schema = this._schema, option, callback;
+    var option, callback;
 
     // Check options
     for ( option in obj ) {
       var val = obj[ option ],
-      defOption = schema[ option ];
+      schema = this._schema[ option ];
 
-      if ( defOption !== undefined ) {
+      if ( schema !== undefined ) {
         // unchangeable
-        if ( defOption.unchangeable && !isNew ) {
+        if ( schema.unchangeable && !isNew ) {
           throw new Error( 'Option \"' + option + '\" could be setted once at the begining.' );
         }
         // wrong type
-        if ( !Options.checkType(val, defOption) ) {
+        if ( !Options.isCorrectType(val, schema) ) {
           var msg = 'Option \"' + option + '\" must be ' +
-            ( defOption.type instanceof Array ? defOption.type.join(', ') : defOption.type ) +
-            ( defOption.nullable ? ' or null.' : '.' );
+            ( schema.type instanceof Array ? schema.type.join(', ') : schema.type ) +
+            ( schema.nullable ? ' or null.' : '.' );
           throw new TypeError( msg );
         }
         // out of values
-        if ( defOption.values && !itContains(defOption.values, val) ) {
-          throw new RangeError( 'Option \"' + option + '\" only could be in these values: \"' + defOption.values.join('\", \"') + '\".' );
+        if ( schema.values && !itContains(schema.values, val) ) {
+          throw new RangeError( 'Option \"' + option + '\" only could be in these values: \"' + schema.values.join('\", \"') + '\".' );
         }
       }
     }
@@ -331,7 +330,7 @@
     $document.on( 'mousemove.'+name     ,this._mousemoveEvent   );
     $document.on( 'click.'+name         ,this._mouseEvent       );
     $document.on( 'mousedown.'+name     ,this._mouseEvent       );
-    this.$el.on(  'mouseup.'+name       ,this._mouseEvent       );
+    $document.on( 'mouseup.'+name       ,this._mouseEvent       );
     this.$el.on(  'selectstart.'+name   ,this._selectstartEvent );
   };
 
@@ -348,7 +347,7 @@
     $document.off( 'mousemove.'+name     ,this._mousemoveEvent   );
     $document.off( 'click.'+name         ,this._mouseEvent       );
     $document.off( 'mousedown.'+name     ,this._mouseEvent       );
-    this.$el.off(  'mouseup.'+name       ,this._mouseEvent       );
+    $document.off( 'mouseup.'+name       ,this._mouseEvent       );
     this.$el.off(  'selectstart.'+name   ,this._selectstartEvent );
   };
 
@@ -1226,35 +1225,30 @@
     type    = e.type,
     isMulti = this._isMulti(e),
     isRange = this._isRange(e),
-    params  = {},
-    target;
+    params  = {};
 
     /* Find target: */
     if (options.mouseMode === 'mouseup') {
-      if (type === 'mouseup') {
-        target = this._getTarget(e);
-      } else if ( type === 'mousedown' || (target = this._getTarget(e)) ) {
-        return;
-      } else { return; }
+      params.target = this._getTarget(e);
+      if ( type === 'click' || (params.target && type === 'mousedown')) { return; }
 
     // because this click may be after mousedown in multi/range mode
     } else if (type === 'click' && !this._mousedownOnItem) {
       return;
 
     } else if (type === 'mousedown' || type === 'click') {
-      target = this._getTarget(e);
+      params.target = this._getTarget(e);
       // Mousedown on item, except cases mathes all conditions:
       // - in multi/range modes 
       // - with multi:true
       // - with mouseMode:'standard'
-      if (type === 'mousedown' && target && !( options.multi && (isMulti||isRange) && options.mouseMode === 'standard' )) {
-        this._mousedownOnItem = target;
+      if (type === 'mousedown' && params.target && !( options.multi && (isMulti||isRange) && options.mouseMode === 'standard' )) {
+        this._mousedownOnItem = params.target;
         return;
       }
       delete this._mousedownOnItem;
     } else { return; }
 
-    params.target = target;
     if( options.multi && params.target ) {
 
       // Range select

@@ -123,10 +123,12 @@
 <!-- <script src="../bower_components/jquery-1.7.0/jquery.js"></script> -->
 <!-- <script src="../bower_components/jquery-1.9.0/jquery.js"></script> -->
 <script src="../bower_components/jquery-1.10.2/jquery.js"></script>
+<!-- <script src="../bower_components/zepto-full/zepto.js"></script> -->
 <script src="selectonic.js"></script>
 
 <script type="text/javascript">
     function say ( text ) { if ( say.enable ) {console.log( text ); } }
+    say.enable = true;
 
     var mainList;
     var elem = $('li:eq(2)');
@@ -174,7 +176,9 @@
         destroy: function() {}
     });
 
-    // say.enable = true;
+    say( mainList.selectonic('option') );
+
+    
 </script>
 
 </body>
