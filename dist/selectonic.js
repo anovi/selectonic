@@ -1,4 +1,4 @@
-/*! Selectonic - v0.4.2 - 2014-02-02
+/*! Selectonic - v0.4.2 - 2014-06-18
 * https://github.com/anovi/selectonic
 * Copyright (c) 2014 Alexey Novichkov; Licensed MIT */
 (function($, window, undefined) {
@@ -299,7 +299,7 @@
       if ( !_this.options.get('textSelection') ) { return false; }
     };
     this._mousemoveEvent = _throttle( function(e) {
-      if( _this._isEnable && _this.options.get('focusOnHover') ) { _this._mousemoveHandler.call(_this, e); }
+      if( _this._isEnable && _this.options && _this.options.get('focusOnHover') ) { _this._mousemoveHandler.call(_this, e); }
     }, 20);
 
     $document.on( 'keydown.'+name       ,this._keyboardEvent    );
