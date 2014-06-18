@@ -1,6 +1,6 @@
 (function() {
   // Default to the local version.
-  var path = '../bower_components/jquery/jquery.js';
+  var path = '../bower_components/jquery/dist/jquery.js';
   // var path = '../bower_components/jquery-1.10.2/jquery.js';
   // Get any jquery=___ param from the query string.
   var jqversion = location.search.match(/[?&]jquery=(.*?)(?=&|$)/);
