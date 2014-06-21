@@ -1,7 +1,7 @@
 # Selectonic
 [![Build Status](https://travis-ci.org/anovi/selectonic.png?branch=master)](https://travis-ci.org/anovi/selectonic)
 
-jQuery based plugin for making any list of items selectable by mouse and keyboard. It could be usefull in webapp where are different widgets like menus, dropdowns with keyboard input, lists with multiple selection and so on. It maybe too bold for just a simple menu in one place.
+jQuery (Zepto) based plugin for making any list of items selectable by mouse and keyboard. It could be usefull in webapp where are different widgets like menus, dropdowns with keyboard input, lists with multiple selection and so on. It maybe too bold for just a simple menu in one place.
 
 **Features**:
 - Single or multiple selection (uses CSS-classes);
@@ -23,7 +23,7 @@ Download the [production version][min] (_minified_) or the [development version]
 bower install selectonic
 ```
 
-Use it like any jQuery plugin:
+Use it like any jQuery (Zepto) plugin:
 ```javascript
 $(".itemsList").selectonic({
 	multi: true,
@@ -226,6 +226,9 @@ Do not forget some css-styling:
 		</tr>
 	</tbody>
 </table>
+
+### Set default options
+Default options object accessible outside by `$.fn.selectonic.defaults`.
 
 
 ## Callbacks (Events)
@@ -438,5 +441,5 @@ $(elem).selectonic("select", "li:eq(3)");
 
 
 ## Compatibility
-Requires jQuery 1.7+  
-Tested in Firefox, Chrome, Safari, Opera, IE8+
+- Requires **jQuery 1.7+** or **Zepto**
+- Tested in Firefox, Chrome, Safari, Opera, IE8+
