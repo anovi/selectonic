@@ -322,7 +322,7 @@
       if ( !_this.options.get('textSelection') ) { return false; }
     };
     this._mousemoveEvent = _throttle( function(e) {
-      if( _this._isEnable && _this.options.get('focusOnHover') ) { _this._mousemoveHandler.call(_this, e); }
+      if( _this._isEnable && _this.options && _this.options.get('focusOnHover') ) { _this._mousemoveHandler.call(_this, e); }
     }, 20);
 
     $document.on( 'keydown.'+name       ,this._keyboardEvent    );
