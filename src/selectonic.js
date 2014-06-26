@@ -1,5 +1,5 @@
 (function($, window, undefined) {
-  'use strict';
+  'use strict'; // remove this line, this script will be support running on IE6
 
   // From Underscore library – http://underscorejs.org/#throttle
   var _throttle = function(func, wait, options) {
@@ -124,7 +124,7 @@
     filter:         { 'default':'> *',          type:'string'                                             },
     multi:          { 'default':true,           type:'boolean'                                            },
     // Mouse
-    mouseMode:      { 'default':'standard',     type:'string', values:['standard','mouseup','toggle'],    },
+    mouseMode:      { 'default':'standard',     type:'string', values:['standard','mouseup','toggle']     },
     focusBlur:      { 'default':false,          type:'boolean'                                            },
     selectionBlur:  { 'default':false,          type:'boolean'                                            },
     handle:         { 'default':null,           type:'string', nullable:true                              },
@@ -132,7 +132,7 @@
     focusOnHover:   { 'default':false,          type:'boolean'                                            },
     // Keyboard
     keyboard:       { 'default':false,          type:'boolean'                                            },
-    keyboardMode:   { 'default':'select',       type:'string', values:['select','toggle'],                },
+    keyboardMode:   { 'default':'select',       type:'string', values:['select','toggle']                 },
     autoScroll:     { 'default':true,           type:['boolean','string']                                 },
     loop:           { 'default':false,          type:'boolean'                                            },
     preventInputs:  { 'default':true,           type:'boolean'                                            },
