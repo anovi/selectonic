@@ -287,7 +287,7 @@
     var _this = this, name = this._name;
 
     this._mouseEvent = function(e) {
-      if ( _this._isEnable ) { _this._mouseHandler.call(_this, e); }
+      if ( _this._isEnable && e.which === 1) { _this._mouseHandler.call(_this, e); }
     };
     this._keyboardEvent = function(e) {
       if( _this.options.get('keyboard') && _this._isEnable ) { _this._keyHandler.call(_this, e); }
