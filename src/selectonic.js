@@ -1,5 +1,5 @@
 (function($, window, undefined) {
-  'use strict';
+  'use strict'; // remove this line, this script will be support running on IE6
 
   // Method for getting full elements height, jQuery's outerHeight is like Zepto's height
   var outerHeight = $.fn.outerHeight ? 'outerHeight' : 'height';
