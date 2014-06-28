@@ -233,10 +233,10 @@
 
   test( 'Blurable mouseup', 3, function() {
     var el = elems();
-    el(3).trigger('mouseup');
+    el(3).triggerMouseup();
     assert.selectedFocus( el(3) );
     
-    $('body').trigger('mousedown');
+    $('body').triggerMousedown();
     assert
       .selected( el(3) )
       .notFocused( el(3) );
