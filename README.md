@@ -228,7 +228,7 @@ Do not forget some css-styling:
 </table>
 
 ### Set default options
-Default options object accessible outside by `$.fn.selectonic.defaults`.
+Default options object accessible from outside by `$.fn.selectonic.defaults`.
 
 
 ## Callbacks (Events)
