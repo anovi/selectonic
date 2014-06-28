@@ -1,12 +1,8 @@
-<<<<<<< HEAD
-/*! Selectonic - v0.4.3 - 2014-06-21
-=======
-/*! Selectonic - v0.4.4 - 2014-06-28
->>>>>>> master
+/*! Selectonic - v0.5.0 - 2014-06-28
 * https://github.com/anovi/selectonic
 * Copyright (c) 2014 Alexey Novichkov; Licensed MIT */
 (function($, window, undefined) {
-  'use strict';
+  'use strict'; // remove this line, this script will be support running on IE6
 
   // Method for getting full elements height, jQuery's outerHeight is like Zepto's height
   var outerHeight = $.fn.outerHeight ? 'outerHeight' : 'height';
