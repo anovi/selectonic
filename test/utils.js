@@ -84,6 +84,7 @@
 
   $.fn.triggerMousedown = function(mode) {
     var e = $.Event( "mousedown" );
+    e.which = 1;
     if (mode === 'meta' || mode === 'ctrl') { e.metaKey = true; } else if (mode === 'shift') { e.shiftKey = true; }
     this.trigger( e );
     return this;
@@ -91,15 +92,18 @@
 
   $.fn.triggerMouseup = function(mode) {
     var e = $.Event( "mouseup" );
+    e.which = 1;
     if (mode === 'meta' || mode === 'ctrl') { e.metaKey = true; } else if (mode === 'shift') { e.shiftKey = true; }
     this.trigger( e );
     return this;
   };
 
   jQuery.fn.triggerClick = function() {
-    this.trigger('mousedown');
-    this.trigger('mouseup');
-    this.trigger('click');
+    this.triggerMousedown();
+    this.triggerMouseup();
+    var e = $.Event( "click" );
+    e.which = 1;
+    this.trigger( e );
     return this;
   };
 

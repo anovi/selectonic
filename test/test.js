@@ -143,6 +143,7 @@
     elem      = box.find('li:eq(3)'),
     secElem   = box.find('li:eq(5)'),
     e         = $.Event( "mousedown" );
+    e.which = 1;
     e.metaKey = true;
     
     elem.triggerClick();
@@ -156,6 +157,7 @@
 
     elem.triggerClick();
     e = $.Event( "mousedown" );
+    e.which = 1;
     e.metaKey = true;
     elem.trigger( e );
     assert
@@ -170,6 +172,7 @@
     midElem    = box.find('li:eq(4)'),
     secElem    = box.find('li:eq(5)'),
     e          = $.Event( "mousedown" );
+    e.which = 1;
     e.shiftKey = true;
     
     elem.triggerClick();
@@ -203,15 +206,15 @@
     
     el(3).triggerClick();
     el(5).shiftMousedown();
-    el(4).trigger('mousedown');
+    el(4).triggerMousedown();
     assert.selectedFocus( el(5) );
     assert.selectedCount(3);
   });
 
   test( 'Mouseup mouseMode', 6, function() {
     var el = elems();
-    el(3).trigger('mouseup');
-    el(5).trigger('mousedown');
+    el(3).triggerMouseup();
+    el(5).triggerMousedown();
     assert.selectedFocus( el(3) );
     
     el(5).triggerMouseup('shift');
@@ -261,6 +264,7 @@
     midElem    = box.find('li:eq(4)'),
     secElem    = box.find('li:eq(5)'),
     e          = $.Event( "mousedown" );
+    e.which = 1;
     e.shiftKey = true;
     
     elem.triggerClick();
@@ -726,6 +730,7 @@
       }
     });
     var e = $.Event( "mousedown" );
+    e.which = 1;
     e.shiftKey = true;
     sec.trigger( e );
 
