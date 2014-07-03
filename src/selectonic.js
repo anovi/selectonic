@@ -1422,40 +1422,34 @@
 
 
   /**
-  * Select one or move items in the list.
+  * Select/unselect one or more items in the list. It is multi-selection.
   * @method select
-  * @param {HTMLElement|String} selector A selector or element to select.
+  * @param {HTMLElement|String} selector A selector or element or set of elements to select.
   **/
   Plugin.prototype.select = function( selector, revert ) {
     var $elem, params;
 
     if ( revert === true && selector === void 0 ) {
-      delete this.ui.solidInitialElem;
-      
+      // To unselecting all items
       params = {
         isTargetWasSelected: true,
         isMultiSelect: true
       };
       params.items = this._getItems( params );
-      this._controller( null, params);
     
     } else {
       $elem = this._checkIfElem( selector );
       if ( $elem === false) { $elem = this._checkIfSelector( selector ); }
-      if ( $elem === false) {
-        throw new Error( 'You shold pass DOM element or selector to \"select\" method.' );
-      }
-      if ( $elem ) {
-        delete this.ui.solidInitialElem;
-        this._controller( null, {
-          items:  ( $elem.addClass ) ? $elem : $( $elem ),
-          // target: $elem[0] || $elem,
-          isTargetWasSelected: (revert) ? true : false,
-          isMultiSelect: true
-        });
-      }
+      if ( $elem === false) { throw new Error('You shold pass DOM element or selector to \"select\" method.'); }
+      params = {
+        items: ( $elem.addClass ) ? $elem : $( $elem ),
+        isTargetWasSelected: (revert) ? true : false,
+        isMultiSelect: true
+      };
     }
 
+    delete this.ui.solidInitialElem;
+    this._controller( null, params);
     return this.$el;
   };
 

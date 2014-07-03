@@ -441,23 +441,66 @@
     assert.selectedCount( 11 );
   });
 
-  test( 'unselect method', 4, function() {
+  test( 'unselect method', 9, function() {
     var
     box = getBox(),
-    el = elems();
+    el = elems(),
+    res = [];
+
+    // Foir testing of triggering callbacks for the method
+    box.selectonic( 'option', { 
+      before:       function() { res.push( 'before' );       },
+      focusLost:    function() { res.push( 'focusLost' );    },
+      select:       function() { res.push( 'select' );       },
+      unselect:     function() { res.push( 'unselect' );     },
+      unselectAll:  function() { res.push( 'unselectAll' );  },
+      stop:         function() { res.push( 'stop' );         },
+      destroy:      function() { res.push( 'destroy' );      }
+    });
     
+    // Select one item
     box.selectonic( 'select', el(3) );
+    ok((
+      res[0] === 'before' &&
+      res[1] === 'select' &&
+      res[2] === 'stop'
+    ), 'Callbacks right!');
+
+    // Select more
     box.selectonic( 'select', el(4) );
     box.selectonic( 'select', el(5) );
     box.selectonic( 'select', el(6) );
     assert.selectedCount(4);
     
+    // Set focus
+    ok( box.selectonic('focus') === null, 'Focus is null' );
+    box.selectonic( 'focus', el(3) );
+    
+    // Unselect one item
+    res = [];
     box.selectonic( 'unselect', el(4) );
+    ok((
+      res[0] === 'before' &&
+      res[1] === 'unselect' &&
+      res[2] === 'stop'
+    ), 'Callbacks right!');
+
     assert.notSelected( el(4) );
     assert.selectedCount(3);
 
+    // Unselect all tems
+    res = [];
     box.selectonic( 'unselect' );
+    ok((
+      res[0] === 'before' &&
+      res[1] === 'unselect' &&
+      res[2] === 'unselectAll' &&
+      res[3] === 'stop'
+    ), 'Callbacks right!');
+
     assert.selectedCount(0);
+    // Sure that focus has not been changed
+    ok( el(3).is(box.selectonic('focus')), 'Focus is elem 3' );
   });
 
   test( 'refresh', 4, function() {
