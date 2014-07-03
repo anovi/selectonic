@@ -324,7 +324,7 @@
     
     secElem.triggerClick();
     assert
-      .selectedFocus( elem )
+      .selected( elem )
       .selectedCount( 1 );
     
     isEnabled = box.selectonic('enable').selectonic('isEnabled');
@@ -333,25 +333,31 @@
 
   test( 'blur', 6, function() {
     var
-    box  = getBox(),
-    elem = box.find('li:eq(3)');
+    box = getBox(),
+    el  = elems();
     
-    box.selectonic('select','li:eq(3)');
+    // box.selectonic('select', el(3));
+    el(3).triggerClick();
+
     assert
-      .selectedFocus( elem )
+      .selectedFocus( el(3) )
       .selectedCount( 1 );
     box
       .selectonic( 'option', 'selectionBlur', true )
       .selectonic( 'blur' );
+
     assert
-      .focused( elem )
+      .focused( el(3) )
       .selectedCount( 0 );
+
+    el(3).triggerClick();
     box
-      .selectonic('select','li:eq(3)')
+      // .selectonic('select', el(3))
       .selectonic( 'option', 'focusBlur', true )
       .selectonic( 'blur' );
+
     assert
-      .notFocused( elem )
+      .notFocused( el(3) )
       .selectedCount( 0 );
   });
 
@@ -419,16 +425,39 @@
     ok( selected === null, 'No focus' );
   });
 
-  test( 'select', 2, function() {
+  test( 'select', 4, function() {
     var
     box = getBox(),
-    elem = box.find('li:eq(3)');
+    el = elems();
     
-    box.selectonic( 'select', elem );
-    assert.selected( elem );
+    box.selectonic( 'select', el(3) );
+    assert.selected( el(3) );
+
+    box.selectonic( 'select', el(4) );
+    assert.selected( el(4) );
+    assert.selectedCount(2);
     
     box.selectonic( 'select','li:odd' );
-    assert.selectedCount( 10 );
+    assert.selectedCount( 11 );
+  });
+
+  test( 'unselect method', 4, function() {
+    var
+    box = getBox(),
+    el = elems();
+    
+    box.selectonic( 'select', el(3) );
+    box.selectonic( 'select', el(4) );
+    box.selectonic( 'select', el(5) );
+    box.selectonic( 'select', el(6) );
+    assert.selectedCount(4);
+    
+    box.selectonic( 'unselect', el(4) );
+    assert.notSelected( el(4) );
+    assert.selectedCount(3);
+
+    box.selectonic( 'unselect' );
+    assert.selectedCount(0);
   });
 
   test( 'refresh', 4, function() {

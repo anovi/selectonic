@@ -1416,26 +1416,46 @@
   };
 
 
+  Plugin.prototype.unselect = function( selector ) {
+    return this.select( selector, true );
+  };
+
+
   /**
   * Select one or move items in the list.
   * @method select
   * @param {HTMLElement|String} selector A selector or element to select.
   **/
-  Plugin.prototype.select = function( selector ) {
-    var $elem;
+  Plugin.prototype.select = function( selector, revert ) {
+    var $elem, params;
 
-    $elem = this._checkIfElem( selector );
-    if ( $elem === false) { $elem = this._checkIfSelector( selector ); }
-    if ( $elem === false) {
-      throw new Error( 'You shold pass DOM element or selector to \"select\" method.' );
-    }
-    if ( $elem ) {
+    if ( revert === true && selector === void 0 ) {
       delete this.ui.solidInitialElem;
-      this._controller( null, {
-        items:  ( $elem.addClass ) ? $elem : $( $elem ),
-        target: $elem[0] || $elem
-      });
+      
+      params = {
+        isTargetWasSelected: true,
+        isMultiSelect: true
+      };
+      params.items = this._getItems( params );
+      this._controller( null, params);
+    
+    } else {
+      $elem = this._checkIfElem( selector );
+      if ( $elem === false) { $elem = this._checkIfSelector( selector ); }
+      if ( $elem === false) {
+        throw new Error( 'You shold pass DOM element or selector to \"select\" method.' );
+      }
+      if ( $elem ) {
+        delete this.ui.solidInitialElem;
+        this._controller( null, {
+          items:  ( $elem.addClass ) ? $elem : $( $elem ),
+          // target: $elem[0] || $elem,
+          isTargetWasSelected: (revert) ? true : false,
+          isMultiSelect: true
+        });
+      }
     }
+
     return this.$el;
   };
 
