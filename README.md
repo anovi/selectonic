@@ -438,7 +438,15 @@ $(elem).selectonic("select", ":even");
 ```javascript
 $(elem).selectonic("select", "li:eq(3)");
 ```
+`select` method only selects passed items but doesn't clear selection from others items, if they are. Method doesn't change focused element.
 
+### unselect
+Unselects passed items or all items if no one has been passed:
+```javascript
+$(elem).selectonic("unselect", $(".someElements")); //clear selection for these items
+$(elem).selectonic("unselect"); //clear selection for all items
+```
+Method doesn't change focused element.
 
 ## Compatibility
 - Requires **jQuery 1.7+** or **Zepto**
