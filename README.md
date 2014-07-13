@@ -451,3 +451,5 @@ Method doesn't change focused element.
 ## Compatibility
 - Requires **jQuery 1.7+** or **Zepto**
 - Tested in Firefox, Chrome, Safari, Opera, IE8+
+
+## [Release notes](https://github.com/anovi/selectonic/releases)
