@@ -5,7 +5,7 @@
   var outerHeight = $.fn.outerHeight ? 'outerHeight' : 'height';
   if ( !$.fn.jquery && !$.fn.zepto ) { $.fn.zepto = true; }
 
-  // From Underscore library – http://underscorejs.org/#throttle
+  // From Underscore library - http://underscorejs.org/#throttle
   var _throttle = function(func, wait, options) {
     var context, args, result;
     var timeout = null;
@@ -593,7 +593,7 @@
       // If there is one selected item and it is focused
       if ( this._selected && this._selected === 1 && this._getIsSelected(this.ui.focus) ) {
         /* It is case, when user moves cursor by keys or chooses single items by mouse 
-        — need just clear selection from focus — no need run go whole DOM of list */
+        - need just clear selection from focus - no need run go whole DOM of list */
         this._unselect( e, params, this.ui.focus, params.isTargetWasSelected );
 
       } else if (this._selected) {
@@ -709,8 +709,8 @@
 
       /*  If it's unselecting and item is selected target,
         and is not 'multi' or 'range' select mode
-        — do nothing because state of selected target should not change
-        – it is just unselecting other items  */
+        - do nothing because state of selected target should not change
+        - it is just unselecting other items  */
       if (isSelectedTarget && !aboveZero && !params.isMultiSelect && !params.isRangeSelect ) { return; }
 
       if( selectedCondition ) {
@@ -1009,7 +1009,7 @@
 
       // SHIFT mode
       } else if ( this.ui.focus && this.options.get('multi') && e.shiftKey && !isAllSelect ) {
-        // Call multiVariator or rangeVariator – 
+        // Call multiVariator or rangeVariator - 
         // it set all needed params depends from arguments
         if (
           key === Plugin.keyCode.END     || key === Plugin.keyCode.HOME ||
@@ -1096,7 +1096,7 @@
 
     if ( this._keyModes.shift && this._shiftModeAction === 'select' && isTargetSelected ) {
       /* When user select range of items by holding SHIFT and presses arrow key, there are already can be
-      selected items — focus should jump through these selected items to first unselected item */
+      selected items - focus should jump through these selected items to first unselected item */
 
       // While first unselected item will be found or edge of the list will be reached
       while( this._getIsSelected(params.items) && params.items.length > 0 ) {
@@ -1132,7 +1132,7 @@
 
   /**
   * Used by _keyHandler
-  * when UP, DOWN, PageUp, PageDown keys has pressed — find target or first/last element of the list
+  * when UP, DOWN, PageUp, PageDown keys has pressed - find target or first/last element of the list
   * @method _findNextTarget
   * @private
   * @param {String} direction Indicates 'prev' 'next' or 'pageup' 'pagedown' item to find 
@@ -1143,7 +1143,7 @@
   Plugin.prototype._findNextTarget = function( direction, params ) {
     var edge = ( direction === 'next' || direction === "pagedown" ) ? 'first' : 'last', // extreme item of the list
       // If there is the focus - try to find next sibling
-      // else get first|last item of the list — depends from direction
+      // else get first|last item of the list - depends from direction
       res = ( this.ui.focus ) ? this._getItems( params, direction, this.ui.focus ) : this._getItems( params, edge );
 
     // If has not found any items and loop option is ON
@@ -1245,6 +1245,8 @@
         return;
       }
       delete this._mousedownOnItem;
+      // to prevent blurring when mousedown on element and mouseup on another element
+      if (!params.target && type === 'click') {return;}
     } else { return; }
 
     if( options.multi && params.target ) {
@@ -1334,7 +1336,7 @@
     if ( _this[method] && $.isFunction(_this[method]) ) {
       publicMethod = _this[method];
     }
-    // If method exists and it is not private – call him
+    // If method exists and it is not private - call him
     if ( publicMethod && $.isFunction( publicMethod ) && method.charAt(0) !== '_' ) {
       args = Array.prototype.slice.call( arguments );
       args.shift();
@@ -1416,6 +1418,11 @@
   };
 
 
+  /**
+  * Uunselect one or more items in the list. It is multi-selection.
+  * @method unselect
+  * @param {HTMLElement|String} selector A selector or element or set of elements to select.
+  **/
   Plugin.prototype.unselect = function( selector ) {
     return this.select( selector, true );
   };
@@ -1425,6 +1432,7 @@
   * Select/unselect one or more items in the list. It is multi-selection.
   * @method select
   * @param {HTMLElement|String} selector A selector or element or set of elements to select.
+  * @param {Boolean} revert If true then method will work as `unselect`.
   **/
   Plugin.prototype.select = function( selector, revert ) {
     var $elem, params;
