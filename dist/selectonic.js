@@ -1,4 +1,4 @@
-/*! Selectonic - v0.5.0 - 2014-06-28
+/*! Selectonic - v0.6.0 - 2014-07-06
 * https://github.com/anovi/selectonic
 * Copyright (c) 2014 Alexey Novichkov; Licensed MIT */
 (function($, window, undefined) {
@@ -1419,26 +1419,40 @@
   };
 
 
-  /**
-  * Select one or move items in the list.
-  * @method select
-  * @param {HTMLElement|String} selector A selector or element to select.
-  **/
-  Plugin.prototype.select = function( selector ) {
-    var $elem;
+  Plugin.prototype.unselect = function( selector ) {
+    return this.select( selector, true );
+  };
 
-    $elem = this._checkIfElem( selector );
-    if ( $elem === false) { $elem = this._checkIfSelector( selector ); }
-    if ( $elem === false) {
-      throw new Error( 'You shold pass DOM element or selector to \"select\" method.' );
+
+  /**
+  * Select/unselect one or more items in the list. It is multi-selection.
+  * @method select
+  * @param {HTMLElement|String} selector A selector or element or set of elements to select.
+  **/
+  Plugin.prototype.select = function( selector, revert ) {
+    var $elem, params;
+
+    if ( revert === true && selector === void 0 ) {
+      // To unselecting all items
+      params = {
+        isTargetWasSelected: true,
+        isMultiSelect: true
+      };
+      params.items = this._getItems( params );
+    
+    } else {
+      $elem = this._checkIfElem( selector );
+      if ( $elem === false) { $elem = this._checkIfSelector( selector ); }
+      if ( $elem === false) { throw new Error('You shold pass DOM element or selector to \"select\" method.'); }
+      params = {
+        items: ( $elem.addClass ) ? $elem : $( $elem ),
+        isTargetWasSelected: (revert) ? true : false,
+        isMultiSelect: true
+      };
     }
-    if ( $elem ) {
-      delete this.ui.solidInitialElem;
-      this._controller( null, {
-        items:  ( $elem.addClass ) ? $elem : $( $elem ),
-        target: $elem[0] || $elem
-      });
-    }
+
+    delete this.ui.solidInitialElem;
+    this._controller( null, params);
     return this.$el;
   };
 

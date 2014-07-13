@@ -324,7 +324,7 @@
     
     secElem.triggerClick();
     assert
-      .selectedFocus( elem )
+      .selected( elem )
       .selectedCount( 1 );
     
     isEnabled = box.selectonic('enable').selectonic('isEnabled');
@@ -333,25 +333,31 @@
 
   test( 'blur', 6, function() {
     var
-    box  = getBox(),
-    elem = box.find('li:eq(3)');
+    box = getBox(),
+    el  = elems();
     
-    box.selectonic('select','li:eq(3)');
+    // box.selectonic('select', el(3));
+    el(3).triggerClick();
+
     assert
-      .selectedFocus( elem )
+      .selectedFocus( el(3) )
       .selectedCount( 1 );
     box
       .selectonic( 'option', 'selectionBlur', true )
       .selectonic( 'blur' );
+
     assert
-      .focused( elem )
+      .focused( el(3) )
       .selectedCount( 0 );
+
+    el(3).triggerClick();
     box
-      .selectonic('select','li:eq(3)')
+      // .selectonic('select', el(3))
       .selectonic( 'option', 'focusBlur', true )
       .selectonic( 'blur' );
+
     assert
-      .notFocused( elem )
+      .notFocused( el(3) )
       .selectedCount( 0 );
   });
 
@@ -419,16 +425,82 @@
     ok( selected === null, 'No focus' );
   });
 
-  test( 'select', 2, function() {
+  test( 'select', 4, function() {
     var
     box = getBox(),
-    elem = box.find('li:eq(3)');
+    el = elems();
     
-    box.selectonic( 'select', elem );
-    assert.selected( elem );
+    box.selectonic( 'select', el(3) );
+    assert.selected( el(3) );
+
+    box.selectonic( 'select', el(4) );
+    assert.selected( el(4) );
+    assert.selectedCount(2);
     
     box.selectonic( 'select','li:odd' );
-    assert.selectedCount( 10 );
+    assert.selectedCount( 11 );
+  });
+
+  test( 'unselect method', 9, function() {
+    var
+    box = getBox(),
+    el = elems(),
+    res = [];
+
+    // Foir testing of triggering callbacks for the method
+    box.selectonic( 'option', { 
+      before:       function() { res.push( 'before' );       },
+      focusLost:    function() { res.push( 'focusLost' );    },
+      select:       function() { res.push( 'select' );       },
+      unselect:     function() { res.push( 'unselect' );     },
+      unselectAll:  function() { res.push( 'unselectAll' );  },
+      stop:         function() { res.push( 'stop' );         },
+      destroy:      function() { res.push( 'destroy' );      }
+    });
+    
+    // Select one item
+    box.selectonic( 'select', el(3) );
+    ok((
+      res[0] === 'before' &&
+      res[1] === 'select' &&
+      res[2] === 'stop'
+    ), 'Callbacks right!');
+
+    // Select more
+    box.selectonic( 'select', el(4) );
+    box.selectonic( 'select', el(5) );
+    box.selectonic( 'select', el(6) );
+    assert.selectedCount(4);
+    
+    // Set focus
+    ok( box.selectonic('focus') === null, 'Focus is null' );
+    box.selectonic( 'focus', el(3) );
+    
+    // Unselect one item
+    res = [];
+    box.selectonic( 'unselect', el(4) );
+    ok((
+      res[0] === 'before' &&
+      res[1] === 'unselect' &&
+      res[2] === 'stop'
+    ), 'Callbacks right!');
+
+    assert.notSelected( el(4) );
+    assert.selectedCount(3);
+
+    // Unselect all tems
+    res = [];
+    box.selectonic( 'unselect' );
+    ok((
+      res[0] === 'before' &&
+      res[1] === 'unselect' &&
+      res[2] === 'unselectAll' &&
+      res[3] === 'stop'
+    ), 'Callbacks right!');
+
+    assert.selectedCount(0);
+    // Sure that focus has not been changed
+    ok( el(3).is(box.selectonic('focus')), 'Focus is elem 3' );
   });
 
   test( 'refresh', 4, function() {
