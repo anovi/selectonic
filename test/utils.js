@@ -1,5 +1,7 @@
 (function( $, QUnit ) {
 
+  var body = $(window.document);
+
   // For IE compatibility
   if (typeof Array.prototype.indexOf === 'undefined') {
     Array.prototype.indexOf = function (searchElement, fromIndex) {
@@ -108,6 +110,54 @@
   };
 
 
+  // Keyboard keys triggers
+  var keys = {
+    "up"        : 38,
+    "down"      : 40,
+    "page-up"   : 33,
+    "page-down" : 34,
+    "home"      : 36,
+    "end"       : 35,
+    "shift"     : 16,
+    "space"     : 32,
+    "enter"     : 13,
+    "ctrl"      : 17,
+    "a"         : 65
+  };
+
+  var type = function (str) {
+    var e = $.Event( "keydown" ), keyEvn;
+    var tokens = str.match( /([a-z]|-)+/ig ), k;
+    for (var i = 0; i < tokens.length; i++) {
+      k = tokens[i];
+      if ( ['shift', 'ctrl'].indexOf(k) >= 0 ) {
+        type.modes[k] = true;
+        keyEvn = $.Event( "keydown" );
+        keyEvn.which = keys[k];
+        body.trigger(keyEvn);
+      } else if ('shift-up' === k) {
+        delete type.modes.shift;
+        keyEvn = $.Event( "keyup" );
+        keyEvn.which = 16;
+        body.trigger(keyEvn);
+      } else if ('ctrl-up' === k) {
+        delete type.modes.ctrl;
+        keyEvn = $.Event( "keyup" );
+        keyEvn.which = 17;
+        body.trigger(keyEvn);
+      } else {
+        if (type.modes.ctrl) { e.ctrlKey = true; }
+        if (type.modes.shift) { e.shiftKey = true; }
+        if (keys[k] === void 0) {throw new Error('There is no such key: ' + k);}
+        e.which = keys[k];
+        body.trigger(e);
+      }
+    }
+  };
+
+  type.modes = {};
+
+
   // QUnit
   QUnit.assert.selected = function( elem ) {
     var actual = elem.hasClass('selected');
@@ -157,6 +207,7 @@
   _Utils.getSelectionText = getSelectionText;
   _Utils.clearSelection   = clearSelection;
   _Utils.elems            = elems;
+  _Utils.type             = type;
 
   window._Utils = _Utils;
   return _Utils;

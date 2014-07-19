@@ -1,4 +1,4 @@
-(function( $, Syn ) {
+(function( $ ) {
 
   /*
   *
@@ -6,9 +6,10 @@
   *
   */
   var
-  assert           = QUnit.assert,
-  getBox           = _Utils.getBox,
-  elems            = _Utils.elems,
+  assert = QUnit.assert,
+  getBox = _Utils.getBox,
+  elems  = _Utils.elems,
+  type   = _Utils.type,
   // getSelectionText = _Utils.getSelectionText,
   // clearSelection   = _Utils.clearSelection,
 
@@ -87,48 +88,46 @@
   module("Basic");
 
   test( 'Up/down and shift', 8, function() {
-    var box = getBox(),
-    el = elems();
+    var el = elems();
     
-    Syn.type( '[down]', box );
-    Syn.type( '[down]', box );
-    Syn.type( '[down]', box );
-    Syn.type( '[down]', box );
+    type( '[down]' );
+    type( '[down]' );
+    type( '[down]' );
+    type( '[down]' );
     assert
       .selected( el(3) )
       .selectedCount(1);
 
-    Syn.type( '[shift]', box );
-    Syn.type( '[down]', box );
-    Syn.type( '[down]', box );
-    Syn.type( '[shift-up]', box );
+    type( '[shift]' );
+    type( '[down]' );
+    type( '[down]' );
+    type( '[shift-up]' );
     assert
       .selected( el(3) )
       .selected( el(4) )
       .selectedFocus( el(5) )
       .selectedCount(3);
     
-    Syn.type( '[shift]', box );
-    Syn.type( '[up]', box );
-    Syn.type( '[up]', box );
-    Syn.type( '[up]', box );
-    Syn.type( '[shift-up]', box );
+    type( '[shift]' );
+    type( '[up]' );
+    type( '[up]' );
+    type( '[up]' );
+    type( '[shift-up]' );
     assert
       .selected( el(3) )
       .selectedCount(2);
   });
 
   test( 'Jump with down-shift', 3, function() {
-    var box = getBox(),
-    el = elems();
+    var el = elems();
     el(3).metaMousedown();
     el(2).metaMousedown();
     el(0).metaMousedown();
 
-    Syn.type( '[shift]', box );
-    Syn.type( '[down]', box );
-    Syn.type( '[down]', box );
-    Syn.type( '[shift-up]', box );
+    type( '[shift]' );
+    type( '[down]' );
+    type( '[down]' );
+    type( '[shift-up]' );
     assert
       .selected( el(0) )
       .selectedFocus( el(4) )
@@ -140,8 +139,8 @@
     box   = getBox(),
     first = box.find('li').first();
     
-    Syn.type( '[ctrl]a', box );
-    Syn.type( '[ctrl-up]', box );
+    type( '[ctrl]a' );
+    type( '[ctrl-up]' );
     assert
       .selectedFocus( first )
       .selectedCount(20);
@@ -153,15 +152,15 @@
     first = box.find('li').first(),
     last  = box.find('li').last();
     
-    Syn.type( '[down]', box );
-    Syn.type( '[shift][up]', box );
-    Syn.type( '[shift-up]', box );
+    type( '[down]' );
+    type( '[shift][up]' );
+    type( '[shift-up]' );
     assert
       .selectedFocus( last )
       .selected( first )
       .selectedCount(2);
 
-    Syn.type( '[down]', box );
+    type( '[down]' );
     assert
       .selectedFocus( first )
       .selectedCount(1);
@@ -174,38 +173,37 @@
     sec   = box.find('li:eq(3)'),
     last  = box.find('li:eq(5)');
     
-    Syn.type( '[down]', box );
+    type( '[down]' );
     assert.selectedFocus( first );
     
-    Syn.type( '[shift][down]', box );
-    Syn.type( '[down]', box );
-    Syn.type( '[shift-up]', box );
+    type( '[shift][down]' );
+    type( '[down]' );
+    type( '[shift-up]' );
     assert
       .selectedFocus( last )
       .selected( sec )
       .selectedCount( 3 );
 
-    Syn.type( '[ctrl]a', box );
-    Syn.type( '[ctrl-up]', box );
+    type( '[ctrl]a' );
+    type( '[ctrl-up]' );
     assert.selectedCount( 10 );
   });
 
   test( 'Selet by Enter', 4, function( ) {
     var
-    box = getBox(),
     el = elems();
 
-    Syn.type( '[down]', box );
-    Syn.type( '[down]', box );
-    Syn.type( '[down]', box );
-    Syn.type( '[enter]', box );
+    type( '[down]' );
+    type( '[down]' );
+    type( '[down]' );
+    type( '[enter]' );
     assert
       .selectedCount( 1 )
       .selectedFocus( el(2) );
 
-    Syn.type( '[down]', box );
-    Syn.type( '[down]', box );
-    Syn.type( '[enter]', box );
+    type( '[down]' );
+    type( '[down]' );
+    type( '[enter]' );
     assert
       .selectedCount( 1 )
       .selectedFocus( el(4) );
@@ -217,17 +215,16 @@
 
   test( 'Home/End and shift', 9, function( ) {
     var
-    box = getBox(),
     el = elems();
     
-    Syn.type( '[down]', box );
-    Syn.type( '[down]', box );
-    Syn.type( '[shift][end]', box );
+    type( '[down]' );
+    type( '[down]' );
+    type( '[shift][end]' );
     assert
       .selectedFocus( el(19) )
       .selectedCount( 19 );
-    Syn.type( '[home]', box );
-    Syn.type( '[shift-up]', box );
+    type( '[home]' );
+    type( '[shift-up]' );
     assert
       .selectedFocus( el(0) )
       .selected( el(1) )
@@ -235,16 +232,16 @@
 
     el(6).triggerClick();
     el(3).metaMousedown();
-    Syn.type( '[shift][home]', box );
-    Syn.type( '[shift-up]', box );
+    type( '[shift][home]' );
+    type( '[shift-up]' );
     assert
       .selectedFocus( el(0) )
       .selectedCount( 4 );
 
     el(6).triggerClick();
     el(6).metaMousedown();
-    Syn.type( '[shift][end]', box );
-    Syn.type( '[shift-up]', box );
+    type( '[shift][end]' );
+    type( '[shift-up]' );
     assert
       .selectedFocus( el(6) )
       .selectedCount( 1 );
@@ -252,26 +249,25 @@
 
   test( 'PageUp/Down shift', 6, function( ) {
     var
-    box = getBox(),
     el = elems();
     
-    Syn.type( '[down]', box );
-    Syn.type( '[shift][page-down]', box );
-    Syn.type( '[shift-up]', box );
+    type( '[down]' );
+    type( '[shift][page-down]' );
+    type( '[shift-up]' );
     assert
       .selectedFocus( el(4) )
       .selectedCount( 5 );
 
-    Syn.type( '[shift][page-down]', box );
-    Syn.type( '[shift-up]', box );
+    type( '[shift][page-down]' );
+    type( '[shift-up]' );
     assert
       .selectedFocus( el(8) )
       .selectedCount( 9 );
 
-    Syn.type( '[shift][up]', box );
-    Syn.type( '[up]', box );
-    Syn.type( '[page-down]', box );
-    Syn.type( '[shift-up]', box );
+    type( '[shift][up]' );
+    type( '[up]' );
+    type( '[page-down]' );
+    type( '[shift-up]' );
     assert
       .selectedFocus( el(10) )
       .selectedCount( 11 );
@@ -279,7 +275,6 @@
 
   test( 'New solid range', 2, function( ) {
     var
-    box = getBox(),
     el = elems();
     
     el(0).triggerClick();
@@ -287,8 +282,8 @@
     el(10).metaMousedown();
     el(4).metaMousedown();
 
-    Syn.type( '[shift][page-down]', box );
-    Syn.type( '[shift-up]', box );
+    type( '[shift][page-down]' );
+    type( '[shift-up]' );
     assert
       .selectedFocus( el(8) )
       .selectedCount( 5 );
@@ -296,37 +291,36 @@
 
   test( 'Initial elem in solid range', 8, function( ) {
     var
-    box = getBox(),
     el = elems();
     
     el(5).triggerClick();
-    Syn.type( '[shift][up]', box );
-    Syn.type( '[up]', box );
-    Syn.type( '[up]', box );
-    Syn.type( '[shift-up]', box );
+    type( '[shift][up]' );
+    type( '[up]' );
+    type( '[up]' );
+    type( '[shift-up]' );
 
-    Syn.type( '[shift][page-down]', box );
-    Syn.type( '[shift-up]', box );
+    type( '[shift][page-down]' );
+    type( '[shift-up]' );
     assert
       .selected( el(5) )
       .selectedFocus( el(6) )
       .selectedCount( 2 );
 
-    Syn.type( '[shift][down]', box );
-    Syn.type( '[down]', box );
-    Syn.type( '[down]', box );
-    Syn.type( '[shift-up]', box );
-    Syn.type( '[shift][page-up]', box );
-    Syn.type( '[shift-up]', box );
+    type( '[shift][down]' );
+    type( '[down]' );
+    type( '[down]' );
+    type( '[shift-up]' );
+    type( '[shift][page-up]' );
+    type( '[shift-up]' );
     assert
       .selectedFocus( el(5) )
       .selectedCount( 1 );
     
     el(5).triggerClick();
     el(4).metaMousedown().metaMousedown();
-    Syn.type( '[shift][page-up]', box );
-    Syn.type( '[page-up]', box );
-    Syn.type( '[shift-up]', box );
+    type( '[shift][page-up]' );
+    type( '[page-up]' );
+    type( '[shift-up]' );
     assert
       .notSelected( el(5) )
       .selectedFocus( el(0) )
@@ -339,25 +333,24 @@
 
   test( 'Toggle', 5, function( ) {
     var
-    box = getBox(),
     el = elems();
 
-    Syn.type( '[down]', box );
-    Syn.type( '[shift][page-down]', box );
-    Syn.type( '[shift-up]', box );
+    type( '[down]' );
+    type( '[shift][page-down]' );
+    type( '[shift-up]' );
     assert.selectedCount( 0 );
 
-    Syn.type( '[space]', box );
+    type( '[space]' );
     assert
       .selectedCount( 1 )
       .selectedFocus( el(4) );
-    Syn.type( '[space]', box );
+    type( '[space]' );
 
-    Syn.type( '[down]', box );
-    Syn.type( '[down]', box );
-    Syn.type( '[space]', box );
-    Syn.type( '[down]', box );
-    Syn.type( '[space]', box );
+    type( '[down]' );
+    type( '[down]' );
+    type( '[space]' );
+    type( '[down]' );
+    type( '[space]' );
     assert
       .selectedCount( 2 )
       .selectedFocus( el(7) );
@@ -366,4 +359,4 @@
 
 
 
-}(jQuery, Syn));
+}(jQuery));
