@@ -6,7 +6,7 @@
 .b-select .select-trigger {
 	width: 250px;
 	text-align: left;
-	background: #F6F5F3 url(../images/arrow.svg) 230px 1.2em no-repeat;
+	background: #F6F5F3 url(./arrow.svg) 230px 1.2em no-repeat;
 	border-radius: 5px;
 	border: none;
 	line-height: 1.9;
@@ -46,7 +46,7 @@
 		background-color: #F6F5F3;
 	}
 	.b-select .select-option.j-selected {
-		background-image: url( ../images/check.svg );
+		background-image: url( ./check.svg );
 		background-position: 0.45em 50%;
 		background-repeat: no-repeat;
 		font-weight: bold;

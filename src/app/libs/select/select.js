@@ -1,8 +1,7 @@
 (function( $, window ) {
   'use strict';
 
-  var keyCode = { UP:38, DOWN:40, ESCAPE:27, ENTER:13 },
-  $document = $( window.document ),
+  var keyCode = { UP:38, DOWN:40, ESCAPE:27, ENTER:13, SPACE:32 },
 
   Select = function( elem ) {
     this.$el     = $( elem );
@@ -10,7 +9,7 @@
     this.title   = this.button.find('.select-title');
     this.list    = this.$el.find('.select-group');
     this.isOpend = false;
-    this.isEnabled = false;
+    this.isEnabled = true;
     this.init();
   };
 
@@ -21,6 +20,9 @@
     this.button.on('blur', function( e ) {
       if ( !_this.isEnabled ) { return; }
       _this.close.call( _this, e );
+    })
+    .on('mouseup', function(e) {
+      e.stopPropagation();
     });
 
     this.$el
@@ -43,13 +45,9 @@
           return;
         }
         e.preventDefault();
-      })
-      .on('mouseup', function(e) {
-        e.stopPropagation();
       });
-    
-    $document.on('mouseup', function() { _this.close(); });
-    
+
+
     // attach selectionc with options
     this.list.selectonic({
       multi: false,
@@ -73,9 +71,9 @@
         _this.close();
       },
       // After each works cycle
-      stop: function( e ) {
+      stop: function( e, ui ) {
         e.preventDefault();
-        if ( e.which === keyCode.ENTER && _this.isOpend ) {
+        if ( (e.which === keyCode.ENTER && _this.isOpend) || !ui.target ) {
           _this.close();
         }
       }
@@ -86,7 +84,7 @@
   Select.prototype.keyHandler = function( e ) {
     var key = e.which;
     if ( !this.isOpend &&
-      (key === keyCode.UP || key === keyCode.DOWN )
+      (key === keyCode.UP || key === keyCode.DOWN || key === keyCode.SPACE )
     ) {
       e.stopPropagation();
       e.preventDefault();
