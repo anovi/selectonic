@@ -173,11 +173,19 @@ var demo = demo || {};
     },
     chooseThird: function() {
       mainList.selectonic('select','li:eq(3)');
+    },
+    unselectEven: function() {
+      mainList.selectonic('unselect',':even');
+    },
+    unselectThird: function() {
+      mainList.selectonic('unselect','li:eq(3)');
     }
   };
 
   $('#chooseEven').click( demo.scenarios.chooseEven );
   $('#chooseThird').click( demo.scenarios.chooseThird );
+  $('#unselectEven').click( demo.scenarios.unselectEven );
+  $('#unselectThird').click( demo.scenarios.unselectThird );
 
 })(jQuery, window);
 
@@ -196,7 +204,7 @@ var demo = demo || {};
   },
   logContainer = $('#log-screen'),
   mainList = $('#selectable-list').selectonic({
-    
+
     // autoScroll: '#scrollable-list',
     autoScroll: true,
 
@@ -265,7 +273,7 @@ var demo = demo || {};
   var selectInput = $('.b-select');
   selectInput.mySelect();
   selectInput.mySelect('disable');
-  
+
   var example     = {},
   enabled         = {},
   navHeight       = $('#navbar').height(),
@@ -275,7 +283,7 @@ var demo = demo || {};
   example.select  = $('#example1');
   example.list    = $('#example-list');
   example.sandbox = $('#sandbox');
-  
+
   $.each( example, function(key) {
     enabled[key] = true;
   });
@@ -301,7 +309,7 @@ var demo = demo || {};
         .find('.b-example:not(.scrollSpy-clone) .j-selectable')
         .selectonic('enable');
     }
-    
+
     active = elem;
     $.each( example, function(key, val) {
       if ( val !== active && enabled[key] ) {
@@ -333,7 +341,7 @@ var demo = demo || {};
       example.select.fromItemBottomOffset = params.box.top + params.item.topInBox + params.item.height;
       example.select.fromBoxBottomOffset  = params.box.top + params.box.height;
       example.select.itemHeight           = params.item.height;
-      
+
       if (
         params.window.scrollTop + params.window.height >= example.select.fromItemBottomOffset &&
         example.select.fromBoxBottomOffset - params.window.scrollTop > params.item.height + navHeight
@@ -381,7 +389,7 @@ var demo = demo || {};
   var navbar = $('#navbar'),
   $window = $(window),
   offset = -navbar.height();
-  
+
   navbar.on('click', 'a', function(event) {
     event.preventDefault();
     var id = $(event.target).attr('href'),
