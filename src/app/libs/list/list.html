@@ -29,47 +29,53 @@
 </head>
 <body>
 
-<div class="example">
-    <p><strong>Items list with actions.</strong><br>
-        <ul>
-            <li>Multi-selection list.</li>
-            <li>Full keyboard support – use <code>up</code>, <code>down</code>, <code>PageUp</code>, <code>PageDown</code> and <code>HOME</code>, <code>END</code>.</li>
-            <li>Hold <code>ctrl</code> when clicking to add/remove items to selection.</li>
-            <li>Hold <code>shift</code> when clicking to select a range of items.</li>
-        </ul>
-    </p>
-    <div class="b-select">
-        <ul class="select-group">
-            <li class="select-option">Item 1</li>
-            <li class="select-option">Item 2</li>
-            <li class="select-option">Item 3</li>
-            <li class="select-option">Item 4</li>
-            <li class="select-option">Item 5</li>
-            <li class="select-option">Item 6</li>
-            <li class="select-option">Item 7</li>
-            <li class="select-option">Item 8</li>
-            <li class="select-option">Item 9</li>
-            <li class="select-option">Item 10</li>
-            <li class="select-option">Item 11</li>
-            <li class="select-option">Item 12</li>
-            <li class="select-option">Item 13</li>
-            <li class="select-option">Item 14</li>
-            <li class="select-option">Item 15</li>
-            <li class="select-option">Item 16</li>
-            <li class="select-option">Item 17</li>
-            <li class="select-option">Item 18</li>
-            <li class="select-option">Item 19</li>
-            <li class="select-option">Item 20</li>
-        </ul>
-        <div class="actionbar">
-            <button >Action1</button>
-            <button >Action2</button>
+
+    <div class="b-example">
+        <!-- <div class="example-description"> -->
+            <!--<ul>
+                <li>Multi-selection list.</li>
+                <li>Full keyboard support – use <span class="keyName">up</span>, <span class="keyName">down</span>, <span class="keyName">PageUp</span>, <span class="keyName">PageDown</span> and <span class="keyName">HOME</span>, <span class="keyName">END</span>.</li>
+                <li>Hold <span class="keyName">ctrl</span> when clicking to add/remove items to selection.</li>
+                <li>Hold <span class="keyName">shift</span> when clicking to select a range of items.</li>
+            </ul>-->
+        <!-- </div> -->
+        <div class="example-example">
+            <!-- START: Example list with actions -->
+            <div class="actions-list" id="actions-list">
+                <ul class="actions-list__group">
+                    <li class="actions-list__option">Item 1</li>
+                    <li class="actions-list__option">Item 2</li>
+                    <li class="actions-list__option">Item 3</li>
+                    <li class="actions-list__option">Item 4</li>
+                    <li class="actions-list__option">Item 5</li>
+                    <li class="actions-list__option">Item 6</li>
+                    <li class="actions-list__option">Item 7</li>
+                    <li class="actions-list__option">Item 8</li>
+                    <li class="actions-list__option">Item 9</li>
+                    <li class="actions-list__option">Item 10</li>
+                    <li class="actions-list__option">Item 11</li>
+                    <li class="actions-list__option">Item 12</li>
+                    <li class="actions-list__option">Item 13</li>
+                    <li class="actions-list__option">Item 14</li>
+                    <li class="actions-list__option">Item 15</li>
+                    <li class="actions-list__option">Item 16</li>
+                    <li class="actions-list__option">Item 17</li>
+                    <li class="actions-list__option">Item 18</li>
+                    <li class="actions-list__option">Item 19</li>
+                    <li class="actions-list__option">Item 20</li>
+                </ul>
+                <div class="actions-list__actionbar">
+                    <button class="actions-list__button">Action1</button>
+                    <button class="actions-list__button">Action2</button>
+                </div>
+            </div>
+            <!-- END: Example list with actions -->
         </div>
     </div>
-</div>
+
 
 <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="../../dist/selectonic.js"></script>
+<script src="../../bower_components/selectonic/dist/selectonic.js"></script>
 <script src="list.js"></script>
 </body>
 </html>
