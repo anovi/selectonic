@@ -991,7 +991,9 @@
     }
     // One of the arrows was pressed
     if ( target && target.length > 0 ) {
-      e.preventDefault(); // Disable default window scroll by arrow keys
+      if (direction) {
+        e.preventDefault(); // Disable default window scroll by arrow keys
+      }
 
       params.target = target[0];
       params.items = target;
