@@ -32,8 +32,7 @@
       })
       .on('mousedown', function(e) {
         if ( !_this.isEnabled ) { return; }
-        var isOnButton = _this.button[0] === e.target ||
-          _this.title[0] === e.target;
+        var isOnButton = _this.button[0] === e.target || _this.title[0] === e.target;
         
         if ( isOnButton ) {
           if (!_this.isOpend) {
@@ -72,10 +71,9 @@
       },
       // After each works cycle
       stop: function( e, ui ) {
-        console.log('SUPER' + new Date());
         if (
           ((e.which === keyCode.ENTER || e.which === keyCode.SPACE) && _this.isOpend) ||
-          (!ui.target && _this.isOpend && !_this.isOpening && !e.originalEvent instanceof KeyboardEvent)
+          (!ui.target && _this.isOpend && !_this.isOpening && !e.originalEvent instanceof window.KeyboardEvent)
         ) {
           _this.close();
         } else if ( e.type === 'mouseup' && ui.focus && $(ui.focus).hasClass('j-selected') ) {
@@ -89,9 +87,7 @@
 
   Select.prototype.keyHandler = function( e ) {
     var key = e.which;
-    if ( !this.isOpend &&
-      (key === keyCode.UP || key === keyCode.DOWN || key === keyCode.SPACE )
-    ) {
+    if ( !this.isOpend && (key === keyCode.UP || key === keyCode.DOWN || key === keyCode.SPACE )) {
       e.stopPropagation();
       e.preventDefault();
       this.open();
@@ -110,13 +106,11 @@
     this.list.selectonic('enable');
 
     if ( this.selected ) {
-      console.log('focus')
       this.list
         // Set focus on selected element
         .selectonic('focus', this.selected)
         // and scroll to it
         .selectonic('scroll');
-      // debugger;
     }
     this.isOpend = true;
   };
