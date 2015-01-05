@@ -1,11 +1,12 @@
 
 .b-select {
 	display: inline-block;
+	margin: 1em;
 }
 .b-select .select-trigger {
 	width: 250px;
 	text-align: left;
-	background: #efefef url(arrow.svg) 230px 1.2em no-repeat;
+	background: #F6F5F3 url(arrow.svg) 230px 1.2em no-repeat;
 	border-radius: 5px;
 	border: none;
 	line-height: 1.9;
@@ -19,6 +20,7 @@
 
 .b-select .select-group {
 	position: absolute;
+	z-index: 10;
 	display: none;
 	margin: 0;
 	padding: 0;
@@ -41,10 +43,10 @@
 	text-overflow: ellipsis;
 }
 	.b-select .select-option.j-focused {
-		background-color: #f3f3f2;
+		background-color: #F6F5F3;
 	}
 	.b-select .select-option.j-selected {
-		background-image: url( check.svg );
+		background-image: url(check.svg);
 		background-position: 0.45em 50%;
 		background-repeat: no-repeat;
 		font-weight: bold;

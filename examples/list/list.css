@@ -1,28 +1,31 @@
-
-/*.b-select {}*/
-.b-select .select-group {
+.actions-list {
+	margin: 2em;
+	border: 1px solid #F8F7F3;
+	border-radius: 5px;
+	background: #fdfcfa;
+}
+.actions-list__group {
 	margin: 0;
 	padding: 5px;
 	min-width: 100%;
-	background-color: #FFF;
-	border-radius: 2px;
-	border: 1px solid #ddd;
-	/*box-shadow: 0 5px 10px rgba(0,0,0,0.2);*/
 	list-style-type: none;
 	max-height: 19em;
 	overflow: auto;
 }
-.b-select .select-option {
+.actions-list__group:focus {
+	outline: 1px solid red;
+}
+.actions-list__option {
 	list-style: none;
-	padding: 0 1em 0 1.8em;
+	padding: 0 1em 0 1.5em;
 	margin: 0;
 	line-height: 1.9;
 	border-radius: 4px;
 }
-	.b-select .select-option.j-focused {
+	.actions-list__option.j-focused {
 		position: relative;
 	}
-		.b-select .select-option.j-focused:after {
+		.actions-list__option.j-focused:after {
 			content: "";
 			display: block;
 			position: absolute;
@@ -31,15 +34,14 @@
 			top: 0;
 			bottom: 0;
 			z-index: 2;
-			border: 1px solid #bfdbeb;
+			border: 1px solid #AED5A8;
 			border-radius: 4px;
 		}
-	.b-select .select-option.j-selected {
-		background-color: #f3f3f2;
-		background-color: #E4F6FA;
+	.actions-list__option.j-selected {
+		background-color: #E5F7E5;
 		position: relative;
 	}
-	.b-select .select-option.j-selected+.select-option.j-selected:before {
+	.actions-list__option.j-selected+.actions-list__option.j-selected:before {
 		content: "";
 		display: block;
 		position: absolute;
@@ -47,44 +49,83 @@
 		right: 0;
 		top: -3px;
 		z-index: 1;
-		background-color: #E4F6FA;
+		background-color: #E5F7E5;
 		height: 6px;
 	}
-	.b-select .select-option.j-selected.animate,
-	.b-select .select-option.j-selected.animate+.select-option.j-selected.animate:before {
-		background-color: #fee20a;
-		background-color: #C3E8FA;
+	.actions-list__option.j-selected.animate,
+	.actions-list__option.j-selected.animate+.actions-list__option.j-selected.animate:before {
+		background-color: #D1F5D1;
 	}
 
-.b-select .actionbar {
-	background: #f9f9f9;	
-	padding: 0 1em;
+
+/* Handle */
+.actions-list__handle {
+	display: none;
+	box-sizing: border-box;
+	float: right;
+	padding: 0.15em 0.4em 0 0.4em;
+	height: 2em;
+	font-size: 0.8em;
+	border-width: 1px;
+	color: #A09890;
+	background: #F7F4F0;
+	border-radius: 4px;
+	margin-top: 0.15em;
+	cursor: pointer;
+	position: relative;
+	z-index: 10;
 }
-	.b-select .actionbar button {
-		margin: 0;
+    .j-selected .actions-list__handle {
+        background: rgba(65, 58, 58, 0.07);
+    }
+    .handle .actions-list__handle {
+        display: inline-block;
+    }
+
+
+/* Actions */
+.actions-list__actionbar {
+	padding: 0.7em;
+	border-top: 1px solid #F1F0EB;
+}
+	.actions-list__button {
+		margin: 0 0.4em 0 0;
 		padding: 0.5em 1em;
-		border: none;
-		background: none;
-		border-radius: 0;
 		font-size: 14px;
 		line-height: 1.9;
+		border: none;
+		border-radius: 5px;
 		cursor: pointer;
+		background: #F6F5F3;
 	}
-	.b-select .actionbar button:hover {
+	.actions-list__button:hover {
 		background: #eee;
 	}
-	.b-select .actionbar button:active {
+	.actions-list__button:active {
 		background: #e0e0e0;
+		border: none;
 	}
-	.b-select .actionbar button:focus {
-		/*outline: none;*/
-	}
-	.b-select .actionbar.disabled button,
-	.b-select .actionbar.disabled button:hover,
-	.b-select .actionbar.disabled button:active {
+	.disabled .actions-list__button,
+	.disabled .actions-list__button:hover,
+	.disabled .actions-list__button:active {
 		color: #bbb;
 		background: none;
 		cursor: default;
+		border-style: none;
+		box-shadow: none;
 	}
 
 
+/* Disabled */
+.j-disabled .actions-list__option {
+	color: #666;
+}
+.j-disabled .actions-list__option.j-selected {
+	background-color: #FAF5F5;
+}
+.j-disabled .actions-list__option.j-selected+.actions-list__option.j-selected:before {
+	background-color: #FAF5F5;
+}
+.j-disabled .actions-list__option.j-focused:after {
+	display: none;
+}

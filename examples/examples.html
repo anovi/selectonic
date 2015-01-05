@@ -11,7 +11,8 @@
         <meta name="description" content="Selectonic — jQuery plugin for making selectable lists by mouse and keyboard, configurable with options, methods and callbacks | Author: Alexey Novichkov">
         <meta name="viewport" content="width=device-width">
 
-        <link rel="stylesheet" href="select.css">
+        <link rel="stylesheet" href="list/list.css">
+        <link rel="stylesheet" href="select/select.css">
         <style>
             body {
                 margin: 0;
@@ -22,18 +23,53 @@
             * {
                 box-sizing: border-box;
             }
-            .example {
-                position: absolute;
-                top: 150px;
-                left: 200px;
+            .example p {
+                margin: 1em;
             }
         </style>
 </head>
 <body>
 
+
+
+<div class="example-example">
+    <!-- START: Example list with actions -->
+    <div class="actions-list" id="actions-list" tabindex="0">
+        <ul class="actions-list__group">
+            <li class="actions-list__option">Item 1</li>
+            <li class="actions-list__option">Item 2</li>
+            <li class="actions-list__option">Item 3</li>
+            <li class="actions-list__option">Item 4</li>
+            <li class="actions-list__option">Item 5</li>
+            <li class="actions-list__option">Item 6</li>
+            <li class="actions-list__option">Item 7</li>
+            <li class="actions-list__option">Item 8</li>
+            <li class="actions-list__option">Item 9</li>
+            <li class="actions-list__option">Item 10</li>
+            <li class="actions-list__option">Item 11</li>
+            <li class="actions-list__option">Item 12</li>
+            <li class="actions-list__option">Item 13</li>
+            <li class="actions-list__option">Item 14</li>
+            <li class="actions-list__option">Item 15</li>
+            <li class="actions-list__option">Item 16</li>
+            <li class="actions-list__option">Item 17</li>
+            <li class="actions-list__option">Item 18</li>
+            <li class="actions-list__option">Item 19</li>
+            <li class="actions-list__option">Item 20</li>
+        </ul>
+        <div class="actions-list__actionbar">
+            <button class="actions-list__button">Action1</button>
+            <button class="actions-list__button">Action2</button>
+        </div>
+    </div>
+    <!-- END: Example list with actions -->
+</div>
+
+
+
 <div class="example">
     <p><strong>Simple select.</strong> <br>It has full keyboard support: <br>Arrows, PageUp, PageDown and HOME, END. <br>You could focus it by TAB, press arrow and choose item.</p>
-    <div class="b-select">
+    <div class="b-select select">
         <button class="select-trigger"><div class="select-title">Choose something…</div></button>
         <ul class="select-group">
             <li class="select-option">Item 1</li>
@@ -60,11 +96,15 @@
     </div>
 </div>
 
-<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script src="../../src/selectonic.js"></script>
-<script src="select.js"></script>
+
+<!-- <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script> -->
+<script src="../bower_components/jquery/dist/jquery.js"></script>
+<script src="../src/selectonic.js"></script>
+<script src="list/list.js"></script>
+<script src="select/select.js"></script>
+
 <script>
-    $('.b-select').mySelect();
+    $('.b-select.select').mySelect();
 </script>
 </body>
 </html>
