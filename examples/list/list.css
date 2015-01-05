@@ -1,10 +1,10 @@
-.actions-list {
+.actionsList {
 	margin: 2em;
 	border: 1px solid #F8F7F3;
 	border-radius: 5px;
 	background: #fdfcfa;
 }
-.actions-list__group {
+.actionsList__group {
 	margin: 0;
 	padding: 5px;
 	min-width: 100%;
@@ -12,20 +12,20 @@
 	max-height: 19em;
 	overflow: auto;
 }
-.actions-list__group:focus {
+.actionsList__group:focus {
 	outline: 1px solid red;
 }
-.actions-list__option {
+.actionsList__option {
 	list-style: none;
 	padding: 0 1em 0 1.5em;
 	margin: 0;
 	line-height: 1.9;
 	border-radius: 4px;
 }
-	.actions-list__option.j-focused {
+	.actionsList__option.j-focused {
 		position: relative;
 	}
-		.actions-list__option.j-focused:after {
+		.actionsList__option.j-focused:after {
 			content: "";
 			display: block;
 			position: absolute;
@@ -37,11 +37,11 @@
 			border: 1px solid #AED5A8;
 			border-radius: 4px;
 		}
-	.actions-list__option.j-selected {
+	.actionsList__option.j-selected {
 		background-color: #E5F7E5;
 		position: relative;
 	}
-	.actions-list__option.j-selected+.actions-list__option.j-selected:before {
+	.actionsList__option.j-selected+.actionsList__option.j-selected:before {
 		content: "";
 		display: block;
 		position: absolute;
@@ -52,14 +52,14 @@
 		background-color: #E5F7E5;
 		height: 6px;
 	}
-	.actions-list__option.j-selected.animate,
-	.actions-list__option.j-selected.animate+.actions-list__option.j-selected.animate:before {
+	.actionsList__option.j-selected.animate,
+	.actionsList__option.j-selected.animate+.actionsList__option.j-selected.animate:before {
 		background-color: #D1F5D1;
 	}
 
 
 /* Handle */
-.actions-list__handle {
+.actionsList__handle {
 	display: none;
 	box-sizing: border-box;
 	float: right;
@@ -75,20 +75,20 @@
 	position: relative;
 	z-index: 10;
 }
-    .j-selected .actions-list__handle {
+    .j-selected .actionsList__handle {
         background: rgba(65, 58, 58, 0.07);
     }
-    .handle .actions-list__handle {
+    .handle .actionsList__handle {
         display: inline-block;
     }
 
 
 /* Actions */
-.actions-list__actionbar {
+.actionsList__actionbar {
 	padding: 0.7em;
 	border-top: 1px solid #F1F0EB;
 }
-	.actions-list__button {
+	.actionsList__button {
 		margin: 0 0.4em 0 0;
 		padding: 0.5em 1em;
 		font-size: 14px;
@@ -98,16 +98,16 @@
 		cursor: pointer;
 		background: #F6F5F3;
 	}
-	.actions-list__button:hover {
+	.actionsList__button:hover {
 		background: #eee;
 	}
-	.actions-list__button:active {
+	.actionsList__button:active {
 		background: #e0e0e0;
 		border: none;
 	}
-	.disabled .actions-list__button,
-	.disabled .actions-list__button:hover,
-	.disabled .actions-list__button:active {
+	.disabled .actionsList__button,
+	.disabled .actionsList__button:hover,
+	.disabled .actionsList__button:active {
 		color: #bbb;
 		background: none;
 		cursor: default;
@@ -116,16 +116,31 @@
 	}
 
 
-/* Disabled */
-.j-disabled .actions-list__option {
+/* Focused */
+.actionsList:not(.focused) .actionsList__option {
 	color: #666;
 }
-.j-disabled .actions-list__option.j-selected {
+.actionsList:not(.focused) .actionsList__option.j-selected {
 	background-color: #FAF5F5;
 }
-.j-disabled .actions-list__option.j-selected+.actions-list__option.j-selected:before {
+.actionsList:not(.focused) .actionsList__option.j-selected+.actionsList__option.j-selected:before {
 	background-color: #FAF5F5;
 }
-.j-disabled .actions-list__option.j-focused:after {
+.actionsList:not(.focused) .actionsList__option.j-focused:after {
+	display: none;
+}
+
+
+/* Disabled */
+.j-disabled .actionsList__option {
+	color: #666;
+}
+.j-disabled .actionsList__option.j-selected {
+	background-color: #FAF5F5;
+}
+.j-disabled .actionsList__option.j-selected+.actionsList__option.j-selected:before {
+	background-color: #FAF5F5;
+}
+.j-disabled .actionsList__option.j-focused:after {
 	display: none;
 }

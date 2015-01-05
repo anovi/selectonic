@@ -1,22 +1,22 @@
 (function( $ ) {
   'use strict';
 
-  var $el = $('#actions-list'),
-  actions = $el.find('.actions-list__actionbar'),
-  list    = $el.find('.actions-list__group');
+  var $el = $('#actionsList'),
+  actions = $el.find('.actionsList__actionbar'),
+  list    = $el.find('.actionsList__group');
 
   // Attach selectonic 
   list
     .selectonic({
       multi: true,
-      keyboard: true,
+      keyboard: false,
       focusBlur: false,
       selectionBlur: false,
 
 
       // Before any changes
       before: function(e) {
-        if (e.target === actions[0] || $(e.target).is('button.actions-list__button')) {
+        if (e.target === actions[0] || $(e.target).is('button.actionsList__button')) {
           this.selectonic('cancel');
         }
       },
@@ -31,22 +31,29 @@
 
       // When all items clears selection
       unselectAll: function() { toggleActions(true); }
-    })
-    .selectonic('disable');
+    });
 
   $el
-    .on('focusin', function (e) {
-      list.selectonic('enable');
-    })
-    .on('focusout', function() {
-      list.selectonic('disable');
-    });
+    .on('focusin', onFocusin)
+    .on('focusout', onFocusout);
 
 
   actions.on('click', 'button', function() {
     // Get selected items from list
     doAction( list.selectonic('getSelected') );
   });
+
+
+  function onFocusin () {
+    list.selectonic('option', 'keyboard', true);
+    $el.addClass('focused');
+  }
+
+
+  function onFocusout () {
+    list.selectonic('option', 'keyboard', false);
+    $el.removeClass('focused');
+  }
 
 
   function toggleActions (state) {
