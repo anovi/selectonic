@@ -989,12 +989,12 @@
         break;
       }
     }
+
+    // Disable default window scroll by arrows, PageUp, PageDown, Home, End
+    if (direction) { e.preventDefault(); }
+
     // One of the arrows was pressed
     if ( target && target.length > 0 ) {
-      if (direction) {
-        e.preventDefault(); // Disable default window scroll by arrow keys
-      }
-
       params.target = target[0];
       params.items = target;
 
