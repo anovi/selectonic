@@ -1,6 +1,6 @@
-/*! Selectonic - v0.6.0 - 2014-07-19
+/*! Selectonic - v0.6.1 - 2015-01-05
 * https://github.com/anovi/selectonic
-* Copyright (c) 2014 Alexey Novichkov; Licensed MIT */
+* Copyright (c) 2015 Alexey Novichkov; Licensed MIT */
 (function($, window, undefined) {
   'use strict'; // remove this line, this script will be support running on IE6
 
@@ -992,10 +992,12 @@
         break;
       }
     }
+
+    // Disable default window scroll by arrows, PageUp, PageDown, Home, End
+    if (direction) { e.preventDefault(); }
+
     // One of the arrows was pressed
     if ( target && target.length > 0 ) {
-      e.preventDefault(); // Disable default window scroll by arrow keys
-
       params.target = target[0];
       params.items = target;
 
