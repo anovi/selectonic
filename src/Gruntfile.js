@@ -271,9 +271,19 @@ module.exports = function (grunt) {
             '.htaccess',
             'images/{,*/}*.webp',
             '{,*/}*.html',
-            'font/{,*/}*.*'
+            'font/{,*/}*.*',
+            '**/*.svg',
+            '!bower_components'
+
           ]
         }]
+      },
+      svg: {
+        expand: true,
+        // dot: true,
+        cwd: '<%= yeoman.app %>/libs/select',
+        dest: '<%= yeoman.dist %>/styles',
+        src: ['arrow.svg', 'check.svg']
       },
       styles: {
         expand: true,
@@ -346,6 +356,7 @@ module.exports = function (grunt) {
     'cssmin',
     'uglify',
     'copy:dist',
+    'copy:svg',
     'rev',
     'usemin',
     'htmlmin'
