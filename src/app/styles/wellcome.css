@@ -1,4 +1,4 @@
-/* ======================================== 
+/* ========================================
 
     Wellcome block
 
@@ -7,7 +7,7 @@
     padding-top: 1.7em;
     line-height: 1.5;
     color: #d8a888;
-    text-shadow: 0 1px 0 black;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.2);
     background: #2e2e2e;
     font-size: 1.5em;
     position: fixed;
@@ -29,17 +29,17 @@
 }
 
 .wellcome .wellcome__wrapper {
-    padding: 3em 0 3em 0;
+    padding: 3em 0 4em 0;
     max-width: 45em;
     margin: 0 2em 0 4em;
 }
 
 h1.wellcome__title {
     margin: 0 0 0.3em 0;
-    font-size: 2em;
-    line-height: 1em;
-    font-weight: bold;
-    color: #f2dfdd;
+    font-size: 1.6em;
+    line-height: 1.2;
+    font-weight: normal;
+    color: #d8a888;
 }
 p.wellcome__title {
     margin: 0 0 0.4em 0;
@@ -61,15 +61,15 @@ a.wellcome__download:visited {
     font-size: 0.9em;
     padding: 0.5em 1em;
     margin: 0.5em 0.5em 0.5em 0;
-    
-    color: #BDE7B7;
+
+    color: white;
+    background: #8AA885;
     text-decoration: none;
-    border-radius: 0.4em;
-    border: 1px solid #96B193;
+    border-radius: 4px;
+    transition: background-color 0.3s ease
 }
 a.wellcome__download:hover {
-    color: white;
-    border-color: #BBBBBB;
+    background: rgb(150, 195, 143);
 }
 
 .wellcome__github {
