@@ -60,10 +60,10 @@ a.wellcome__download:visited {
     display: inline-block;
     font-size: 0.9em;
     padding: 0.5em 1em;
-    margin: 0.5em 0.5em 0.5em 0;
+    margin: 0.5em 1em 0.5em 0;
 
     color: white;
-    background: #8AA885;
+    background: #8AB283;
     text-decoration: none;
     border-radius: 4px;
     transition: background-color 0.3s ease

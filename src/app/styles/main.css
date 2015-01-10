@@ -1,5 +1,5 @@
 
-/* ======================================== 
+/* ========================================
 
     Basic
 
@@ -21,7 +21,7 @@ body {
 h1,h2,h3,h5,h6 {
     padding: 0;
     margin: 0 0 0.3em;
-    color: #AED5A8;
+    color: #383D37;
     line-height: 1.4;
 }
     h2 {
@@ -116,7 +116,7 @@ table {
         padding: 0.5em 0.5em;
         border-top: 1px solid #e1e1e1;
     }
-    
+
     /* IE */
     .ie9 table,
     .lt-ie9 table {
@@ -242,7 +242,7 @@ input[type=radio]+label:before {
 
 
 
-/* ======================================== 
+/* ========================================
 
     Panels
 
@@ -263,9 +263,9 @@ input[type=radio]+label:before {
             display: block;
             position: relative;
             padding: 0 1em;
-            
+
             font-size: 16px;
-            line-height: 2em;   
+            line-height: 2em;
 
             color: #CFC4BD;
             -webkit-box-shadow: 0 1px 1px rgba(0,0,40,0.1);
@@ -291,7 +291,7 @@ input[type=radio]+label:before {
     font-family: monospace;
 }
 
-/* ======================================== 
+/* ========================================
 
     About
 
@@ -304,7 +304,7 @@ input[type=radio]+label:before {
 }
 
 
-/* ======================================== 
+/* ========================================
 
     Methods
 
@@ -333,7 +333,7 @@ input[type=radio]+label:before {
 }
 
 
-/* ======================================== 
+/* ========================================
 
     Sandbox
 
