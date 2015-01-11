@@ -64,7 +64,7 @@ var demo = demo || {};
     if ( attr === 'handle' ) {
       value = (value) ? '.actions-list__handle' : value;
       mainList.toggleClass( 'handle', value);
-      mainList.selectonic( 'option', attr, value );
+      mainList.selectonic( 'option', attr, (value===false?null:value) );
 
     } else {
       mainList.selectonic( 'option', attr, value );
