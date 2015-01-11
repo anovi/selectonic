@@ -1,7 +1,7 @@
 .b-navbar {
     position: fixed;
     top: 35px;
-    left: 80px;
+    left: 0;
     right: 0;
     background: #444;
     background: #2e2e2e;
@@ -21,6 +21,10 @@
         transition: top 0.3s ease;
         top: 0;
     }
+    .b-navbar.fixed .nav-32 {
+        display: inline;
+        display: none;
+    }
 
 .b-navbar a,
 .b-navbar a:hover,
@@ -32,7 +36,7 @@
 }
 
 .b-navbar .nav-tabs {
-    margin: 0;
+    margin: 0 0 0 80px;
     padding: 0;
     line-height: 3;
 }
@@ -60,6 +64,7 @@
     }
 
 
+/* Logo */
 .b-navbar .nav-name {
     font-weight: bold;
     text-transform: uppercase;
@@ -69,9 +74,11 @@
     .b-navbar li.nav-name.active:hover {
         background: #2E2E2E;
     }
-    .b-navbar li.nav-name a {
-        color: #eee;
-    }
-    .b-navbar .nav-name img {
+    .nav-48 {
         vertical-align: top;
     }
+
+.nav-name.animate .nav-48 {
+    transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+    transform: rotate(1turn);
+}

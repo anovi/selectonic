@@ -1,4 +1,4 @@
-/* ======================================== 
+/* ========================================
 
     Options
 
@@ -31,8 +31,6 @@
         font-size: 1em;
         background: transparent;
         border-radius: 0;
-        -webkit-box-shadow: none;
-        -moz-box-shadow: none;
         box-shadow: none;
     }
         .options-table td {

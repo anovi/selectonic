@@ -406,11 +406,19 @@ var demo = demo || {};
   $window = $(window),
   offset = -navbar.height();
 
+  function animateLogo() {
+    navbar.find('.nav-name').addClass('animate');
+    setTimeout(function() {
+      navbar.find('.nav-name').removeClass('animate');
+    }, 500);
+  }
+
   navbar.on('click', 'a', function(event) {
     event.preventDefault();
     var id = $(event.currentTarget).attr('href'),
     target = $( id ),
     top = target.offset().top;
+    if (id === '#top-anchor') { animateLogo(); }
     $window.scrollTop( top + offset );
   });
 
