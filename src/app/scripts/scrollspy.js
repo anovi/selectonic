@@ -9,9 +9,12 @@
     cloneRemove:  { default:null, type:'function', isNullable:true },
     move:         { default:null, type:'function', isNullable:true },
     stop:         { default:null, type:'function', isNullable:true },
+    start:        { default:null, type:'function', isNullable:true },
     over:         { default:null, type:'function', isNullable:true },
     out:          { default:null, type:'function', isNullable:true },
-    visible:      { default:null, type:'function', isNullable:true }
+    visible:      { default:null, type:'function', isNullable:true },
+    positioning:  { default:true, type:'boolean', isNullable:false },
+    cloning:      { default:true, type:'boolean', isNullable:false }
   },
   $window = $( window );
 
@@ -67,34 +70,47 @@
     }
 
     if ( boxWindowY > windowScrollTop + offset) {
-      item.css({
-        position: this._initState.position,
-        top: this._initState.top,
-      });
+      if (this.options.get('positioning')) {
+        item.css({
+          position: this._initState.position,
+          top: this._initState.top,
+        });
+      }
+      this._active = false;
+      this._callEvent('stop');
       this._cutClone();
-    
+
     } else if ( windowScrollTop > boxViewHeight + boxWindowY - itemHeight - offset ) {
       // set item to bottom box edge
       this._setClone();
-      item.css({
-        position:'absolute',
-        top: boxViewHeight + boxWindowY - itemHeight
-      });
+      if (this.options.get('positioning')) {
+        item.css({
+          position:'absolute',
+          top: boxViewHeight + boxWindowY - itemHeight
+        });
+      }
+      this._active = false;
       this._callEvent('stop');
-    
+
     } else {
       this._setClone();
-      item.css({
-        position: 'fixed',
-        top: 0 + this.options.get('offset')
-      });
+      if (this.options.get('positioning')) {
+        item.css({
+          position: 'fixed',
+          top: 0 + this.options.get('offset')
+        });
+      }
+      if (!this._active) {
+        this._active = true;
+        this._callEvent('start');
+      }
       this._callEvent('move');
     }
   };
 
 
   Plugin.prototype._setClone = function() {
-    if ( this._clone ) { return; }
+    if ( this._clone || !this.options.get('cloning') ) { return; }
     this._clone = this.$el
       .clone()
       .css({ opacity: 0 })
@@ -134,7 +150,7 @@
       args.push( this._clone );
       args.push( this.$el );
       break;
-      
+
     case 'out':
     case 'over':
       if ( this._called[name] ) {

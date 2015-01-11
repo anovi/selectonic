@@ -1,76 +1,77 @@
 .b-navbar {
-	position: fixed;
-	top: 0;
-	left: 0;
-	right: 0;
-	background: #444;
-	background: #2e2e2e;
-	color: #d8a888;
-	z-index: 100;
-	box-shadow: 0 1px 0 #444;
-	box-shadow: 0 1px 0 rgba(255,255,255,0.1);
+    position: fixed;
+    top: 35px;
+    left: 80px;
+    right: 0;
+    background: #444;
+    background: #2e2e2e;
+    color: #d8a888;
+    z-index: -1;
 }
-	.lt-ie10 .b-navbar {
-		display: none;
-	}
+    .lt-ie10 .b-navbar {
+        display: none;
+    }
+
+    .b-navbar.fixed {
+        z-index: 100;
+        left: 0;
+        top: -48px;
+    }
+    .b-navbar.fixed.visible {
+        transition: top 0.3s ease;
+        top: 0;
+    }
 
 .b-navbar a,
 .b-navbar a:hover,
 .b-navbar a:visited {
-	color: #BDE7B7;
-	text-decoration: none;
-	border: none;
+    color: #BDE7B7;
+    text-decoration: none;
+    border: none;
     outline: none;
 }
 
 .b-navbar .nav-tabs {
-	margin: 0;
-	padding: 0;
-	line-height: 3;
+    margin: 0;
+    padding: 0;
+    line-height: 3;
 }
-	.b-navbar .nav-tabs li {
-		margin: 0;
-		float: left;
-		list-style: none;
-	}
+    .b-navbar .nav-tabs li {
+        margin: 0;
+        float: left;
+        list-style: none;
+    }
 
-	.b-navbar li.active,
-	.b-navbar li.active:hover {
-		background: #555;
-		background: rgba(255,255,255,0.1);
-	}
-	.b-navbar li a {
-		padding: 0 1em;
-		display: inline-block;
-	}
-	.b-navbar li:hover a {
-		color: #FFF;
-	}
-	.b-navbar li.active a {
-		color: #eee;
-		color: #D8A888;
-	}
-
-
-.b-navbar .nav-group {
-	margin: 0 1em;
-}
-.b-navbar .nav-group-title {
-	font-size: 0.8em;
-	padding: 0 0.5em 0 1em;
-	line-height: 3.75; /*   0.8 * 1.25 = 1; 0.8 * 3 = 3.75;    */
-	display: none;
-}
+    .b-navbar li.active,
+    .b-navbar li.active:hover {
+        background: #555;
+        background: rgba(255,255,255,0.1);
+    }
+    .b-navbar li a {
+        padding: 0 1em;
+        display: inline-block;
+    }
+    .b-navbar li:hover a {
+        color: #FFF;
+    }
+    .b-navbar li.active a {
+        color: #eee;
+        color: #D8A888;
+    }
 
 
 .b-navbar .nav-name {
-	font-weight: bold;
-	text-transform: uppercase;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-left: 4px;
 }
-	.b-navbar li.nav-name.active,
-	.b-navbar li.nav-name.active:hover {
-		background: #444;
-	}
-	.b-navbar li.nav-name a {
-		color: #eee;
-	}
+    .b-navbar li.nav-name.active,
+    .b-navbar li.nav-name.active:hover {
+        background: #2E2E2E;
+    }
+    .b-navbar li.nav-name a {
+        color: #eee;
+    }
+    .b-navbar .nav-name img {
+        vertical-align: top;
+    }

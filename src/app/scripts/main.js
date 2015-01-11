@@ -276,6 +276,7 @@ var demo = demo || {};
 
   var example     = {},
   enabled         = {},
+  navbar          = $('#navbar'),
   navHeight       = $('#navbar').height(),
   active          = null,
   isSelectStopped = false;
@@ -375,6 +376,21 @@ var demo = demo || {};
       }
     });
 
+
+  // Floating navbar
+  navbar.scrollSpy({
+    box: $('.docs-wrapper')[0],
+    cloning: false,
+    positioning: false,
+    start: function() {
+      navbar.addClass('fixed');
+      setTimeout(function() {navbar.addClass('visible');}, 0);
+    },
+    stop: function() {
+      navbar.removeClass('visible fixed');
+    }
+  });
+
 })(jQuery, window);
 
 
@@ -392,7 +408,7 @@ var demo = demo || {};
 
   navbar.on('click', 'a', function(event) {
     event.preventDefault();
-    var id = $(event.target).attr('href'),
+    var id = $(event.currentTarget).attr('href'),
     target = $( id ),
     top = target.offset().top;
     $window.scrollTop( top + offset );
