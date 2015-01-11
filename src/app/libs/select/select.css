@@ -11,6 +11,7 @@
 	border: none;
 	line-height: 1.9;
 	padding: 0.5em 2.3em 0.5em 1em;
+    color: black;
 }
 	.b-select .select-title {
 		overflow: hidden;

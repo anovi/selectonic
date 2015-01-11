@@ -94,6 +94,7 @@
 		border-radius: 5px;
 		cursor: pointer;
 		background: #F6F5F3;
+        color: black;
 	}
 	.actions-list__button:hover {
 		background: #eee;
@@ -101,6 +102,7 @@
 	.actions-list__button:active {
 		background: #e0e0e0;
 		border: none;
+        color: #444;
 	}
 	.disabled .actions-list__button,
 	.disabled .actions-list__button:hover,

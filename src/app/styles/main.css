@@ -136,18 +136,22 @@ pre {
 button {
     padding: 0.3em 0.5em 0.4em;
     font-size: 0.9em;
-    border: 1px solid #B7E7D6;
+    /*border: 1px solid #B7E7D6;*/
+    border: none;
     border-radius: 3px;
     box-shadow: 0 1px 0 0 white;
-    background: white;
+    background: #88CDAB;
+    color: white;
 }
     .ie9 button {
         filter: none;
     }
-
+    button:hover {
+        background: #84D7AE;
+    }
     button:active {
-        color: #777;
-        background: #F8FDFB;
+        color: #EFEFEF;
+        background: #7E968A;
     }
     button:focus {
         outline: none;
@@ -219,7 +223,7 @@ input[type=radio]+label:before {
 }
 input[type=checkbox]:checked+label:before,
 input[type=radio]:checked+label:before {
-    background: #B7E7D6;
+    background: #8BDAB3;
 }
 /* Radio */
 input[type=radio]+label:before {
