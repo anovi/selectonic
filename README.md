@@ -31,8 +31,8 @@ $(".itemsList").selectonic({
     keyboard: true,
     select: function(event, ui) {
         // do something cool, for expample enable actions buttons
-    }
-	unselectAll: function(event, ui) {
+    },
+    unselectAll: function(event, ui) {
         // …and disable actions buttons
     }
 });
