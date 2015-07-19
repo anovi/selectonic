@@ -432,6 +432,9 @@
     default:
       items = params.allItems ? params.allItems : this.$el.find( this.options.get('filter') );
       params.allItems = items;
+      if (target && $.isNumeric(target)) {
+        return items.eq(target);
+      }
       return items;
     }
   };
@@ -1448,14 +1451,18 @@
       params.items = this._getItems( params );
 
     } else {
-      $elem = this._checkIfElem( selector );
-      if ( $elem === false) { $elem = this._checkIfSelector( selector ); }
-      if ( $elem === false) { throw new Error('You shold pass DOM element or selector to \"select\" method.'); }
       params = {
-        items: ( $elem === null) ? null : ( $elem.addClass ) ? $elem : $( $elem ),
         isTargetWasSelected: (revert) ? true : false,
         isMultiSelect: true
       };
+      if (selector && $.isNumeric(selector)) {
+        params.items = this._getItems( params, selector );
+      } else {
+        $elem = this._checkIfElem( selector );
+        if ( $elem === false) { $elem = this._checkIfSelector( selector ); }
+        if ( $elem === false) { throw new Error('You shold pass DOM element or selector to \"select\" method.'); }
+        params.items = ( $elem === null) ? null : ( $elem.addClass ) ? $elem : $( $elem );
+      }
     }
 
     delete this.ui.solidInitialElem;
@@ -1512,10 +1519,13 @@
     var $elem;
 
     if ( arguments.length > 0 ) {
-      $elem = ($elem = this._checkIfElem( selector )) === false ? this._checkIfSelector( selector ) : $elem;
+      if ( $.isNumeric(selector) ) {
+        $elem = this._getItems( {}, selector );
+      } else {
+        $elem = ($elem = this._checkIfElem( selector )) === false ? this._checkIfSelector( selector ) : $elem;
+      }
       if ( $elem && ($elem.jquery || $elem.zepto) ) {
         this._setFocus( $elem[0] );
-
       } else if ( $elem === false) {
         throw new Error( 'You shold pass DOM element or CSS selector to set focus or nothing to get it.' );
       }

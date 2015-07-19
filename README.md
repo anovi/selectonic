@@ -425,6 +425,9 @@ $(elem).selectonic("focus"); //returns focus or null if there is no one
 ```javascript
 $(elem).selectonic("focus", elem); //if elem is a list's item it will be focused
 ```
+```javascript
+$(elem).selectonic("focus", 0); //first element in the list
+```
 
 ### select
 If in any scenario you need auto-select items (select first item at the beginning) then you need pass element to `select` method:
@@ -437,6 +440,10 @@ $(elem).selectonic("select", ":even");
 ```
 ```javascript
 $(elem).selectonic("select", "li:eq(3)");
+```
+You also could select an item by passing its number:
+```javascript
+$(elem).selectonic("select", 0);
 ```
 `select` method only selects passed items but doesn't clear selection from others items, if they are. Method doesn't change focused element.
 

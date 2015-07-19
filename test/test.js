@@ -1092,7 +1092,7 @@
     box.html(''); //clear box
 
     res = box.selectonic('select', 'li');
-    res2 = box.selectonic('getSelected').length
+    res2 = box.selectonic('getSelected').length;
 
     ok( res2 === 0, 'getSelected returned 0' );
     ok( res.jquery, 'Nothing happend, it is ok!' );
