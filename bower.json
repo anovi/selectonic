@@ -1,7 +1,7 @@
 {
   "name": "selectonic",
   "title": "Selectonic",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "jQuery-plugin for making any list of items selectable by mouse and keyboard.",
   "homepage": "https://github.com/anovi/selectonic",
   "author": {
