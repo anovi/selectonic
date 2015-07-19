@@ -52,7 +52,7 @@
   * @for Selectonic
   * @param {Object} schema Options schema.
   * @param {Object} initial Initial options, will be mixed with schema's defaults.
-  **/ 
+  **/
   function Options ( schema, defaults, initial ) {
     this._schema    = schema;
     this._options   = {};
@@ -183,7 +183,7 @@
   * @constructor
   * @param {HTMLElement} element
   * @param {Object} options will be mixed with default options
-  **/ 
+  **/
   function Plugin( element, options ) {
     this._name      = Plugin.pluginName;
     this.el         = element;
@@ -212,7 +212,7 @@
   Plugin.pluginName = 'selectonic';
   Plugin.keyCode    = { DOWN:40, UP:38, SHIFT:16, END:35, HOME:36, PAGE_DOWN:34, PAGE_UP:33, A:65, SPACE:32, ENTER:13 };
 
-  
+
   /**
   * Gets plugin's data object
   * @param {HTMLElement} el
@@ -220,7 +220,7 @@
   * @static
   * @private
   * @return {Object} Selectonic instance.
-  **/ 
+  **/
   Plugin.getDataObject = function( el ) {
     return $( el ).data( 'plugin_' + Plugin.pluginName );
   };
@@ -303,7 +303,7 @@
     params.wasCancelled = true;
   };
 
-  
+
   /**
   * Attath handlers for plugin instace.
   * @method _bindEvents
@@ -334,7 +334,7 @@
     this.$el.on(  'selectstart.'+name   ,this._selectstartEvent );
   };
 
-  
+
   /**
   * Detach instance handlers.
   * @method _unbindEvents
@@ -382,7 +382,7 @@
       return target;
     }
     // has not clicked any selectable items of a list
-    return null; 
+    return null;
   };
 
 
@@ -391,7 +391,7 @@
   * @method _getItems
   * @private
   * @param {Object} params Current params.
-  * @param {String} [target] Find 'next' 'prev' 'pageup' 'pagedown' item 
+  * @param {String} [target] Find 'next' 'prev' 'pageup' 'pagedown' item
   *   relative to `elem` argument or 'first' or 'last' item of the list.
   * @param {HTMLElement} [elem] Element.
   * @return {jQuery object|null} Found element wrapped in jQuery or null.
@@ -444,7 +444,7 @@
   * Both algorithms runs loop until total item's height reaches maximum possible value,
   * but lower than page height. But first version gets from DOM one next element every cycle,
   * and second version gets all items at the beginning and then iterates through them.
-  * And it set allItems and rangeStart and rangeEnd for params. So second version used only 
+  * And it set allItems and rangeStart and rangeEnd for params. So second version used only
   * for Shift+pageUp/Down cases for performance and can be enabled by flag params.isShiftPageRange.
   *
   * @method _getNextPageElem
@@ -453,10 +453,10 @@
   * @param {String} target Find 'pageup' 'pagedown' item relative to `elem` argument.
   * @param {HTMLElement} elem Element.
   * @return {jQuery object|null} Found element wrapped in jQuery or null.
-  **/ 
+  **/
   Plugin.prototype._getNextPageElem = function( params, target, elem ) {
     var
-      _isOptimized  = params.isShiftPageRange, 
+      _isOptimized  = params.isShiftPageRange,
       box           = this._scrolledElem || this.el,
       boxViewHeight = box.clientHeight,
       winViewHeight = $( window )[outerHeight](),
@@ -481,19 +481,19 @@
         cand = currentIndex >= 0 ? allItems.eq( currentIndex ) : null;
         $candidate = cand && cand.length > 0 ? cand : null;
       } else {
-        $candidate = this._getItems( params, direction, $current );  
+        $candidate = this._getItems( params, direction, $current );
       }
-      
+
       if ( !$candidate && $current[0] === elem ) {
         break;
       } else if ( !$candidate  ) {
         if ( _isOptimized ) { params.rangeEnd = currentIndex - direction; }
         return $current;
       }
-      
+
       candHeight = $candidate[outerHeight]();
       itemsHeight = itemsHeight + candHeight;
-      
+
       if ( itemsHeight > pageHeight ) {
         // If two items bigger than page than it just will give next item
         if ( currentHeight + candHeight > pageHeight ) {
@@ -566,10 +566,10 @@
     if ( params.target && params.isTargetWasSelected === undefined ) {
       params.isTargetWasSelected = this._getIsSelected( params.target );
     }
-    
+
     if (
-      params.isRangeSelect && 
-      params.isTargetWasSelected && 
+      params.isRangeSelect &&
+      params.isTargetWasSelected &&
       params.target === this.ui.focus
     ) {
       // do nothing
@@ -592,7 +592,7 @@
 
       // If there is one selected item and it is focused
       if ( this._selected && this._selected === 1 && this._getIsSelected(this.ui.focus) ) {
-        /* It is case, when user moves cursor by keys or chooses single items by mouse 
+        /* It is case, when user moves cursor by keys or chooses single items by mouse
         - need just clear selection from focus - no need run go whole DOM of list */
         this._unselect( e, params, this.ui.focus, params.isTargetWasSelected );
 
@@ -602,14 +602,14 @@
       // Select item. Callback 'select' calls only if target was selected
       this._select( e, params, params.items, params.isTargetWasSelected );
 
-    } else if ( !params.target && this._selected > 0 && this.options.get('selectionBlur') ) { 
+    } else if ( !params.target && this._selected > 0 && this.options.get('selectionBlur') ) {
       this._unselectAll( e, params );
     }
 
     if( !this._selected && params.wasSelected ) {
       this._trigger('unselectAll', e, params);
     }
-    
+
     params.prevFocus = ( this.ui.focus ) ? this.ui.focus : null;
 
     if ( !params.target && this.options.get('focusBlur') ) {
@@ -617,7 +617,7 @@
     } else if ( params.target && !params.wasCancelled ) {
       this._setFocus( params.target );
     }
-    
+
     // End of the cycle
     this._stop( e, params );
   };
@@ -646,7 +646,7 @@
       items = items.add( allItems.slice( bot + 1 ) );
       this._unselect( e, params, items );
       this._select( e, params, params.items );
-    
+
     // Existing Solid selection and target is not selected
     // and initial selection's elem is in current range
     } else if (
@@ -699,7 +699,7 @@
       aboveZero = delta > 0,
       changedItems = [],
       _this = this;
-    
+
     $( items ).each( function( index, item ) {
       var
         isSelected = _this._getIsSelected( item ),
@@ -910,7 +910,7 @@
   * @method _checkIfSelector
   * @private
   * @param {any} selector
-  * @return {jQuery object|false|null} If `selector` is a selector 
+  * @return {jQuery object|false|null} If `selector` is a selector
   *   and match some elements then method return these elements.
   **/
   Plugin.prototype._checkIfSelector = function( selector ) {
@@ -920,11 +920,11 @@
         .find( selector )
         .filter( this._itemsSelector );
       return ( res.jquery && res.length > 0 ) ? res : null;
-    
+
     } else { return false; }
   };
 
-  
+
 
   /* ==============================================================================
 
@@ -1011,7 +1011,7 @@
 
       // SHIFT mode
       } else if ( this.ui.focus && this.options.get('multi') && e.shiftKey && !isAllSelect ) {
-        // Call multiVariator or rangeVariator - 
+        // Call multiVariator or rangeVariator -
         // it set all needed params depends from arguments
         if (
           key === Plugin.keyCode.END     || key === Plugin.keyCode.HOME ||
@@ -1137,7 +1137,7 @@
   * when UP, DOWN, PageUp, PageDown keys has pressed - find target or first/last element of the list
   * @method _findNextTarget
   * @private
-  * @param {String} direction Indicates 'prev' 'next' or 'pageup' 'pagedown' item to find 
+  * @param {String} direction Indicates 'prev' 'next' or 'pageup' 'pagedown' item to find
   *   relative to the focused element.
   * @param {Object} params Current params.
   * @return {jQuery object|null} Targeted element.
@@ -1176,9 +1176,9 @@
 
     if ( itemBoxTop < boxScrollTop ) {
       $box.scrollTop( itemBoxTop );
-    
+
     } else if ( (itemBoxTop + itemHeight) > (boxScrollTop + boxViewHeight) ) {
-      // Scroll to bottom edge of elem - 
+      // Scroll to bottom edge of elem -
       // bottom edges of item and viewport will be on the same Y
       $box.scrollTop( itemBoxTop + itemHeight - boxViewHeight );
     }
@@ -1239,7 +1239,7 @@
     } else if (type === 'mousedown' || type === 'click') {
       params.target = this._getTarget(e);
       // Mousedown on item, except cases mathes all conditions:
-      // - in multi/range modes 
+      // - in multi/range modes
       // - with multi:true
       // - with mouseMode:'standard'
       if (type === 'mousedown' && params.target && !( options.multi && (isMulti||isRange) && options.mouseMode === 'standard' )) {
@@ -1302,7 +1302,7 @@
   Plugin.prototype._preventMouseMove = function() {
     var _this = this;
     this._isFocusOnHoverPrevented = true;
-    
+
     if ( this._focusHoverTimeout ) {
       clearTimeout( this._focusHoverTimeout );
       delete this._focusHoverTimeout;
@@ -1446,13 +1446,13 @@
         isMultiSelect: true
       };
       params.items = this._getItems( params );
-    
+
     } else {
       $elem = this._checkIfElem( selector );
       if ( $elem === false) { $elem = this._checkIfSelector( selector ); }
       if ( $elem === false) { throw new Error('You shold pass DOM element or selector to \"select\" method.'); }
       params = {
-        items: ( $elem.addClass ) ? $elem : $( $elem ),
+        items: ( $elem === null) ? null : ( $elem.addClass ) ? $elem : $( $elem ),
         isTargetWasSelected: (revert) ? true : false,
         isMultiSelect: true
       };

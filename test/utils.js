@@ -35,12 +35,12 @@
     box.selectonic( options );
   },
 
-  
+
   getBox = function () {
     return $('#qunit-fixture').find('#sublist');
   },
 
-  
+
   getSelectionText = function() {
     var txt = '';
     if (txt = window.getSelection) {
@@ -64,7 +64,7 @@
     }
   },
 
-  
+
   elems = function() {
     var elems = getBox().find('li');
     return function( eq ) {

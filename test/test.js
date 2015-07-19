@@ -1,5 +1,5 @@
 (function( $ ) {
-  
+
   /*
     TODO: more apppropriate test for mouseMode option
     TODO: test for autoScroll option
@@ -34,7 +34,7 @@
     multi:         true,
     autoScroll:    true,
     preventInputs: true,
-    
+
     focusBlur:     false,
     selectionBlur: false,
     keyboard:      false,
@@ -54,7 +54,7 @@
     if (info.module === 'Keyboard') {
       $.extend( advanced, { multi: true, keyboard: true });
     }
-    
+
     switch ( info.name ) {
       case 'Blurable mousedown':
       case 'cancel':
@@ -98,6 +98,7 @@
     }
   });
 
+
   /*
   *
   * Basic suite
@@ -125,10 +126,10 @@
   test( 'Select click', 4, function() {
     var elem = getBox().find('li:eq(3)'),
     secElem = getBox().find('li:eq(10)');
-    
+
     elem.triggerClick();
     assert.selectedFocus( elem );
-    
+
     secElem.triggerClick();
     secElem.triggerClick();
     assert
@@ -145,7 +146,7 @@
     e         = $.Event( "mousedown" );
     e.which = 1;
     e.metaKey = true;
-    
+
     elem.triggerClick();
     ok( elem.hasClass('selected'), "Selected" );
     ok( elem.hasClass('focused'), "Focused" );
@@ -174,7 +175,7 @@
     e          = $.Event( "mousedown" );
     e.which = 1;
     e.shiftKey = true;
-    
+
     elem.triggerClick();
     assert.selectedFocus( elem );
 
@@ -192,7 +193,7 @@
 
   test( 'Blurable mousedown', 3, function() {
     var elem = getBox().find('li:eq(3)');
-    
+
     elem.triggerClick();
     assert.selectedFocus( elem );
 
@@ -203,7 +204,7 @@
 
   test( 'Standard mouseMode', 2, function() {
     var el = elems();
-    
+
     el(3).triggerClick();
     el(5).shiftMousedown();
     el(4).triggerMousedown();
@@ -216,7 +217,7 @@
     el(3).triggerMouseup();
     el(5).triggerMousedown();
     assert.selectedFocus( el(3) );
-    
+
     el(5).triggerMouseup('shift');
     assert
       .selectedFocus( el(5) )
@@ -235,7 +236,7 @@
     var el = elems();
     el(3).triggerMouseup();
     assert.selectedFocus( el(3) );
-    
+
     $('body').triggerMousedown();
     assert
       .selected( el(3) )
@@ -244,13 +245,13 @@
 
   test( 'Toggle mouseMode', 4, function() {
     var el = _Utils.elems();
-    
+
     el(3).triggerClick();
     el(5).triggerClick();
     assert
       .selected( el(3) )
       .selectedFocus( el(5) );
-    
+
     el(3).triggerClick();
     assert
       .notSelected( el(3) )
@@ -266,21 +267,21 @@
     e          = $.Event( "mousedown" );
     e.which = 1;
     e.shiftKey = true;
-    
+
     elem.triggerClick();
     secElem.trigger( e );
     assert
       .selected( elem )
       .selectedFocus( secElem )
       .notSelected( midElem );
-    
+
     midElem.triggerClick();
     assert.selectedCount(0);
   });
 
   test( 'Handled items mousedown', 2, function() {
     var elem = getBox().find('li:eq(3)');
-    
+
     elem.triggerClick();
     assert.selectedCount(0);
 
@@ -289,7 +290,7 @@
   });
 
   test( 'Text selection', 1, function() {
-    var 
+    var
     box = getBox(),
     elem = box.find('li:eq(3)'),
     secElem = box.find('li:eq(5)');
@@ -315,18 +316,18 @@
     box     = getBox(),
     elem    = box.find('li:eq(3)'),
     secElem = box.find('li:eq(5)'),
-    
+
     isEnabled = box
       .selectonic('select','li:eq(3)')
       .selectonic('disable')
       .selectonic('isEnabled');
     ok( !isEnabled, 'Is diabled!' );
-    
+
     secElem.triggerClick();
     assert
       .selected( elem )
       .selectedCount( 1 );
-    
+
     isEnabled = box.selectonic('enable').selectonic('isEnabled');
     ok( isEnabled, 'Is enabled!' );
   });
@@ -335,7 +336,7 @@
     var
     box = getBox(),
     el  = elems();
-    
+
     // box.selectonic('select', el(3));
     el(3).triggerClick();
 
@@ -367,14 +368,14 @@
     elem    = box.find('li:eq(3)'),
     secElem = box.find('li:eq(5)'),
     selected;
-    
+
     elem.triggerClick();
     secElem.shiftMousedown();
 
     assert
       .selectedFocus( secElem )
       .selectedCount( 3 );
-    
+
     selected = box
       .selectonic('option', 'selectionBlur', true)
       .selectonic('getSelected');
@@ -392,14 +393,14 @@
     elem    = box.find('li:eq(3)'),
     secElem = box.find('li:eq(5)'),
     selected;
-    
+
     elem.triggerClick();
     secElem.shiftMousedown();
 
     assert
       .selectedFocus( secElem )
       .selectedCount( 3 );
-    
+
     selected = box
       .selectonic('option', 'selectionBlur', true)
       .selectonic('getSelectedId');
@@ -413,7 +414,7 @@
     box     = getBox(),
     elem    = box.find('li:eq(3)'),
     selected;
-    
+
     elem.triggerClick();
     selected = box
       .selectonic( 'option', 'focusBlur', true )
@@ -429,14 +430,14 @@
     var
     box = getBox(),
     el = elems();
-    
+
     box.selectonic( 'select', el(3) );
     assert.selected( el(3) );
 
     box.selectonic( 'select', el(4) );
     assert.selected( el(4) );
     assert.selectedCount(2);
-    
+
     box.selectonic( 'select','li:odd' );
     assert.selectedCount( 11 );
   });
@@ -448,7 +449,7 @@
     res = [];
 
     // Foir testing of triggering callbacks for the method
-    box.selectonic( 'option', { 
+    box.selectonic( 'option', {
       before:       function() { res.push( 'before' );       },
       focusLost:    function() { res.push( 'focusLost' );    },
       select:       function() { res.push( 'select' );       },
@@ -457,7 +458,7 @@
       stop:         function() { res.push( 'stop' );         },
       destroy:      function() { res.push( 'destroy' );      }
     });
-    
+
     // Select one item
     box.selectonic( 'select', el(3) );
     ok((
@@ -471,11 +472,11 @@
     box.selectonic( 'select', el(5) );
     box.selectonic( 'select', el(6) );
     assert.selectedCount(4);
-    
+
     // Set focus
     ok( box.selectonic('focus') === null, 'Focus is null' );
     box.selectonic( 'focus', el(3) );
-    
+
     // Unselect one item
     res = [];
     box.selectonic( 'unselect', el(4) );
@@ -508,11 +509,11 @@
     box   = getBox(),
     elem  = box.find('li:eq(0)'),
     check = true;
-    
+
     box
       .selectonic( 'select', elem )
       .selectonic( 'option', { unselectAll: function() {check = false;} });
-    
+
     assert.selectedCount( 1 );
 
     elem.remove();
@@ -530,7 +531,7 @@
     elem = box.find('li:eq(0)'),
     sec = box.find('li:eq(5)'),
     focus;
-    
+
     box
       .selectonic( 'select','li:odd' )
       .selectonic( 'option', {
@@ -590,7 +591,7 @@
     sec  = box.find('li:eq(3)'),
     res  = [],
     options;
-    
+
     // Set options
     box
       .selectonic( 'option', {
@@ -601,7 +602,7 @@
         unselectAll:  function() { res.push( 'unselectAll' );  },
         stop:         function() { res.push( 'stop' );         },
         destroy:      function() { res.push( 'destroy' );      },
-        
+
         filter:        'li:odd',
         mouseMode:     'toggle',
         event:         'hybrid',
@@ -610,7 +611,7 @@
         multi:         false,
         autoScroll:    false,
         preventInputs: false,
-        
+
         focusBlur:     true,
         selectionBlur: true,
         keyboard:      true,
@@ -691,7 +692,7 @@
     box  = getBox(),
     elem = box.find('li:eq(1)'),
     sec  = box.find('li:eq(3)');
-    
+
     // Set options
     box.selectonic( 'option', {
       filter:        'li:odd',
@@ -702,7 +703,7 @@
       multi:         true,
       autoScroll:  false,
       preventInputs: false,
-      
+
       focusBlur:     true,
       selectionBlur: true,
       keyboard:      true,
@@ -722,7 +723,7 @@
       stop: function() { },
       destroy: function() { }
     });
-    
+
     // Click
     elem.triggerClick();
 
@@ -770,7 +771,7 @@
     box  = getBox(),
     elem = box.find('li:eq(1)'),
     sec  = box.find('li:eq(3)');
-    
+
     // Set options
     box.selectonic( 'option', {
       multi:         true,
@@ -786,7 +787,7 @@
         ok( ui.items, 'items' );
       }
     });
-    
+
     // Click
     elem.triggerClick();
 
@@ -816,7 +817,7 @@
     box  = getBox(),
     elem = box.find('li:eq(1)'),
     sec  = box.find('li:eq(3)');
-    
+
     // Set options
     box.selectonic( 'option', {
       multi:         true,
@@ -833,7 +834,7 @@
         ok( ui.items.length === 2, '2 items' );
       }
     });
-    
+
     // Multi selection
     elem.triggerClick();
     sec.shiftMousedown();
@@ -862,7 +863,7 @@
     box  = getBox(),
     elem = box.find('li:eq(1)'),
     sec  = box.find('li:eq(3)');
-    
+
     // Set options
     box.selectonic( 'option', {
       multi:         true,
@@ -919,7 +920,7 @@
     var
     box  = getBox(),
     elem = box.find('li:eq(1)');
-    
+
     // Set options
     box.selectonic( 'option', {
       filter:        'li:odd',
@@ -930,7 +931,7 @@
       multi:         true,
       autoScroll:  false,
       preventInputs: false,
-      
+
       focusBlur:     true,
       selectionBlur: true,
       keyboard:      true,
@@ -944,7 +945,7 @@
         ok( !ui.items, 'No items' );
       }
     });
-    
+
     // Click
     elem.triggerClick();
 
@@ -960,13 +961,13 @@
     elem = box.find('li:eq(1)'),
     sec  = box.find('li:eq(3)'),
     third = box.find('li:eq(5)');
-    
+
     // Set options
     box.selectonic( 'option', {
       multi:         true,
       autoScroll:  false,
       preventInputs: false,
-      
+
       focusBlur:     true,
       selectionBlur: true,
       keyboard:      true,
@@ -980,7 +981,7 @@
         ok( ui.items, 'items' );
       }
     });
-    
+
     // Click
     elem.triggerClick();
 
@@ -1082,6 +1083,19 @@
     } catch (err) {
       ok( err.message.match(/select/), 'Should pass DOM element or selector!' );
     }
+  });
+
+
+  test( 'Call select on empty list', 2, function() {
+    var res, res2,
+    box = getBox();
+    box.html(''); //clear box
+
+    res = box.selectonic('select', 'li');
+    res2 = box.selectonic('getSelected').length
+
+    ok( res2 === 0, 'getSelected returned 0' );
+    ok( res.jquery, 'Nothing happend, it is ok!' );
   });
 
 
