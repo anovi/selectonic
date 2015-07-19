@@ -46,7 +46,7 @@
     "qunit": "~1.18.0",
     "jquery-1.7.0": "jquery#1.7.0",
     "jquery-1.9.0": "jquery#1.9.0",
-    "jquery-1.10.2": "jquery#1.10.2",
+    "jquery-1.11.3": "jquery#1.11.3",
     "jquery-2.1.4": "jquery#2.1.4",
     "benchmark": "~1.0.0",
     "zepto-full": "~1.1.2"

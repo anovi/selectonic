@@ -2,8 +2,7 @@
 
 module.exports = function(grunt) {
 
-  var jqueries = ['1.7.0', '1.9.0', '1.10.2'];
-  // var jqueries = ['1.7.0', '1.9.0', '1.10.2', '2.0.3'];
+  var jqueries = ['1.7.0', '1.9.0', '1.11.3', '2.1.4'];
 
   // Project configuration.
   grunt.initConfig({
