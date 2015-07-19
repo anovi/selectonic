@@ -42,8 +42,7 @@ module.exports = function(grunt) {
       },
       dist: {
         options: {
-          sourceMap: true,
-          sourceMapName: 'dist/<%= pkg.name %>.min.map'
+          sourceMap: true
         },
         files:{
           'dist/<%= pkg.name %>.min.js': '<%= concat.dist.dest %>'
@@ -111,8 +110,8 @@ module.exports = function(grunt) {
       all: {
         options: {
           patterns: [{
-            match: /\s*\/\* DEVELOPMENT \*\/(\n|.)+\}\(jQuery, window\)\);\n*$/,
-            replacement: '\n\n}(jQuery, window));',
+            match: /\s*\/\* DEVELOPMENT \*\/(\n|.)+\/\* DEVELOPMENT:END \*\//,
+            replacement: '',
             expression: true
           }]
         },
