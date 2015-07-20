@@ -1,4 +1,4 @@
-/*! Selectonic - v0.6.2 - 2015-07-19
+/*! Selectonic - v0.6.3 - 2015-07-20
 * https://github.com/anovi/selectonic
 * Copyright (c) 2015 Alexey Novichkov; Licensed MIT */
 (function($, window, undefined) {
@@ -435,7 +435,7 @@
     default:
       items = params.allItems ? params.allItems : this.$el.find( this.options.get('filter') );
       params.allItems = items;
-      if (target && $.isNumeric(target)) {
+      if (target !== void 0 && $.isNumeric(target)) {
         return items.eq(target);
       }
       return items;
@@ -1458,7 +1458,7 @@
         isTargetWasSelected: (revert) ? true : false,
         isMultiSelect: true
       };
-      if (selector && $.isNumeric(selector)) {
+      if (selector !== void 0 && $.isNumeric(selector)) {
         params.items = this._getItems( params, selector );
       } else {
         $elem = this._checkIfElem( selector );
