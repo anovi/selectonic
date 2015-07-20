@@ -432,7 +432,7 @@
     default:
       items = params.allItems ? params.allItems : this.$el.find( this.options.get('filter') );
       params.allItems = items;
-      if (target && $.isNumeric(target)) {
+      if (target !== void 0 && $.isNumeric(target)) {
         return items.eq(target);
       }
       return items;
@@ -1455,7 +1455,7 @@
         isTargetWasSelected: (revert) ? true : false,
         isMultiSelect: true
       };
-      if (selector && $.isNumeric(selector)) {
+      if (selector !== void 0 && $.isNumeric(selector)) {
         params.items = this._getItems( params, selector );
       } else {
         $elem = this._checkIfElem( selector );
