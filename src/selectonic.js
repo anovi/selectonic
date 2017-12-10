@@ -1,9 +1,10 @@
-(function($, window, undefined) {
+(function(window, undefined) {
   'use strict'; // remove this line, this script will be support running on IE6
 
-  // Method for getting full elements height, jQuery's outerHeight is like Zepto's height
-  var outerHeight = $.fn.outerHeight ? 'outerHeight' : 'height';
-  if ( !$.fn.jquery && !$.fn.zepto ) { $.fn.zepto = true; }
+
+/**
+  * > Utils
+  */
 
   // From Underscore library - http://underscorejs.org/#throttle
   var _throttle = function(func, wait, options) {
@@ -34,17 +35,94 @@
     };
   },
 
-  __indexOf = Array.prototype.indexOf || function(item) {
+  _each = function(obj, iteratee, context) {
+    var ctx = context !== undefined ? context : null;
+    var i, length;
+    if (obj.push) {
+      for (i = 0, length = obj.length; i < length; i++) {
+        iteratee.call(ctx, obj[i], i, obj);
+      }
+    }
+    return obj;
+  },
+
+  _isArray = Array.isArray || function(obj) {
+    return toString.call(obj) === '[object Array]';
+  },
+
+  _isNumeric = function(val) {
+    return typeof val === "number";
+  },
+
+  _isFunction = function(val) {
+    return typeof val === "function";
+  },
+
+  _isPlainObject = function(obj) {
+    var type = typeof obj;
+    return (type !== 'function' || type === 'object') && !!obj;
+  },
+
+  _indexOf = Array.prototype.indexOf || function(item) {
     for (var i = 0, l = this.length; i < l; i++) { if (this[i] === item) {return i;}  }
     return -1;
   },
 
-  itContains = function( array, elem ) {
-    if (array instanceof Array) { return __indexOf.call(array, elem) >= 0; }
+  _toArray = function(coll) {
+    return Array.prototype.slice.call(coll);
+  },
+
+  _itContains = function( array, elem ) {
+    if (array instanceof Array) { return _indexOf.call(array, elem) >= 0; }
     return false;
   },
 
-  $document = $( window.document );
+  _outerHeight = function(elm) {
+    var elmHeight, elmMargin;
+    if(document.all) { // IE
+      elmHeight = elm.currentStyle.height;
+      elmMargin = parseInt(elm.currentStyle.marginTop, 10) + parseInt(elm.currentStyle.marginBottom, 10) + "px";
+    } else { // Mozilla
+      elmHeight = document.defaultView.getComputedStyle(elm, '').getPropertyValue('height');
+      elmMargin = parseInt(document.defaultView.getComputedStyle(elm, '').getPropertyValue('margin-top')) + parseInt(document.defaultView.getComputedStyle(elm, '').getPropertyValue('margin-bottom')) + "px";
+    }
+    return (Number.parseInt(elmHeight) + Number.parseInt(elmMargin));
+  },
+
+  _matches = function(el, selector) {
+    if (el.nodeType !== 1) return false;
+    return (el.matches || el.matchesSelector || el.msMatchesSelector || el.mozMatchesSelector || el.webkitMatchesSelector || el.oMatchesSelector).call(el, selector);
+  },
+
+  _offset = function(el) {
+    var rect = el.getBoundingClientRect();
+    return {
+      top: rect.top + _getWindowScroll(),
+      left: rect.left + document.body.scrollLeft
+    }
+  },
+
+  _getWindowScroll = function() {
+    var scroll = window.pageYOffset !== undefined ? window.pageYOffset :document.scrollTop;
+    var clientTop = document.clientTop !== undefined ? document.clientTop : 0;
+    return scroll - clientTop;
+  },
+
+  _scroll = function(box, y) {
+    if (box === window) {
+      window.scrollTo(null, y);
+    } else {
+      box.scrollTop = y;
+    }
+  },
+
+  _filter = function(arr, cb) {
+    return arr.reduce(function(res, currentValue, currentIndex) {
+      if (cb(currentValue, currentIndex, arr)) res.push(currentValue);
+      return res;
+    }, []);
+  }
+
 
   /**
   * @class Options
@@ -57,13 +135,13 @@
     this._schema    = schema;
     this._options   = {};
     this._callbacks = {};
-    this.set( $.extend({}, defaults, initial||{}), true );
+    this.set( Object.assign({}, defaults, initial||{}), true );
     return this;
   }
 
   Options.isCorrectType = function(val, schema) {
     var type = typeof val, isNullable = val === null && schema.nullable;
-    return ( schema.type instanceof Array ) ? itContains(schema.type, type) || isNullable : type === schema.type || isNullable;
+    return ( schema.type instanceof Array ) ? _itContains(schema.type, type) || isNullable : type === schema.type || isNullable;
   };
 
   Options.prototype.set = function( obj, isNew ) {
@@ -87,7 +165,7 @@
           throw new TypeError( msg );
         }
         // out of values
-        if ( schema.values && !itContains(schema.values, val) ) {
+        if ( schema.values && !_itContains(schema.values, val) ) {
           throw new RangeError( 'Option \"' + option + '\" only could be in these values: \"' + schema.values.join('\", \"') + '\".' );
         }
       }
@@ -98,11 +176,11 @@
         obj[option] = callback.call( this, obj[option] );
       }
     }
-    this._options = $.extend( this._options, obj );
+    this._options = Object.assign(this._options, obj);
   };
 
   Options.prototype.get = function( opt ) {
-    return opt ? this._options[ opt ] : $.extend( {}, this._options );
+    return opt ? this._options[ opt ] : Object.assign({}, this._options);
   };
 
   Options.prototype.on = function( option, cb ) {
@@ -187,7 +265,6 @@
   function Plugin( element, options ) {
     this._name      = Plugin.pluginName;
     this.el         = element;
-    this.$el        = $( element );
     this.ui         = {};   // Object for DOM elements
     this._selected  = 0;    // Amount of selected items
     this._isEnable  = true; // Flag that plugin is enabled - used by handlers
@@ -207,29 +284,17 @@
     this._itemsSelector = '.' + this.options.get('listClass') + ' ' + this.options.get('filter');
     this._setScrolledElem( this.options.get('autoScroll') );
     this._init();
+    return this;
   }
 
-  Plugin.pluginName = 'selectonic';
+  Plugin.pluginName = 'Selectonic';
   Plugin.keyCode    = { DOWN:40, UP:38, SHIFT:16, END:35, HOME:36, PAGE_DOWN:34, PAGE_UP:33, A:65, SPACE:32, ENTER:13 };
-
-
-  /**
-  * Gets plugin's data object
-  * @param {HTMLElement} el
-  * @method getDataObject
-  * @static
-  * @private
-  * @return {Object} Selectonic instance.
-  **/
-  Plugin.getDataObject = function( el ) {
-    return $( el ).data( 'plugin_' + Plugin.pluginName );
-  };
-
+  Plugin.default    = defaults;
 
 
   /* ==============================================================================
 
-  Core
+  > Core
 
   */
   /**
@@ -238,9 +303,8 @@
   * @private
   **/
   Plugin.prototype._init = function() {
-    this.$el.addClass( this.options.get('listClass') );   // Add class to box
+    this.el.classList.add( this.options.get('listClass') );   // Add class to box
     this._bindEvents();                                   // Attach handlers6
-    this.$el.data( 'plugin_' + Plugin.pluginName, this ); // Save plugin's instance
     this._trigger('create');                              // Callback
   };
 
@@ -259,9 +323,9 @@
       return;
     }
     if ( typeof selector === "string" ) {
-      elem = $( selector );
-      if (elem.length > 0) {
-        this._scrolledElem = elem[0];
+      elem = document.querySelector( selector );
+      if (elem) {
+        this._scrolledElem = elem;
       } else {
         throw new Error('There are no elements that matches to selector - \"' + selector + '\"');
       }
@@ -285,15 +349,15 @@
     var _this = this;
 
     // Restores items states for each changed item
-    $.each(
-      $(params.changedItems),
-      function( index, item ) {
+    _each(
+      params.changedItems,
+      function( item, index ) {
         // there is boolean value in array prevItemsStates
         // with same index that item has in _changedItems
         if ( params.prevItemsStates[ index ] ) {
-          _this._select( e, params, $(item), true );
+          _this._select( e, params, item, true );
         } else {
-          _this._unselect( e, params, $(item), true );
+          _this._unselect( e, params, item, true );
         }
       }
     );
@@ -325,13 +389,13 @@
       if( _this._isEnable && _this.options && _this.options.get('focusOnHover') ) { _this._mousemoveHandler.call(_this, e); }
     }, 20);
 
-    $document.on( 'keydown.'+name       ,this._keyboardEvent    );
-    $document.on( 'keyup.'+name         ,this._keyboardEvent    );
-    $document.on( 'mousemove.'+name     ,this._mousemoveEvent   );
-    $document.on( 'click.'+name         ,this._mouseEvent       );
-    $document.on( 'mousedown.'+name     ,this._mouseEvent       );
-    $document.on( 'mouseup.'+name       ,this._mouseEvent       );
-    this.$el.on(  'selectstart.'+name   ,this._selectstartEvent );
+    document.addEventListener( 'keydown'       ,this._keyboardEvent    );
+    document.addEventListener( 'keyup'         ,this._keyboardEvent    );
+    document.addEventListener( 'mousemove'     ,this._mousemoveEvent   );
+    document.addEventListener( 'click'         ,this._mouseEvent       );
+    document.addEventListener( 'mousedown'     ,this._mouseEvent       );
+    document.addEventListener( 'mouseup'       ,this._mouseEvent       );
+    this.el.addEventListener(  'selectstart'   ,this._selectstartEvent );
   };
 
 
@@ -342,13 +406,13 @@
   **/
   Plugin.prototype._unbindEvents = function() {
     var name = this._name;
-    $document.off( 'keydown.'+name       ,this._keyboardEvent    );
-    $document.off( 'keyup.'+name         ,this._keyboardEvent    );
-    $document.off( 'mousemove.'+name     ,this._mousemoveEvent   );
-    $document.off( 'click.'+name         ,this._mouseEvent       );
-    $document.off( 'mousedown.'+name     ,this._mouseEvent       );
-    $document.off( 'mouseup.'+name       ,this._mouseEvent       );
-    this.$el.off(  'selectstart.'+name   ,this._selectstartEvent );
+    document.removeEventListener( 'keydown'       ,this._keyboardEvent    );
+    document.removeEventListener( 'keyup'         ,this._keyboardEvent    );
+    document.removeEventListener( 'mousemove'     ,this._mousemoveEvent   );
+    document.removeEventListener( 'click'         ,this._mouseEvent       );
+    document.removeEventListener( 'mousedown'     ,this._mouseEvent       );
+    document.removeEventListener( 'mouseup'       ,this._mouseEvent       );
+    this.el.removeEventListener(  'selectstart.'   ,this._selectstartEvent );
   };
 
 
@@ -363,21 +427,18 @@
   Plugin.prototype._getTarget = function( e ) {
     var elem = e.target,
       handle = this.options.get('handle'),
-      $elem, target, handleElem;
+      target, handleElem;
 
     // While plugin's element or top of the DOM is achieved
     while ( elem !== null && elem !== this.el ) {
-      $elem = $(elem);
-      // Set context, because old (< 1.10.0) versions of jQuery gives wrong result.
-      $elem.context = window.document;
-      if( $elem.is(this._itemsSelector) ) { target = elem; }
-      if( handle && $elem.is(handle) ) { handleElem = elem; }
+      if( _matches(elem, this._itemsSelector) ) { target = elem; }
+      if( handle && _matches(elem, handle) ) { handleElem = elem; }
       elem = elem.parentNode;
     }
     if( handle && elem && handleElem ) {
       return target;
 
-    // If achieved $el of this instance of plugin's object
+    // If achieved el of this instance of plugin's object
     } else if( !handle && elem ) {
       return target;
     }
@@ -394,7 +455,7 @@
   * @param {String} [target] Find 'next' 'prev' 'pageup' 'pagedown' item
   *   relative to `elem` argument or 'first' or 'last' item of the list.
   * @param {HTMLElement} [elem] Element.
-  * @return {jQuery object|null} Found element wrapped in jQuery or null.
+  * @return {Element|Array|null} Found element or array of elements or null.
   **/
   Plugin.prototype._getItems = function( params, target, elem ) {
     var items;
@@ -403,39 +464,35 @@
     case 'next':
     case 'prev':
       var
-      item = elem.jquery ? elem : $( elem ),
-      find = $.fn[target];
-
+      item = elem;
       while (true) {
-        item = find.call( item );
-        if ( item.length === 0 ) { break; }
-        // Set context, because old (< 1.10.0) versions of jQuery gives wrong result.
-        item.context = window.document;
-        if ( item.is(this._itemsSelector) ) { return item; }
+        item = item[ target === 'prev' ? 'previousSibling' : 'nextSibling' ];
+        if ( item == null ) { break; }
+        if ( _matches(item, this._itemsSelector) ) { return item; }
       }
       return null;
 
     case 'pageup':
     case 'pagedown':
-      return this._getNextPageElem( params, target, elem);
+      return this._getNextPageElem(params, target, elem);
 
     case 'first':
-      items = params.allItems ? params.allItems : this.$el.find( this.options.get('filter') );
-      params.allItems = items;
-      return items.first();
+      items = params.allItems ? params.allItems : this.el.querySelectorAll( this._itemsSelector );
+      params.allItems = _toArray(items);
+      return items[0];
 
     case 'last':
-      items = params.allItems ? params.allItems : this.$el.find( this.options.get('filter') );
-      params.allItems = items;
-      return items.last();
+      items = params.allItems ? params.allItems : this.el.querySelectorAll( this._itemsSelector );
+      params.allItems = _toArray(items);
+      return items[items.length - 1];
 
     default:
-      items = params.allItems ? params.allItems : this.$el.find( this.options.get('filter') );
-      params.allItems = items;
-      if (target !== void 0 && $.isNumeric(target)) {
-        return items.eq(target);
+      items = params.allItems ? params.allItems : this.el.querySelectorAll( this._itemsSelector );
+      params.allItems = _toArray(items);
+      if (target !== undefined && _isNumeric(target)) {
+        return [items[target]];
       }
-      return items;
+      return params.allItems;
     }
   };
 
@@ -462,52 +519,53 @@
       _isOptimized  = params.isShiftPageRange,
       box           = this._scrolledElem || this.el,
       boxViewHeight = box.clientHeight,
-      winViewHeight = $( window )[outerHeight](),
-      $current      = $( elem ),
+      winViewHeight = window.innerHeight,
+      current       = elem,
       isBoxBigger   = boxViewHeight > winViewHeight,
       pageHeight    = isBoxBigger ? winViewHeight : boxViewHeight,
-      itemHeight    = $current[outerHeight](),
+      itemHeight    = _outerHeight(current),
       currentHeight = itemHeight,
       itemsHeight   = itemHeight,
       direction     = (target === 'pageup') ? 'prev' : 'next',
-      $candidate, candHeight, currentIndex, allItems, cand;
+      candidate, candHeight, currentIndex, allItems, cand;
 
       if ( _isOptimized ) {
         direction = (target === 'pageup') ? -1 : 1;
         allItems = this._getItems( params );
-        params.rangeStart = currentIndex = allItems.index( elem );
+        params.rangeStart = currentIndex = _indexOf.call(allItems, elem );
       }
 
     while( true ) {
       if ( _isOptimized ) {
         currentIndex = currentIndex + direction;
         cand = currentIndex >= 0 ? allItems.eq( currentIndex ) : null;
-        $candidate = cand && cand.length > 0 ? cand : null;
+        candidate = cand && cand.length > 0 ? cand : null;
       } else {
-        $candidate = this._getItems( params, direction, $current );
+        candidate = this._getItems( params, direction, current );
       }
 
-      if ( !$candidate && $current[0] === elem ) {
+      if ( !candidate && current === elem ) {
         break;
-      } else if ( !$candidate  ) {
+      } else if ( !candidate  ) {
         if ( _isOptimized ) { params.rangeEnd = currentIndex - direction; }
-        return $current;
+        return current;
       }
 
-      candHeight = $candidate[outerHeight]();
+      // candHeight = candidate[outerHeight]();
+      candHeight = _outerHeight(candidate);
       itemsHeight = itemsHeight + candHeight;
 
       if ( itemsHeight > pageHeight ) {
         // If two items bigger than page than it just will give next item
         if ( currentHeight + candHeight > pageHeight ) {
           if ( _isOptimized ) { params.rangeEnd = currentIndex; }
-          return $candidate;
+          return candidate;
         }
         if ( _isOptimized ) { params.rangeEnd = currentIndex - direction; }
-        return $current;
+        return current;
       }
       currentHeight = candHeight;
-      $current = $candidate;
+      current = candidate;
     }
     return null;
   };
@@ -527,7 +585,7 @@
     var ui, cb = this.options.get(name);
     if ( !cb ) { return; }
     if ( name === 'create' || name === 'destroy' ) {
-      return cb.call( this.$el );
+      return cb.call( this.el );
     }
     ui = {};
     if ( params.target ) { ui.target = params.target; }
@@ -540,7 +598,7 @@
       case 'stop':        if ( !params.wasCancelled ) { ui.items = params.changedItems; } break;
     }
     // Pass to callback: elem, event object and new ui object
-    cb.call( this.$el, event || null, ui );
+    cb.call( this.el, event || null, ui );
   };
 
 
@@ -594,7 +652,7 @@
     } else if ( params.target && params.items ) {
 
       // If there is one selected item and it is focused
-      if ( this._selected && this._selected === 1 && this._getIsSelected(this.ui.focus) ) {
+      if ( this._selected && this._selected === 1 && this.ui.focus && this._getIsSelected(this.ui.focus) ) {
         /* It is case, when user moves cursor by keys or chooses single items by mouse
         - need just clear selection from focus - no need run go whole DOM of list */
         this._unselect( e, params, this.ui.focus, params.isTargetWasSelected );
@@ -655,7 +713,7 @@
     } else if (
       this.ui.solidInitialElem &&
       !params.isTargetWasSelected &&
-      (initial = params.items.index( this.ui.solidInitialElem )) >= 0
+      (initial = _indexOf.call(params.items, this.ui.solidInitialElem )) >= 0
     ) {
       // Need to unselect items from start to initial elem and select from initial elem to the end
       initial     = ( endAfterStart ) ? params.rangeStart + initial : params.rangeEnd + initial;
@@ -698,12 +756,13 @@
   * @param {Object} params Current params.
   **/
   Plugin.prototype._changeItemsStates = function( items, delta, params ) {
+    if (items.parentNode !== undefined) items = [items];
     var
       aboveZero = delta > 0,
       changedItems = [],
       _this = this;
 
-    $( items ).each( function( index, item ) {
+    _each(items, function( item, index ) {
       var
         isSelected = _this._getIsSelected( item ),
         // Condition - if item is not selected (_select) or items is selected (_unselect)
@@ -723,12 +782,12 @@
         }
         _this._selected += delta;
       }
-      $( item ).toggleClass( _this.options.get('selectedClass'), aboveZero );
+      item.classList.toggle( _this.options.get('selectedClass'), aboveZero );
 
     });
 
     if( !params.isCancellation ) {
-      params[ (aboveZero?'selected':'unselected') ] = $( changedItems );
+      params[ (aboveZero?'selected':'unselected') ] = changedItems;
       params.changedItems = params.changedItems.concat( changedItems );
     }
   };
@@ -792,7 +851,7 @@
   **/
   Plugin.prototype._multiSelect = function( params ) {
     params.isMultiSelect = true;
-    return $( params.target );
+    return params.target;
   };
 
 
@@ -805,12 +864,12 @@
   **/
   Plugin.prototype._rangeSelect = function( params ) {
     params.isRangeSelect = true;
-    if( params.target === this.ui.focus ) { return $( params.target ); }
+    if( params.target === this.ui.focus ) { return params.target; }
 
     // Detect position of target and focus in the list
     var arr = params.allItems ? params.allItems : this._getItems( params ),
-      x = arr.index( params.target ),
-      y = arr.index( this.ui.focus ),
+      x = _indexOf.call(arr, params.target ),
+      y = _indexOf.call(arr, this.ui.focus ),
 
     // Get array of items between focus and target
     subArr =     ( x < y ) ? arr.slice( x, y ) : arr.slice( y, x );
@@ -832,13 +891,7 @@
   **/
   Plugin.prototype._getIsSelected = function( target ) {
     var options = this.options.get();
-
-    if( $(target).length <= 1 ) {
-      return $( target ).hasClass( options.selectedClass );
-    }
-    return $.map( $(target), function( item ) {
-      return $( item ).hasClass( options.selectedClass );
-    });
+    return target.classList.contains( options.selectedClass );
   };
 
 
@@ -855,7 +908,7 @@
       this._trigger('focusLost', e, params);
     }
     if( this.ui.focus ) {
-      $( this.ui.focus ).removeClass( this.options.get('focusClass') );
+      this.ui.focus.classList.remove( this.options.get('focusClass') );
       delete this.ui.focus;
     }
   };
@@ -870,10 +923,10 @@
   Plugin.prototype._setFocus = function( target ) {
     if( !target ) { return; }
     if( this.ui.focus ) {
-      $(this.ui.focus).removeClass( this.options.get('focusClass') );
+      this.ui.focus.classList.remove( this.options.get('focusClass') );
     }
     this.ui.focus = target;
-    $( this.ui.focus ).addClass( this.options.get('focusClass') );
+    this.ui.focus.classList.add( this.options.get('focusClass') );
     return this.ui.focus;
   };
 
@@ -900,10 +953,8 @@
   **/
   Plugin.prototype._checkIfElem = function( selector ) {
     var res;
-    if ( selector && (selector.jquery || selector.zepto || selector.nodeType) ) {
-      selector = (selector.jquery||selector.zepto) ? selector : $( selector );
-      res = selector.filter( this._itemsSelector );
-      return res.length > 0 ? res : null;
+    if ( selector && selector.parentNode ) {
+      return true;
     } else { return false; }
   };
 
@@ -917,12 +968,20 @@
   *   and match some elements then method return these elements.
   **/
   Plugin.prototype._checkIfSelector = function( selector ) {
-    var res;
+    var res, _this = this;
     if ( selector && typeof selector === 'string') {
-      res = this.$el
-        .find( selector )
-        .filter( this._itemsSelector );
-      return ( res.jquery && res.length > 0 ) ? res : null;
+      try {
+        res = _toArray(this.el.querySelectorAll(selector));
+        if (res) res = _filter(res, function(el) {
+          return _matches(el, _this._itemsSelector);
+        });
+        // TODO .filter( this._itemsSelector );
+      }
+      catch (e) {
+        res = false;
+      }
+      // return ( res && res.length && res.length > 0 ) ? res : false;
+      return res;
 
     } else { return false; }
   };
@@ -931,7 +990,7 @@
 
   /* ==============================================================================
 
-  Keyboard
+  > Keyboard
 
   */
   /**
@@ -941,7 +1000,6 @@
   * @param {Object} event
   **/
   Plugin.prototype._keyHandler = function( e ) {
-
     if ( !this.options.get('keyboard') ) { return; }
     if ( this.options.get('preventInputs') && e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') { return; }
     var key = e.which, params = {}, target, isAllSelect, direction, page;
@@ -985,10 +1043,10 @@
         target = this._findNextTarget( page, params );
         break;
       case Plugin.keyCode.SPACE:
-        target = $( this.ui.focus );
+        target = this.ui.focus;
         break;
       case Plugin.keyCode.ENTER:
-        if ( !this.options.get('multi') ) { target = $( this.ui.focus ); }
+        if ( !this.options.get('multi') ) { target = this.ui.focus; }
         break;
       }
     }
@@ -997,9 +1055,9 @@
     if (direction) { e.preventDefault(); }
 
     // One of the arrows was pressed
-    if ( target && target.length > 0 ) {
-      params.target = target[0];
-      params.items = target;
+    if ( target ) {
+      params.target = target;
+      params.items = [target];
 
       // Toggle mode
       if ( this.options.get('keyboardMode') === 'toggle' ) {
@@ -1056,12 +1114,12 @@
   **/
   Plugin.prototype._rangeVariator = function( params ) {
     var
-      isFocusSelected = void 0 === params.isFocusSelected ? this._getIsSelected( this.ui.focus ) : params.isFocusSelected,
+      isFocusSelected = undefined === params.isFocusSelected ? this._getIsSelected( this.ui.focus ) : params.isFocusSelected,
       isTargetSelected = params.isTargetWasSelected = this._getIsSelected( params.target );
 
     if ( !isFocusSelected && !isTargetSelected ) {
       // Only target will be selected
-      params.target = params.items = this.ui.focus;
+      params.target = params.items = [this.ui.focus];
       params.isMultiSelect = true;
     } else {
       params.items = this._rangeSelect( params );
@@ -1088,11 +1146,11 @@
   **/
   Plugin.prototype._multiVariator = function( params, key, direction, target ) {
     var
-      isFocusSelected       = void 0 === params.isFocusSelected ? this._getIsSelected( this.ui.focus ) : params.isFocusSelected,
+      isFocusSelected       = undefined === params.isFocusSelected ? this._getIsSelected( this.ui.focus ) : params.isFocusSelected,
       isTargetSelected      = this._getIsSelected( params.target ),
       afterTarget           = this._getItems( params, direction, target ), // Search for next target in the same direction
       isSelectedAfterTarget = this._getIsSelected( afterTarget ), // Check if second target is selected
-      prevItem;
+      prevItem, target;
 
     // If another arrow was pressed that means the direction was changed
     if ( this._keyModes.shift && this._keyModes.shift !== key ) {
@@ -1104,24 +1162,26 @@
       selected items - focus should jump through these selected items to first unselected item */
 
       // While first unselected item will be found or edge of the list will be reached
-      while( this._getIsSelected(params.items) && params.items.length > 0 ) {
-        prevItem = params.items;
-        params.items = this._getItems( params, direction, params.items );
+      target = params.target;
+      while( target && this._getIsSelected(target) ) {
+        prevItem = target;
+        target = this._getItems( params, direction, target );
       }
       // If unselected item was found it becomes target item
       // target will be selected and get the focus
-      params.target = params.items ? params.items : prevItem;
+      params.target = target ? target : prevItem;
+      params.items = [params.target];
 
     } else if ( isTargetSelected && isFocusSelected && !isSelectedAfterTarget ) {
       /* Sitiation is possible when user unselect items by arrow key with holding SHIFT */
 
       // Clear flags of serial selection by SHIFT
       this._keyModes.shift = this._shiftModeAction = null;
-      params.items = this.ui.focus;
+      params.items = [this.ui.focus];
       // Selection will be clear on the focus, focus will be set on target item
 
     } else if ( isFocusSelected && isTargetSelected ) {
-      params.items = this.ui.focus;
+      params.items = [this.ui.focus];
       // If there is no SHIFT action (first pressing arrow key with holding SHIFT)
       // Set mode of selection
       if ( !this._shiftModeAction ) { this._shiftModeAction = 'unselect'; }
@@ -1129,7 +1189,7 @@
 
     } else if ( !isFocusSelected ) {
       // Focus will be selected
-      params.target = params.items = this.ui.focus;
+      params.target = params.items = [this.ui.focus];
     }
     params.isMultiSelect = true;
   };
@@ -1168,22 +1228,21 @@
   **/
   Plugin.prototype._refreshBoxScroll = function( box ) {
     var
-      $box          = $( box ),
       isWindow      = box === window,
-      boxViewHeight = isWindow ? $box[outerHeight]() : box.clientHeight,
-      boxScrollTop  = $box.scrollTop(),
-      boxWindowY    = isWindow ? 0 : $box.offset().top,
-      $item         = $( this.ui.focus ),
-      itemHeight    = $item[outerHeight](),
-      itemBoxTop    = isWindow ? $item.offset().top : ( $item.offset().top - boxWindowY + boxScrollTop );
+      boxViewHeight = isWindow ? box.innerHeight : box.clientHeight,
+      boxScrollTop  = isWindow ? _getWindowScroll() : box.scrollTop,
+      boxWindowY    = isWindow ? 0 : _offset(box).top,
+      item          = this.ui.focus,
+      itemHeight    = _outerHeight(item),
+      itemBoxTop    = isWindow ? _offset(item).top : ( _offset(item).top - boxWindowY + boxScrollTop );
 
     if ( itemBoxTop < boxScrollTop ) {
-      $box.scrollTop( itemBoxTop );
+      _scroll(box, itemBoxTop);
 
     } else if ( (itemBoxTop + itemHeight) > (boxScrollTop + boxViewHeight) ) {
       // Scroll to bottom edge of elem -
       // bottom edges of item and viewport will be on the same Y
-      $box.scrollTop( itemBoxTop + itemHeight - boxViewHeight );
+      _scroll(box, itemBoxTop + itemHeight - boxViewHeight);
     }
   };
 
@@ -1210,10 +1269,15 @@
   };
 
 
+  Plugin.prototype._isVisible = function(item) {
+    this.el.contains(item);
+  };
+
+
 
   /* ==============================================================================
 
-  Mouse
+  > Mouse
 
   */
   /**
@@ -1223,6 +1287,7 @@
   * @param {Object} event Event object.
   **/
   Plugin.prototype._mouseHandler = function( e ) {
+    // debugger;
     var
     options = this.options.get(),
     type    = e.type,
@@ -1266,7 +1331,7 @@
       }
     }
 
-    if ( params.target && !params.items ) { params.items = $( params.target ); }
+    if ( params.target && !params.items ) { params.items = [params.target]; }
     delete this.ui.solidInitialElem;
     this._controller( e, params );
   };
@@ -1320,35 +1385,7 @@
 
   /* ==============================================================================
 
-  Public API
-
-  */
-  /**
-  * Searches public method and calls it if exists.
-  * @method _callPublicMethod
-  * @private
-  * @param {String} method
-  **/
-  Plugin._callPublicMethod = function( method ) {
-    var
-      _this = Plugin.getDataObject( this ),
-      publicMethod, args;
-
-    if( null === _this || void 0 === _this ) {
-      throw new Error( 'Element ' + this[0] + ' has no plugin ' + Plugin.pluginName );
-    }
-    // Try to find method
-    if ( _this[method] && $.isFunction(_this[method]) ) {
-      publicMethod = _this[method];
-    }
-    // If method exists and it is not private - call him
-    if ( publicMethod && $.isFunction( publicMethod ) && method.charAt(0) !== '_' ) {
-      args = Array.prototype.slice.call( arguments );
-      args.shift();
-      return publicMethod.apply( _this, args );
-    }
-    throw new Error( 'Plugin \"' + Plugin.pluginName + '\" has no method \"' + method + '\"' );
-  };
+  > Public API
 
 
   /**
@@ -1377,15 +1414,15 @@
         var opt = {};
         opt[option] = value;
         this.options.set( opt );
-        return this.$el;
+        return this.el;
       }
       // Return value of option
       return this.options.get( option );
     }
     // Received object
-    if( args > 0 && $.isPlainObject( option ) ) {
+    if( args > 0 && _isPlainObject( option ) ) {
       this.options.set( option );
-      return this.$el;
+      return this.el;
     }
     // Return whole options object
     if ( args === 0 ) {
@@ -1401,24 +1438,28 @@
   * @method destroy
   **/
   Plugin.prototype.destroy = function() {
+    var selectedClass = this.options.get('selectedClass');
     this._trigger('destroy');
     this._unbindEvents();
     if ( this._focusHoverTimeout ) { clearTimeout(this._focusHoverTimeout); }
     if( this.ui.focus ) {
-      $(this.ui.focus).removeClass( this.options.get('focusClass') );
+      this.ui.focus.classList.remove( this.options.get('focusClass') );
       delete this.ui.focus;
     }
     if( this._selected > 0 ) {
-      this.getSelected().removeClass( this.options.get('selectedClass') );
+      var selected = this.getSelected();
+      if (_isArray(selected))
+        _each(selected, function(item) {
+          item.classList.remove(selectedClass);
+        });
     }
-    this.$el.removeClass( this.options.get('disabledClass') );
-    this.$el.removeClass( this.options.get('listClass') );
+    this.el.classList.remove( this.options.get('disabledClass') );
+    this.el.classList.remove( this.options.get('listClass') );
     this.options.off();
     delete this.options;
     delete this._scrolledElem;
     delete this.ui.solidInitialElem;
-    this.$el.removeData( 'plugin_' + Plugin.pluginName );
-    this.$el = null;
+    this.el = null;
     return;
   };
 
@@ -1440,9 +1481,9 @@
   * @param {Boolean} revert If true then method will work as `unselect`.
   **/
   Plugin.prototype.select = function( selector, revert ) {
-    var $elem, params;
+    var elem, params;
 
-    if ( revert === true && selector === void 0 ) {
+    if ( revert === true && selector === undefined ) {
       // To unselecting all items
       params = {
         isTargetWasSelected: true,
@@ -1455,19 +1496,19 @@
         isTargetWasSelected: (revert) ? true : false,
         isMultiSelect: true
       };
-      if (selector !== void 0 && $.isNumeric(selector)) {
+      if (selector !== undefined && _isNumeric(selector)) {
         params.items = this._getItems( params, selector );
       } else {
-        $elem = this._checkIfElem( selector );
-        if ( $elem === false) { $elem = this._checkIfSelector( selector ); }
-        if ( $elem === false) { throw new Error('You shold pass DOM element or selector to \"select\" method.'); }
-        params.items = ( $elem === null) ? null : ( $elem.addClass ) ? $elem : $( $elem );
+        elem = this._checkIfElem( selector ) ? selector : false;
+        if ( elem === false) { elem = this._checkIfSelector( selector ); }
+        if ( elem === false) { throw new Error('You shold pass DOM element or selector to \"select\" method.'); }
+        params.items = _isArray(elem) ? elem : [elem];
       }
     }
 
     delete this.ui.solidInitialElem;
     this._controller( null, params);
-    return this.$el;
+    return this.el;
   };
 
 
@@ -1477,7 +1518,7 @@
   **/
   Plugin.prototype.blur = function() {
     this._controller( null, { target: null } );
-    return this.$el;
+    return this.el;
   };
 
 
@@ -1489,7 +1530,10 @@
   **/
   Plugin.prototype.getSelected = function( getIds ) {
     var arr,
-    items = this._getItems({}).filter( '.' + this.options.get('selectedClass') );
+    selectedClass = this.options.get('selectedClass'),
+    items = _filter(this._getItems({}), function(el) {
+      return el.classList.contains(selectedClass);
+    })
 
     if( getIds ) {
       arr = [];
@@ -1516,20 +1560,24 @@
   * @param {HTMLElement|String} selector A selector or element to select.
   **/
   Plugin.prototype.focus = function( selector ) {
-    var $elem;
+    var elem;
 
     if ( arguments.length > 0 ) {
-      if ( $.isNumeric(selector) ) {
-        $elem = this._getItems( {}, selector );
+      if ( _isNumeric(selector) ) {
+        elem = this._getItems( {}, selector );
+      } else if (this._checkIfElem(selector)) {
+        elem = selector;
       } else {
-        $elem = ($elem = this._checkIfElem( selector )) === false ? this._checkIfSelector( selector ) : $elem;
+        elem = this._checkIfSelector(selector);
       }
-      if ( $elem && ($elem.jquery || $elem.zepto) ) {
-        this._setFocus( $elem[0] );
-      } else if ( $elem === false) {
+      if ( _isArray(elem) && elem.length > 0 ) {
+        this._setFocus( elem[0] );
+      } else if ( elem && this._checkIfElem(elem) ) {
+        this._setFocus( elem );
+      } else if ( elem === false ) {
         throw new Error( 'You shold pass DOM element or CSS selector to set focus or nothing to get it.' );
       }
-      return this.$el;
+      return this.el;
     }
 
     if (this.ui.focus) { return this.ui.focus; } else { return null; }
@@ -1555,8 +1603,8 @@
   **/
   Plugin.prototype.enable = function() {
     this._isEnable = true;
-    this.$el.removeClass( this.options.get('disabledClass') );
-    return this.$el;
+    this.el.classList.remove( this.options.get('disabledClass') );
+    return this.el;
   };
 
 
@@ -1567,8 +1615,8 @@
   Plugin.prototype.disable = function() {
     this._isEnable = false;
     this._isHovered = false;
-    this.$el.addClass( this.options.get('disabledClass') );
-    return this.$el;
+    this.el.classList.add( this.options.get('disabledClass') );
+    return this.el;
   };
 
 
@@ -1580,7 +1628,7 @@
   **/
   Plugin.prototype.cancel = function() {
     this._isPrevented = true;
-    return this.$el;
+    return this.el;
   };
 
   /**
@@ -1590,31 +1638,29 @@
   **/
   Plugin.prototype.refresh = function() {
     var focus = this.ui.focus;
-    if ( focus && !$(focus).is(':visible') ) { delete this.ui.focus; }
+    if ( focus && this._isVisible(focus) ) { delete this.ui.focus; }
     this._selected = ( this.getSelected() ).length;
-    return this.$el;
+    return this.el;
   };
 
 
 
   /* ==============================================================================
 
-  Method of jQuery.fn
+  > Module
 
   */
-  $.fn[Plugin.pluginName] = function( options ) {
-    if( options && options.charAt ) {
-      return Plugin._callPublicMethod.apply( this, arguments );
-    }
-    return this.each( function(key, elem) {
-      if ( !Plugin.getDataObject(elem) ) { new Plugin( elem, options ); }
+
+  if (typeof module !== 'undefined' && module.exports) {
+    module.exports = Plugin;
+  } else if (typeof define === 'function' && typeof define.amd === 'object' && define.amd) {
+    // register as 'Plugin', consistent with npm package name
+    define(Plugin.pluginName, [], function () {
+      return Plugin;
     });
-  };
-
-  $.fn[Plugin.pluginName].defaults = defaults;
-
-
-
+  } else {
+    window[Plugin.pluginName] = Plugin;
+  }
 
 
   /* DEVELOPMENT */
@@ -1627,4 +1673,4 @@
 
 
   /* DEVELOPMENT:END */
-}((window.jQuery || window.Zepto), window));
+}(window));

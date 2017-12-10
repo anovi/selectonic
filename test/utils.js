@@ -32,7 +32,7 @@
       box.append( str );
     }
     $('#qunit-fixture').html( res );
-    box.selectonic( options );
+    return new Selectonic( box[0], options );
   },
 
 
@@ -85,18 +85,33 @@
   };
 
   $.fn.triggerMousedown = function(mode) {
-    var e = $.Event( "mousedown" );
+    /*var e = $.Event( "mousedown" );
     e.which = 1;
     if (mode === 'meta' || mode === 'ctrl') { e.metaKey = true; } else if (mode === 'shift') { e.shiftKey = true; }
     this.trigger( e );
+    return this;*/
+    var e = new MouseEvent("mousedown", {
+      metaKey: (mode === 'meta' || mode === 'ctrl'),
+      shiftKey: (mode === 'shift'),
+      which: 1,
+      bubbles: true
+    });
+    this.each(function() { this.dispatchEvent(e); });
     return this;
   };
 
   $.fn.triggerMouseup = function(mode) {
-    var e = $.Event( "mouseup" );
+    /*var e = $.Event( "mouseup" );
     e.which = 1;
     if (mode === 'meta' || mode === 'ctrl') { e.metaKey = true; } else if (mode === 'shift') { e.shiftKey = true; }
-    this.trigger( e );
+    this.trigger( e );*/
+    var e = new MouseEvent("mouseup", {
+      metaKey: (mode === 'meta' || mode === 'ctrl'),
+      shiftKey: (mode === 'shift'),
+      which: 1,
+      bubbles: true
+    });
+    this.each(function() { this.dispatchEvent(e); });
     return this;
   };
 

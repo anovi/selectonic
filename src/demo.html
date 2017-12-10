@@ -19,7 +19,7 @@
                 box-sizing: border-box;
             }
             #list {
-                margin: 50px;
+                margin: 200px 50px 50px;
             }
             #list ul {
                 list-style-type: none;
@@ -130,10 +130,10 @@
     function say ( text ) { if ( say.enable ) {console.log( text ); } }
     say.enable = true;
 
-    var mainList;
+    var mainList = document.querySelector('#list ul');
     var elem = $('li:eq(2)');
 
-    mainList = $("#list ul").selectonic({
+    mainListSelectable = new Selectonic( mainList, {
         // filter:         '> *',
         // filter:         'li:odd',
         mouseMode:      'mouseup',
@@ -151,9 +151,9 @@
         // listClass: 'my-super',
 
         create: function() {
-            this.mouseup(function(event) {
-                // console.log('mouseup');
-            });
+            // this.mouseup(function(event) {
+            console.log('mouseup');
+            // });
         },
         before: function( event, ui ) {
             say('before');
@@ -176,9 +176,9 @@
         destroy: function() {}
     });
 
-    say( mainList.selectonic('option') );
+    say( mainListSelectable.option() );
 
-    
+
 </script>
 
 </body>

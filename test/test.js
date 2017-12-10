@@ -19,6 +19,7 @@
   getSelectionText = _Utils.getSelectionText,
   clearSelection   = _Utils.clearSelection,
   elems            = _Utils.elems,
+  selectable,
 
   initOptions = {
     listClass:      ( 'selectable' ),
@@ -71,7 +72,7 @@
         break;
       case 'Filter odd mousedown':
       case 'Filter odd up/down':
-        $.extend( advanced, { filter: 'li:odd', selectionBlur: true });
+        $.extend( advanced, { filter: 'li:nth-child(odd)', selectionBlur: true });
         break;
       case 'Handled items mousedown':
         $.extend( advanced, { handle: '.handle', selectionBlur: true });
@@ -88,13 +89,13 @@
     }
 
     res = $.extend( res, advanced );
-    createList( res );
+    selectable = createList( res );
   });
 
   QUnit.testDone( function () {
     var box = getBox();
     if (box.hasClass('selectable')) {
-      box.selectonic('destroy');
+      selectable.destroy();
     }
   });
 
@@ -111,7 +112,7 @@
   });
 
   test( 'Test destroy', 1, function() {
-    getBox().selectonic('destroy');
+    selectable.destroy();
     ok( !getBox().hasClass('selectable'), "Destroyed" );
   });
 
@@ -142,25 +143,19 @@
     var
     box       = getBox(),
     elem      = box.find('li:eq(3)'),
-    secElem   = box.find('li:eq(5)'),
-    e         = $.Event( "mousedown" );
-    e.which = 1;
-    e.metaKey = true;
+    secElem   = box.find('li:eq(5)');
 
     elem.triggerClick();
     ok( elem.hasClass('selected'), "Selected" );
     ok( elem.hasClass('focused'), "Focused" );
 
-    secElem.trigger( e );
+    secElem.metaMousedown();
     assert
       .selected( elem )
       .selectedFocus( secElem );
 
     elem.triggerClick();
-    e = $.Event( "mousedown" );
-    e.which = 1;
-    e.metaKey = true;
-    elem.trigger( e );
+    elem.metaMousedown();
     assert
       .notSelected( elem )
       .focused( elem );
@@ -171,15 +166,12 @@
     box        = getBox(),
     elem       = box.find('li:eq(3)'),
     midElem    = box.find('li:eq(4)'),
-    secElem    = box.find('li:eq(5)'),
-    e          = $.Event( "mousedown" );
-    e.which = 1;
-    e.shiftKey = true;
+    secElem    = box.find('li:eq(5)');
 
     elem.triggerClick();
     assert.selectedFocus( elem );
 
-    secElem.trigger( e );
+    secElem.shiftMousedown();
     assert
       .selected( elem )
       .selected( midElem )
@@ -261,15 +253,12 @@
   test( 'Filter odd mousedown', 4, function() {
     var
     box        = getBox(),
-    elem       = box.find('li:eq(3)'),
-    midElem    = box.find('li:eq(4)'),
-    secElem    = box.find('li:eq(5)'),
-    e          = $.Event( "mousedown" );
-    e.which = 1;
-    e.shiftKey = true;
+    elem       = box.find('li:eq(2)'),
+    midElem    = box.find('li:eq(3)'),
+    secElem    = box.find('li:eq(4)');
 
     elem.triggerClick();
-    secElem.trigger( e );
+    secElem.shiftMousedown();
     assert
       .selected( elem )
       .selectedFocus( secElem )
@@ -315,12 +304,11 @@
     var
     box     = getBox(),
     elem    = box.find('li:eq(3)'),
-    secElem = box.find('li:eq(5)'),
+    secElem = box.find('li:eq(5)');
 
-    isEnabled = box
-      .selectonic('select','li:eq(3)')
-      .selectonic('disable')
-      .selectonic('isEnabled');
+    selectable.select('li:nth-child(4)');
+    selectable.disable();
+    var isEnabled = selectable.isEnabled();
     ok( !isEnabled, 'Is diabled!' );
 
     secElem.triggerClick();
@@ -328,7 +316,8 @@
       .selected( elem )
       .selectedCount( 1 );
 
-    isEnabled = box.selectonic('enable').selectonic('isEnabled');
+    selectable.enable();
+    isEnabled = selectable.isEnabled();
     ok( isEnabled, 'Is enabled!' );
   });
 
@@ -343,19 +332,18 @@
     assert
       .selectedFocus( el(3) )
       .selectedCount( 1 );
-    box
-      .selectonic( 'option', 'selectionBlur', true )
-      .selectonic( 'blur' );
+
+    selectable.option('selectionBlur', true );
+    selectable.blur();
 
     assert
       .focused( el(3) )
       .selectedCount( 0 );
 
     el(3).triggerClick();
-    box
-      // .selectonic('select', el(3))
-      .selectonic( 'option', 'focusBlur', true )
-      .selectonic( 'blur' );
+    // .selectonic('select', el(3))
+    selectable.option('focusBlur', true);
+    selectable.blur();
 
     assert
       .notFocused( el(3) )
@@ -376,14 +364,13 @@
       .selectedFocus( secElem )
       .selectedCount( 3 );
 
-    selected = box
-      .selectonic('option', 'selectionBlur', true)
-      .selectonic('getSelected');
+    selectable.option('selectionBlur', true);
+    selected = selectable.getSelected();
     assert.selectedCount( 3 );
 
     $('body').triggerClick();
 
-    selected = box.selectonic('getSelected');
+    selected = selectable.getSelected();
     assert.selectedCount( 0 );
   });
 
@@ -400,10 +387,9 @@
     assert
       .selectedFocus( secElem )
       .selectedCount( 3 );
-
-    selected = box
-      .selectonic('option', 'selectionBlur', true)
-      .selectonic('getSelectedId');
+    // debugger;
+    selectable.option('selectionBlur', true);
+    selected = selectable.getSelectedId();
     ok( $.isArray(selected), 'Is array' );
     equal( selected.length, 3, "Is 3 selected" );
     equal( selected[0], elem.attr('id'), "Id's match" );
@@ -416,13 +402,12 @@
     selected;
 
     elem.triggerClick();
-    selected = box
-      .selectonic( 'option', 'focusBlur', true )
-      .selectonic( 'focus' );
+    selectable.option('focusBlur', true);
+    selected = selectable.focus();
     ok( $(selected).is( elem ) , 'Items match' );
 
     $('body').triggerClick();
-    selected = box.selectonic( 'focus' );
+    selected = selectable.focus();
     ok( selected === null, 'No focus' );
   });
 
@@ -431,14 +416,14 @@
     box = getBox(),
     el = elems();
 
-    box.selectonic( 'select', el(3) );
+    selectable.select( el(3)[0] );
     assert.selected( el(3) );
 
-    box.selectonic( 'select', el(4) );
+    selectable.select( el(4)[0] );
     assert.selected( el(4) );
     assert.selectedCount(2);
 
-    box.selectonic( 'select','li:odd' );
+    selectable.select('li:nth-child(odd)' );
     assert.selectedCount( 11 );
   });
 
@@ -449,7 +434,7 @@
     res = [];
 
     // Foir testing of triggering callbacks for the method
-    box.selectonic( 'option', {
+    selectable.option({
       before:       function() { res.push( 'before' );       },
       focusLost:    function() { res.push( 'focusLost' );    },
       select:       function() { res.push( 'select' );       },
@@ -460,7 +445,7 @@
     });
 
     // Select one item
-    box.selectonic( 'select', el(3) );
+    selectable.select( el(3)[0] );
     ok((
       res[0] === 'before' &&
       res[1] === 'select' &&
@@ -468,18 +453,18 @@
     ), 'Callbacks right!');
 
     // Select more
-    box.selectonic( 'select', el(4) );
-    box.selectonic( 'select', el(5) );
-    box.selectonic( 'select', el(6) );
+    selectable.select( el(4)[0] );
+    selectable.select( el(5)[0] );
+    selectable.select( el(6)[0] );
     assert.selectedCount(4);
 
     // Set focus
-    ok( box.selectonic('focus') === null, 'Focus is null' );
-    box.selectonic( 'focus', el(3) );
+    ok( selectable.focus() === null, 'Focus is null' );
+    selectable.focus( el(3)[0] );
 
     // Unselect one item
     res = [];
-    box.selectonic( 'unselect', el(4) );
+    selectable.unselect( el(4)[0] );
     ok((
       res[0] === 'before' &&
       res[1] === 'unselect' &&
@@ -491,7 +476,7 @@
 
     // Unselect all tems
     res = [];
-    box.selectonic( 'unselect' );
+    selectable.unselect();
     ok((
       res[0] === 'before' &&
       res[1] === 'unselect' &&
@@ -501,7 +486,7 @@
 
     assert.selectedCount(0);
     // Sure that focus has not been changed
-    ok( el(3).is(box.selectonic('focus')), 'Focus is elem 3' );
+    ok( el(3).is(selectable.focus()), 'Focus is elem 3' );
   });
 
   test( 'refresh', 4, function() {
@@ -510,47 +495,45 @@
     elem  = box.find('li:eq(0)'),
     check = true;
 
-    box
-      .selectonic( 'select', elem )
-      .selectonic( 'option', { unselectAll: function() {check = false;} });
+    selectable.select( elem[0] )
+    selectable.option( { unselectAll: function() {check = false;} });
 
     assert.selectedCount( 1 );
 
     elem.remove();
-    box.selectonic('refresh');
+    selectable.refresh();
     assert.selectedCount( 0 );
-    ok( !box.selectonic('focus'), 'Focus cleared.' );
+    ok( !selectable.focus(), 'Focus cleared.' );
 
-    box.selectonic('blur');
+    selectable.blur();
     ok( check, 'There was no unselectAll callback!' );
   });
 
   test( 'cancel', 10, function() {
     var
     box  = getBox(),
-    elem = box.find('li:eq(0)'),
+    elem = box.find('li:eq(1)'),
     sec = box.find('li:eq(5)'),
     focus;
 
-    box
-      .selectonic( 'select','li:odd' )
-      .selectonic( 'option', {
-        stop: function() {
-          this.selectonic( 'cancel' );
-        }
-      })
-      .selectonic( elem );
+    selectable.select('li:nth-child(odd)');
+    selectable.option({
+      stop: function() {
+        selectable.cancel();
+      }
+    });
+    selectable.select(elem[0]);
 
     assert.selectedCount( 10 );
     assert.notSelected( elem );
 
     // Cancel in before callback
-    box.selectonic( 'option', 'stop', null );
+    selectable.option( 'stop', null );
     elem.triggerClick();
-    focus = box.selectonic('focus');
-    box.selectonic( 'option', {
+    focus = selectable.focus();
+    selectable.option({
       before: function() {
-        this.selectonic('cancel');
+        selectable.cancel();
       }
     });
     sec.shiftMousedown();
@@ -558,18 +541,18 @@
     assert.selectedFocus( elem );
 
     // Second cancel in stop callback
-    box.selectonic( 'option', 'stop', function() {
-      this.selectonic('cancel');
+    selectable.option( 'stop', function() {
+      selectable.cancel();
     });
     sec.shiftMousedown();
     assert.selectedCount( 1 );
     assert.selectedFocus( elem );
 
     // First cancel in select and second in stop
-    box.selectonic( 'option', {
+    selectable.option({
       before: null,
       select: function() {
-        this.selectonic('cancel');
+        selectable.cancel();
       }
     });
     sec.shiftMousedown();
@@ -577,7 +560,7 @@
     assert.selectedFocus( elem );
 
     // Only in stop
-    box.selectonic( 'option', 'select', null );
+    selectable.option( 'select', null );
     // Try click outside
     $('body').triggerClick();
     assert.selectedCount( 1 );
@@ -587,41 +570,40 @@
   test( 'option', 7, function() {
     var
     box  = getBox(),
-    elem = box.find('li:eq(1)'),
-    sec  = box.find('li:eq(3)'),
+    elem = box.find('li:eq(0)'),
+    sec  = box.find('li:eq(2)'),
     res  = [],
     options;
 
     // Set options
-    box
-      .selectonic( 'option', {
-        before:       function() { res.push( 'before' );       },
-        focusLost:    function() { res.push( 'focusLost' );    },
-        select:       function() { res.push( 'select' );       },
-        unselect:     function() { res.push( 'unselect' );     },
-        unselectAll:  function() { res.push( 'unselectAll' );  },
-        stop:         function() { res.push( 'stop' );         },
-        destroy:      function() { res.push( 'destroy' );      },
+    selectable.option({
+      before:       function() { res.push( 'before' );       },
+      focusLost:    function() { res.push( 'focusLost' );    },
+      select:       function() { res.push( 'select' );       },
+      unselect:     function() { res.push( 'unselect' );     },
+      unselectAll:  function() { res.push( 'unselectAll' );  },
+      stop:         function() { res.push( 'stop' );         },
+      destroy:      function() { res.push( 'destroy' );      },
 
-        filter:        'li:odd',
-        mouseMode:     'toggle',
-        event:         'hybrid',
-        handle:        '.handle',
+      filter:        'li:nth-child(odd)',
+      mouseMode:     'toggle',
+      event:         'hybrid',
+      handle:        '.handle',
 
-        multi:         false,
-        autoScroll:    false,
-        preventInputs: false,
+      multi:         false,
+      autoScroll:    false,
+      preventInputs: false,
 
-        focusBlur:     true,
-        selectionBlur: true,
-        keyboard:      true,
-        loop:          true
-      });
+      focusBlur:     true,
+      selectionBlur: true,
+      keyboard:      true,
+      loop:          true
+    });
 
     // Check getting options object
-    options = box.selectonic( 'option' );
+    options = selectable.option();
     ok((
-      options.filter        === 'li:odd' &&
+      options.filter        === 'li:nth-child(odd)' &&
       options.mouseMode     === 'toggle' &&
       options.event         === 'hybrid' &&
       options.handle        === '.handle' &&
@@ -671,7 +653,7 @@
     ), 'Select another item');
 
     // Disable handle
-    box.selectonic('option', 'handle', null);
+    selectable.option('handle', null);
     // Select item
     elem.triggerClick();
     ok((
@@ -683,19 +665,19 @@
 
     // Destroing plugin
     res = [];
-    box.selectonic( 'destroy' );
+    selectable.destroy();
     ok( res[0] === 'destroy', 'Plugin destroied!' );
   });
 
   test( 'before arguments', 20, function() {
     var
     box  = getBox(),
-    elem = box.find('li:eq(1)'),
-    sec  = box.find('li:eq(3)');
+    elem = box.find('li:eq(0)'),
+    sec  = box.find('li:eq(2)');
 
     // Set options
-    box.selectonic( 'option', {
-      filter:        'li:odd',
+    selectable.option( {
+      filter:        'li:nth-child(odd)',
       mouseMode:     'toggle',
       event:         'hybrid',
       // handle:        '.handle',
@@ -728,7 +710,7 @@
     elem.triggerClick();
 
     // Select another item
-    box.selectonic( 'option', {
+    selectable.option( {
       before: function( e, ui ) {
         ok( e, 'event' );
         ok( ui, 'ui' );
@@ -740,7 +722,7 @@
     sec.find('.handle').triggerClick();
 
     // Click outside list
-    box.selectonic( 'option', {
+    selectable.option( {
       before: function( e, ui ) {
         ok( e, 'event' );
         ok( ui, 'ui' );
@@ -752,7 +734,7 @@
     $('body').triggerClick();
 
     // Click outside second time
-    box.selectonic( 'option', {
+    selectable.option( {
       before: function( e, ui ) {
         ok( e, 'event' );
         ok( ui, 'ui' );
@@ -762,7 +744,7 @@
       }
     });
     $('body').triggerClick();
-    box.selectonic( 'option', 'before', null );
+    selectable.option( 'before', null );
   });
 
 
@@ -773,7 +755,7 @@
     sec  = box.find('li:eq(3)');
 
     // Set options
-    box.selectonic( 'option', {
+    selectable.option( {
       multi:         true,
       focusBlur:     true,
       selectionBlur: true,
@@ -792,7 +774,7 @@
     elem.triggerClick();
 
     // Multi selection
-    box.selectonic( 'option', {
+    selectable.option( {
       select: function( e, ui ) {
         ok( e, 'event' );
         ok( ui, 'ui' );
@@ -802,10 +784,7 @@
         ok( ui.items.length === 2, '2 items' );
       }
     });
-    var e = $.Event( "mousedown" );
-    e.which = 1;
-    e.shiftKey = true;
-    sec.trigger( e );
+    sec.shiftMousedown();
 
     // Click outside list
     $('body').triggerClick();
@@ -819,7 +798,7 @@
     sec  = box.find('li:eq(3)');
 
     // Set options
-    box.selectonic( 'option', {
+    selectable.option( {
       multi:         true,
       focusBlur:     true,
       selectionBlur: true,
@@ -843,7 +822,7 @@
 
     // Click outside list
     sec.shiftMousedown();
-    box.selectonic( 'option', {
+    selectable.option( {
       unselect: function( e, ui ) {
         ok( e, 'event' );
         ok( ui, 'ui' );
@@ -865,7 +844,7 @@
     sec  = box.find('li:eq(3)');
 
     // Set options
-    box.selectonic( 'option', {
+    selectable.option( {
       multi:         true,
       focusBlur:     true,
       selectionBlur: true,
@@ -887,7 +866,7 @@
 
     // Click outside list
     sec.shiftMousedown();
-    box.selectonic( 'option', {
+    selectable.option( {
       unselectAll: function( e, ui ) {
         ok( e, 'event' );
         ok( ui, 'ui' );
@@ -901,7 +880,7 @@
     $('body').triggerClick();
 
     // Unselect one item without focuss loss
-    box.selectonic( 'option', {
+    selectable.option( {
       unselectAll: function( e, ui ) {
         ok( e, 'event' );
         ok( ui, 'ui' );
@@ -919,11 +898,11 @@
   test( 'focusLost arguments', 5, function() {
     var
     box  = getBox(),
-    elem = box.find('li:eq(1)');
+    elem = box.find('li:eq(0)');
 
     // Set options
-    box.selectonic( 'option', {
-      filter:        'li:odd',
+    selectable.option( {
+      filter:        'li:nth-child(odd)',
       mouseMode:     'toggle',
       event:         'hybrid',
       // handle:        '.handle',
@@ -963,7 +942,7 @@
     third = box.find('li:eq(5)');
 
     // Set options
-    box.selectonic( 'option', {
+    selectable.option( {
       multi:         true,
       autoScroll:  false,
       preventInputs: false,
@@ -986,7 +965,7 @@
     elem.triggerClick();
 
     // Range
-    box.selectonic( 'option', 'stop', function( e, ui ) {
+    selectable.option( 'stop', function( e, ui ) {
       ok( e, 'event' );
       ok( ui, 'ui' );
       ok( ui.target, 'target' );
@@ -997,7 +976,7 @@
     sec.shiftMousedown();
 
     // Click unselected item
-    box.selectonic( 'option', 'stop', function( e, ui ) {
+    selectable.option( 'stop', function( e, ui ) {
       ok( e, 'event' );
       ok( ui, 'ui' );
       ok( ui.target, 'target' );
@@ -1008,7 +987,7 @@
     third.triggerClick();
 
     // Select and call `cancel` method
-    box.selectonic( 'option', {
+    selectable.option( {
       select: function( e, ui ) {
         ok( e, 'event' );
         ok( ui, 'ui' );
@@ -1016,7 +995,7 @@
         ok( ui.focus, 'focus' );
         ok( ui.items, 'items' );
         ok( ui.items.length === 4, '4 items' );
-        this.selectonic('cancel');
+        selectable.cancel();
       },
       stop: function( e, ui ) {
         ok( e, 'event' );
@@ -1029,7 +1008,7 @@
     elem.shiftMousedown();
 
     // Click outside list
-    box.selectonic( 'option', 'stop', function( e, ui ) {
+    selectable.option( 'stop', function( e, ui ) {
       ok( e, 'event' );
       ok( ui, 'ui' );
       ok( !ui.target, 'No target' );
@@ -1041,61 +1020,50 @@
   });
 
 
-  test( 'API exceptions', 8, function() {
+  test( 'API exceptions', 6, function() {
     var box = getBox();
     try {
-      box.selectonic( 'option', false );
+      selectable.option( false );
     } catch (err) {
       ok( err.message.match(/Format.*option.*/), 'Wrong option format' );
     }
     try {
-      box.selectonic( 'option', 'mouseMode', 'superlalala' );
+      selectable.option( 'mouseMode', 'superlalala' );
     } catch (err) {
       ok( err.message.match(/Option.*values.*/), 'Option only allowed values' );
     }
     try {
-      box.selectonic( 'option', 'listClass', 'superlalala' );
+      selectable.option( 'listClass', 'superlalala' );
     } catch (err) {
       ok( err.message.match(/.*listClass.*once/), 'Is not allowed to change classnames' );
     }
     try {
-      box.selectonic( 'option', 'before', 'superlalala' );
+      selectable.option( 'before', 'superlalala' );
     } catch (err) {
       ok( err.message.match(/Option.*function.*/), 'Should be a function' );
     }
     try {
-      box.selectonic( 'option', 'autoScroll', '#superlalala' );
+      selectable.option( 'autoScroll', '#superlalala' );
     } catch (err) {
       ok( err.message.match(/elements.*selector.*/), 'No elems matches selector for autoScroll' );
     }
     try {
-      $('#list').selectonic( 'option', 'autoScroll', '#superlalala' );
-    } catch (err) {
-      ok( err.message.match(/plugin/), 'Elem has no plugin attached' );
-    }
-    try {
-      box.selectonic( 'alkjsdkfjaslk', 'asdlfkjasd' );
-    } catch (err) {
-      ok( err.message.match(/method/), 'No such method!' );
-    }
-    try {
-      box.selectonic( 'select' );
+      selectable.select();
     } catch (err) {
       ok( err.message.match(/select/), 'Should pass DOM element or selector!' );
     }
   });
 
 
-  test( 'Call select on empty list', 2, function() {
+  test( 'Call select on empty list', 1, function() {
     var res, res2,
     box = getBox();
     box.html(''); //clear box
-
-    res = box.selectonic('select', 'li');
-    res2 = box.selectonic('getSelected').length;
+    res = selectable.select('li');
+    res2 = selectable.getSelected().length;
 
     ok( res2 === 0, 'getSelected returned 0' );
-    ok( res.jquery, 'Nothing happend, it is ok!' );
+    // ok( res.jquery, 'Nothing happend, it is ok!' );
   });
 
 
