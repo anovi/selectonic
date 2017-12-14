@@ -382,8 +382,11 @@
     this._keyboardEvent = function(e) {
       if( _this.options.get('keyboard') && _this._isEnable ) { _this._keyHandler.call(_this, e); }
     };
-    this._selectstartEvent = function() {
-      if ( !_this.options.get('textSelection') ) { return false; }
+    this._selectstartEvent = function(e) {
+      if ( !_this.options.get('textSelection') ) {
+        e.preventDefault();
+        return false;
+      }
     };
     this._mousemoveEvent = _throttle( function(e) {
       if( _this._isEnable && _this.options && _this.options.get('focusOnHover') ) { _this._mousemoveHandler.call(_this, e); }
@@ -641,10 +644,13 @@
 
     // Multi
     } else if ( params.isMultiSelect ) {
-      method = params.isTargetWasSelected ? this._unselect : this._select;
-      method.call( this, e, params, params.items );
+      if (params.items) {
+        method = params.isTargetWasSelected ? this._unselect : this._select;
+        method.call( this, e, params, params.items );
+      }
+      // else do nothing - focus will be set
 
-    // Moving focus be mouse
+    // Moving focus by mouse
     } else if ( params.target && !params.items && e.type === 'mouseover' ) {
       // do nothing - focus will be set
 
@@ -1149,7 +1155,7 @@
       isFocusSelected       = undefined === params.isFocusSelected ? this._getIsSelected( this.ui.focus ) : params.isFocusSelected,
       isTargetSelected      = this._getIsSelected( params.target ),
       afterTarget           = this._getItems( params, direction, target ), // Search for next target in the same direction
-      isSelectedAfterTarget = this._getIsSelected( afterTarget ), // Check if second target is selected
+      isSelectedAfterTarget = afterTarget ? this._getIsSelected( afterTarget ) : false, // Check if second target is selected
       prevItem, target;
 
     // If another arrow was pressed that means the direction was changed
@@ -1189,7 +1195,8 @@
 
     } else if ( !isFocusSelected ) {
       // Focus will be selected
-      params.target = params.items = [this.ui.focus];
+      params.target = this.ui.focus;
+      params.items = [this.ui.focus];
     }
     params.isMultiSelect = true;
   };
@@ -1563,7 +1570,9 @@
     var elem;
 
     if ( arguments.length > 0 ) {
-      if ( _isNumeric(selector) ) {
+      if (selector === null) {
+        this.ui.focus = null;
+      } else if ( _isNumeric(selector) ) {
         elem = this._getItems( {}, selector );
       } else if (this._checkIfElem(selector)) {
         elem = selector;
