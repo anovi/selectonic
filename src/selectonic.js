@@ -1050,6 +1050,7 @@
         break;
       case Plugin.keyCode.SPACE:
         target = this.ui.focus;
+        e.preventDefault();
         break;
       case Plugin.keyCode.ENTER:
         if ( !this.options.get('multi') ) { target = this.ui.focus; }
