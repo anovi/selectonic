@@ -965,17 +965,29 @@ Required features
 
 
   /**
-  * Checks if object is HTMLElement or element wrapped in jQuery
+  * Checks if object is HTMLElement
   * @method _checkIfElem
   * @private
-  * @param {any} selector
-  * @return {Boolean} True if `selector` is element of jQuery element.
+  * @param {any} element.
+  * @return {Boolean} True if `elem` is HTMLElement.
   **/
-  Plugin.prototype._checkIfElem = function( selector ) {
+  Plugin.prototype._checkIfElem = function( elem ) {
     var res;
-    if ( selector && selector.parentNode ) {
+    if ( elem && elem.parentNode ) {
       return true;
     } else { return false; }
+  };
+
+
+  /**
+  * Checks if element is selectable accorting to plugin options
+  * @method _checkIfSelectable
+  * @private
+  * @param {HTMLElement} element to check.
+  * @return {Boolean} True if `elem` is selectable.
+  **/
+  Plugin.prototype._checkIfSelectable = function( elem ) {
+    return _matches(elem, this._itemsSelector);
   };
 
 
@@ -1098,9 +1110,9 @@ Required features
           key === Plugin.keyCode.END     || key === Plugin.keyCode.HOME ||
           key === Plugin.keyCode.PAGE_UP || key === Plugin.keyCode.PAGE_DOWN
         ) {
-          this._rangeVariator( params );
+          this._handleRangeSelection( params );
         } else {
-          this._multiVariator( params, key, direction, target );
+          this._handleShiftKeySelection( params, key, direction, target );
         }
 
         // Set solid selection
@@ -1128,11 +1140,11 @@ Required features
 
   /**
   * Sets range or multi modes for selection depending from `params`.
-  * @method _rangeVariator
+  * @method _handleRangeSelection
   * @private
   * @param {Object} params Current params.
   **/
-  Plugin.prototype._rangeVariator = function( params ) {
+  Plugin.prototype._handleRangeSelection = function( params ) {
     var
       isFocusSelected = undefined === params.isFocusSelected ? this._getIsSelected( this.ui.focus ) : params.isFocusSelected,
       isTargetSelected = params.isTargetWasSelected = this._getIsSelected( params.target );
@@ -1157,14 +1169,14 @@ Required features
   * FOR SHIFT MODE ONLY
   * - turns on shift mode flags
   * - solves different situations with shift+arrows selection
-  * @method _multiVariator
+  * @method _handleShiftKeySelection
   * @private
   * @param {Object} params Current params.
   * @param {Number} key Keycode of pressed key.
   * @param {String} direction Indicates 'prev' or 'next' item to find.
   * @param {HTMLElement} target Targeted element.
   **/
-  Plugin.prototype._multiVariator = function( params, key, direction, target ) {
+  Plugin.prototype._handleShiftKeySelection = function( params, key, direction, target ) {
     var
       isFocusSelected       = undefined === params.isFocusSelected ? this._getIsSelected( this.ui.focus ) : params.isFocusSelected,
       isTargetSelected      = this._getIsSelected( params.target ),
@@ -1233,7 +1245,7 @@ Required features
       res = ( this.ui.focus ) ? this._getItems( params, direction, this.ui.focus ) : this._getItems( params, edge );
 
     // If has not found any items and loop option is ON
-    if ( (res === null || res.length === 0) && this.options.get('loop') ) {
+    if ( !res && this.options.get('loop') ) {
       res = this._getItems( params, edge ); // find extreme item
     }
     return res;
@@ -1287,11 +1299,6 @@ Required features
   **/
   Plugin.prototype._isMulti = function( e ) {
     return e.ctrlKey || e.metaKey;
-  };
-
-
-  Plugin.prototype._isVisible = function(item) {
-    this.el.contains(item);
   };
 
 
@@ -1521,6 +1528,7 @@ Required features
         params.items = this._getItems( params, selector );
       } else {
         elem = this._checkIfElem( selector ) ? selector : false;
+        if (elem && !this._checkIfSelectable(elem)) throw new Error(selector + ' is not selectable element');
         if ( elem === false) { elem = this._checkIfSelector( selector ); }
         if ( elem === false) { throw new Error('You shold pass DOM element or selector to \"select\" method.'); }
         params.items = _isArray(elem) ? elem : [elem];
@@ -1589,13 +1597,14 @@ Required features
       } else if ( _isNumeric(selector) ) {
         elem = this._getItems( {}, selector );
       } else if (this._checkIfElem(selector)) {
+        if (!this._checkIfSelectable(selector)) throw new Error(selector + ' is not selectable element');
         elem = selector;
       } else {
         elem = this._checkIfSelector(selector);
       }
       if ( _isArray(elem) && elem.length > 0 ) {
         this._setFocus( elem[0] );
-      } else if ( elem && this._checkIfElem(elem) ) {
+      } else if ( elem ) {
         this._setFocus( elem );
       } else if ( elem === false ) {
         throw new Error( 'You shold pass DOM element or CSS selector to set focus or nothing to get it.' );
@@ -1661,7 +1670,7 @@ Required features
   **/
   Plugin.prototype.refresh = function() {
     var focus = this.ui.focus;
-    if ( focus && this._isVisible(focus) ) { delete this.ui.focus; }
+    if (focus && (!this._checkIfElem(focus) || !this._checkIfSelectable(focus))) { delete this.ui.focus; }
     this._selected = ( this.getSelected() ).length;
     return this.el;
   };
