@@ -541,8 +541,7 @@
     while( true ) {
       if ( _isOptimized ) {
         currentIndex = currentIndex + direction;
-        cand = currentIndex >= 0 ? allItems.eq( currentIndex ) : null;
-        candidate = cand && cand.length > 0 ? cand : null;
+        candidate = currentIndex >= 0 ? allItems[currentIndex] : null;
       } else {
         candidate = this._getItems( params, direction, current );
       }
@@ -710,7 +709,7 @@
       // Get items from top to first range item (not include)
       items = allItems.slice( 0, top );
       // Add items from last range item (not include) to the end of list
-      items = items.add( allItems.slice( bot + 1 ) );
+      items = items.concat( allItems.slice( bot + 1 ) );
       this._unselect( e, params, items );
       this._select( e, params, params.items );
 
