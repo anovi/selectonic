@@ -1,9 +1,24 @@
+/*
+Required features
+- Object.assign
+- document.querySelector
+- document.querySelectorAll
+- Element.matches ||
+  Element.matchesSelector ||
+  Element.msMatchesSelector ||
+  Element.mozMatchesSelector ||
+  Element.webkitMatchesSelector ||
+  Element.oMatchesSelector
+- getBoundingClientRect
+- addEventListener
+*/
 (function(window, undefined) {
-  'use strict'; // remove this line, this script will be support running on IE6
+  'use strict';
 
+  /* ==============================================================================
 
-/**
-  * > Utils
+  > Utils
+
   */
 
   // From Underscore library - http://underscorejs.org/#throttle
@@ -980,7 +995,6 @@
         if (res) res = _filter(res, function(el) {
           return _matches(el, _this._itemsSelector);
         });
-        // TODO .filter( this._itemsSelector );
       }
       catch (e) {
         res = false;
@@ -1672,14 +1686,4 @@
   }
 
 
-  /* DEVELOPMENT */
-  /* DO NOT CHANGE THIS!
-  All code below DEVELOPMENT line ( except closing function wrapper )
-  will be automatically removed for production by grunt replace task */
-  window[ '_' + Plugin.pluginName ] = Plugin;
-
-
-
-
-  /* DEVELOPMENT:END */
 }(window));
