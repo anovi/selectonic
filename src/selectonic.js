@@ -530,7 +530,7 @@ Required features
   * @param {Object} params Current params.
   * @param {String} target Find 'pageup' 'pagedown' item relative to `elem` argument.
   * @param {HTMLElement} elem Element.
-  * @return {jQuery object|null} Found element wrapped in jQuery or null.
+  * @return {HTMLElement|null} Found targeted element or null.
   **/
   Plugin.prototype._getNextPageElem = function( params, target, elem ) {
     var
@@ -770,8 +770,8 @@ Required features
   * Used by _select and _unselect methods.
   * @method _changeItemsStates
   * @private
-  * @param {jQuery collection} items jQuery collection of items that will be change.
-  * @param {Nubmer} delta Ss number to modifying selection counter
+  * @param {Array} Array of HTMLElement items that will be changed.
+  * @param {Nubmer} delta number to modifying selection counter
   *   above zero `delta` from _select/ sub zero `delta` from _unselect
   * @param {Object} params Current params.
   **/
@@ -819,7 +819,7 @@ Required features
   * @private
   * @param {Object} event Event object.
   * @param {Object} params Current params.
-  * @param {jQuery collection} items jQuery collection of items that will be selected.
+  * @param {Array} Array of HTMLElement items that will be selected.
   * @param {Boolean} [silent] If true then `select` callback won't be called.
   **/
   Plugin.prototype._select = function( e, params, items, silent ) {
@@ -835,7 +835,7 @@ Required features
   * @private
   * @param {Object} event Event object.
   * @param {Object} params Current params.
-  * @param {jQuery collection} items jQuery collection of items that will be unselected.
+  * @param {Array} array of HTMLElement items that will be unselected.
   * @param {Boolean} [silent] If true then `unselect` callback won't be called.
   **/
   Plugin.prototype._unselect = function( e, params, items, silent ) {
@@ -880,7 +880,7 @@ Required features
   * @method _rangeSelect
   * @private
   * @param {Object} params Current params.
-  * @return {jQuery object} Range of items between focused and targeted elements (included).
+  * @return {Array} Array of HTMLElement items between focused and targeted elements (included).
   **/
   Plugin.prototype._rangeSelect = function( params ) {
     params.isRangeSelect = true;
@@ -996,8 +996,8 @@ Required features
   * @method _checkIfSelector
   * @private
   * @param {any} selector
-  * @return {jQuery object|false|null} If `selector` is a selector
-  *   and match some elements then method return these elements.
+  * @return {Array|false} If `selector` is a selector
+  *   and then method return Array of these elements or empty Array; else returns false.
   **/
   Plugin.prototype._checkIfSelector = function( selector ) {
     var res, _this = this;
@@ -1236,7 +1236,7 @@ Required features
   * @param {String} direction Indicates 'prev' 'next' or 'pageup' 'pagedown' item to find
   *   relative to the focused element.
   * @param {Object} params Current params.
-  * @return {jQuery object|null} Targeted element.
+  * @return {Element|Array|null} Same as _getItems method.
   **/
   Plugin.prototype._findNextTarget = function( direction, params ) {
     var edge = ( direction === 'next' || direction === "pagedown" ) ? 'first' : 'last', // extreme item of the list
@@ -1555,7 +1555,7 @@ Required features
   * Get selected items in the list.
   * @method getSelected
   * @param {Boolean} [getIds] If true method return array of IDs of selcted elements.
-  * @return {Array|jQuery object} Selected items as jQuery collection or array of IDs.
+  * @return {Array} Selected Elements or array of their IDs.
   **/
   Plugin.prototype.getSelected = function( getIds ) {
     var arr,
